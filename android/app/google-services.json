@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "328024353457",
+    "firebase_url": "https://yumnak-3df66.firebaseio.com",
+    "project_id": "yumnak-3df66",
+    "storage_bucket": "yumnak-3df66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328024353457:android:805f2d5cffa3d7b4461090",
+        "android_client_info": {
+          "package_name": "application.yumnak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328024353457-f2bscs9b6kcghe37oci6n98a41m9pobb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "application.yumnak",
+            "certificate_hash": "173e4e2e552225af4e4d5183dbbf31f11f64ebfa"
+          }
+        },
+        {
+          "client_id": "328024353457-duphum62ffg7bemlirdn4fucan0q6o6k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn0EQRrKapjgu6kNfPvwzh21iaJuqcKIw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328024353457-duphum62ffg7bemlirdn4fucan0q6o6k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
