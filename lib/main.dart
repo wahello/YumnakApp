@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yumnak/models/user.dart';
+import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/wrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:yumnak/services/auth.dart';
@@ -13,7 +14,8 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>.value(
       value: AuthService().user,
       child: MaterialApp(
-        home: Wrapper(),
+       home:  Main(),
+        //Wrapper(),
       ),
     );
   }
