@@ -13,7 +13,7 @@ class SignIn_Cust extends StatefulWidget {
 class _SignIn_CustState extends State<SignIn_Cust> {
 
   final AuthService  _auth = AuthService();
-  final _formKey = GlobalKey<FormState>();
+  final  _formKey = GlobalKey<FormState>();
 
   String email="";
   String password="";
@@ -122,6 +122,7 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                       }
                                     else{
                                       print("signed in");
+                                      print(result.user);
                                       Navigator.push(context, new MaterialPageRoute(
                                           builder: (context) => HomePage()
                                       ));

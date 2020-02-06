@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:yumnak/models/user.dart';
 
-class Customer extends User{
-  List<CustomerRate> _rateArray;
-  double _avgRate;
+class Customer{
+
+  //List<CustomerRate> _rateArray;
+  //double _avgRate;
 
   //Customer(String phoneNumber, String name, String email, String password, var location, String userType, this._rateArray, this._avgRate)
     //  :super(phoneNumber, name, email, password, location, userType);
 
-
-  set rateArray(List<CustomerRate> rate){
+  /*set rateArray(List<CustomerRate> rate){
     location=rate;
   }
   
@@ -18,10 +18,20 @@ class Customer extends User{
   }
 
   List<CustomerRate> get rateArray => rateArray;
-  double get avgRate => avgRate;
+  double get avgRate => avgRate;*/
+
+
+  String name;
+  String email;
+  String password;
+  var uid;
+      Customer();
+
+
 
 }
 
+/*
 class CustomerRate {
   String _id;
   DateTime _dateTime;
@@ -42,4 +52,4 @@ class CustomerRate {
   String get id => id;
   DateTime get dateTime => dateTime;
   double get stars => stars;
-}
+}*/

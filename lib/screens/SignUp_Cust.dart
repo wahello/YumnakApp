@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:yumnak/models/Customer.dart';
 import 'package:yumnak/services/auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUp_Cust extends StatefulWidget {
   @override
@@ -8,9 +12,22 @@ class SignUp_Cust extends StatefulWidget {
 
 class _SignUp_CustState extends State<SignUp_Cust> {
 
+  Customer _customer = Customer();
+
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+  final DatabaseReference database= FirebaseDatabase.instance.reference().child("Customer");
+
+  sendData(){
+    database.push().set({
+      'name' : name,
+      'email': email,
+      'password': password,
+    });
+  }
+
+  String name="";
   String email="";
   String password="";
   String error="";
@@ -41,9 +58,10 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                       padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                       child: Column(
                         children: <Widget>[
-                          /*Directionality(
+                          Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
+                                onChanged: (val){setState(() => name=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.person),
                                     labelText:  'الاسم',
@@ -51,7 +69,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                     focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: Colors.lightBlueAccent))),
                               )
-                          ),*/
+                          ),
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
@@ -133,12 +151,12 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                         child: GestureDetector(
                           onTap: () async {
                             if (_formKey.currentState.validate()){
-                              dynamic result = await _auth.registerWithEmailAndPassword(email,password);
-                              if (result == null ){
-                                setState(() => error= 'please supply a valid email');
+                             dynamic result = await _auth.registerWithEmailAndPassword(email,password);
+                              if (result == null ){setState(() => error= 'please supply a valid email');}
+                               else{print("signed up");
+                               print(result.toString());
                               }
-                               else{print("signed up"); }
-                            }
+                            sendData();}
                           },
                           child: Center(
                             child: Text( 'تسجيل ',
