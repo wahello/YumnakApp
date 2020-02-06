@@ -40,9 +40,7 @@ class _RegisterState extends State<Register> {
                   SizedBox(height: 20),
                   TextFormField(
                     validator: (val) => val.isEmpty ? "Enter an email" : null,  //null means valid email
-                    onChanged: (val){
-                      setState(() => email=val);
-                    },
+                    onChanged: (val){setState(() => email=val);},
 
                   ),
 

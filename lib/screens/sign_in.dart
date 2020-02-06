@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:yumnak/screens/authenticate.dart';
 import 'package:yumnak/services/auth.dart';
+/*
 
 class SignIn extends StatefulWidget {
 
@@ -66,7 +66,7 @@ class _SignInState extends State<SignIn> {
                       if (result == null ){
                         setState(() => error= 'could not sign in with those credintials');
                       }
-                      // } else{print("signed in"); }
+                       else{print("signed in"); }
                     }
                   },
                 ),
@@ -86,3 +86,4 @@ class _SignInState extends State<SignIn> {
     );
   }
 }
+*/
