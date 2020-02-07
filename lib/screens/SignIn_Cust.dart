@@ -1,14 +1,19 @@
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/SignUp_Cust.dart';
 import 'package:yumnak/services/auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 
 
 class SignIn_Cust extends StatefulWidget {
   @override
   _SignIn_CustState createState() => _SignIn_CustState();
 }
+
+
 
 class _SignIn_CustState extends State<SignIn_Cust> {
 
@@ -17,7 +22,12 @@ class _SignIn_CustState extends State<SignIn_Cust> {
 
   String email="";
   String password="";
+  var uid;
   String error="";
+  dynamic result;
+  var db;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,16 +126,23 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                 child: GestureDetector(
                                   onTap: () async {
                                     if (_formKey.currentState.validate()){
-                                      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                                       result = await _auth.signInWithEmailAndPassword(email, password);
                                       if (result == null ){
                                         setState(() => error= 'could not sign in with those credintials');
                                       }
                                     else{
                                       print("signed in");
-                                      print(result.user);
+
+                                     db=  FirebaseDatabase.instance.reference().child("Customer").child("-M-Tcn7P9yohEGmOEwlM");
+                                      db.once().then((DataSnapshot snapshot){
+                                        Map<dynamic, dynamic> values=snapshot.value;
+                                        print(values["name"]);
+                                      } );
+
+                                      print("This is uid "+result);
                                       Navigator.push(context, new MaterialPageRoute(
                                           builder: (context) => HomePage()
-                                      ));
+                                    ));
                                     }
                                     }
                                   },

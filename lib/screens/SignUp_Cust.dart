@@ -24,12 +24,14 @@ class _SignUp_CustState extends State<SignUp_Cust> {
       'name' : name,
       'email': email,
       'password': password,
+      'uid': uid
     });
   }
 
   String name="";
   String email="";
   String password="";
+  var uid;
   String error="";
 
   @override
@@ -153,8 +155,8 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                             if (_formKey.currentState.validate()){
                              dynamic result = await _auth.registerWithEmailAndPassword(email,password);
                               if (result == null ){setState(() => error= 'please supply a valid email');}
-                               else{print("signed up");
-                               print(result.toString());
+                               else{uid=result;
+                              // print(result);
                               }
                             sendData();}
                           },
