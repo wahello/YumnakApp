@@ -43,8 +43,7 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                       children: <Widget>[
                         Container(
                           padding: EdgeInsets.fromLTRB(11.0, 40.0, 0.0, 30.0),
-                          child: Text(
-                            'تسجيل دخول',
+                          child: Text('تسجيل دخول',
                             style:
                             TextStyle(color: Colors.lightBlueAccent, fontSize: 40.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
                           ),
@@ -55,16 +54,14 @@ class _SignIn_CustState extends State<SignIn_Cust> {
 
                   Container(
                     padding: EdgeInsets.fromLTRB(160.0, 00.0, 0.0, 0.0),
-                    child: Text(
-                      '..أهلا بعودتك',
+                    child: Text( '..أهلا بعودتك',
                       style:
                       TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
                     ),
                   ),
                   Container(
                     padding: EdgeInsets.fromLTRB(90.0, 00.0, 0.0, 0.0),
-                    child: Text(
-                      'فضلاً أدخل معلومات الدخول',
+                    child: Text('فضلاً أدخل معلومات الدخول',
                       style:
                       TextStyle(color: Colors.grey[600], fontSize: 15.0, fontFamily: "Montserrat"),
                     ),
@@ -128,7 +125,7 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                     if (_formKey.currentState.validate()){
                                        result = await _auth.signInWithEmailAndPassword(email, password);
                                       if (result == null ){
-                                        setState(() => error= 'could not sign in with those credintials');
+                                        setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
                                       }
                                     else{
                                       print("signed in");

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:yumnak/screens/CustMyOrders.dart';
 import 'package:yumnak/screens/Main.dart';
+import 'package:yumnak/screens/ModifyCustInfo.dart';
 import 'package:yumnak/services/auth.dart';
 
 class HomePage extends StatefulWidget {
@@ -43,8 +45,8 @@ class _HomePageState extends State<HomePage> {
                         leading: Icon(Icons.list),
                         title: new Text("طلباتي",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                          //Navigator.push(context, new MaterialPageRoute(
-                          //  builder: (context) =>    ));
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>  CustMyOrders()  ));
                         },
                       ),
                       new Divider(),
@@ -63,8 +65,8 @@ class _HomePageState extends State<HomePage> {
                         leading: Icon(Icons.settings),
                         title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                          /*  Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>   ModifyCusInfo() ));*/
+                            Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) =>   ModifyCustInfo() ));
                         },
                       ),
                       new Divider(),

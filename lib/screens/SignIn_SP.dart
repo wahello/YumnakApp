@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
 import 'package:yumnak/screens/SignUp_SP.dart';
 import 'package:yumnak/services/auth.dart';
@@ -114,13 +115,15 @@ class _SignIn_SPState extends State<SignIn_SP> {
                               color: Colors.green[300],
                               elevation: 7.0,
                               child: GestureDetector(
+
+                                //اذا دخل ايميل وباسورد مو موجودات مايطلع له مسج !!
+
                                 onTap: () async {
                                   if (_formKey.currentState.validate()){
                                     dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                                     if (result == null ){
-                                      setState(() => error= 'could not sign in with those credintials');
+                                      setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
                                     }
-                                    // } else{print("signed in"); }
                                   }
                                 },
                                 child: Center(

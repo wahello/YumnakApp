@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/services/auth.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -49,7 +50,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   Directionality(
                       textDirection: TextDirection.rtl,
                       child:TextFormField(
-                        validator: (val) => val.isEmpty ? "Enter an email" : null,  //null means valid email
+                        validator: (val) => val.isEmpty ? "فضلاً أدخل البريد الإلكتروني" : null,  //null means valid email
                         decoration: InputDecoration(
                             labelText:  'البريد الإلكتروني',
                             labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
@@ -70,7 +71,14 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                             onPressed: ()async {
                               if (_formKey.currentState.validate()){
                                 dynamic result = _auth.sendPasswordResetEmail(email);
-                                // } else{print("signed in"); }
+                                Fluttertoast.showToast(
+                                    msg: "تم إرسال رابط تغير كلمة المرور إليك",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIos: 5,
+                                    backgroundColor: Colors.yellowAccent,
+                                    textColor: Colors.black
+                                );
                               }
                             },
                           ),
