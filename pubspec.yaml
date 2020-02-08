@@ -28,6 +28,7 @@ dependencies:
   provider: ^4.0.2
   firebase_core: any
   firebase_database: ^3.1.1
+  fluttertoast: ^3.1.3
 
 
 

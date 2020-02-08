@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yumnak/models/Customer.dart';
 import 'package:yumnak/services/auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
+import "package:firebase_database/firebase_database.dart";
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 class SignUp_Cust extends StatefulWidget {
   @override
   _SignUp_CustState createState() => _SignUp_CustState();
@@ -17,6 +16,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+
   final DatabaseReference database= FirebaseDatabase.instance.reference().child("Customer");
 
   sendData(){
@@ -24,19 +24,24 @@ class _SignUp_CustState extends State<SignUp_Cust> {
       'name' : name,
       'email': email,
       'password': password,
-      'uid': uid
+      'uid': uid,
+      'phoneNumber': phoneNumber,
     });
   }
 
   String name="";
   String email="";
   String password="";
+  String Vpassword="";
   var uid;
   String error="";
+  String phoneNumber="";
+  bool pass=false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
 
       body: Container(
         child: Form(
@@ -75,7 +80,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.isEmpty ? "Enter an email" : null,  //null means valid email
+                                validator: (val) => val.isEmpty ? "أدخل البريد الألكتروني" : null,  //null means valid email
                                 onChanged: (val){setState(() => email=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.email),
@@ -85,9 +90,22 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                         borderSide: BorderSide(color: Colors.lightBlueAccent))),
                               )
                           ),
-                          /*Directionality(
+                          Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
+                                validator: (String v){
+                                  if (v.isEmpty) {
+                                    return  "أدخل رقم الجوال";
+                                  }
+                                  if (v.length!=10) {
+                                    return'أدخل رقم الجوال الصحيح';
+                                  }
+                                  return null;
+
+                                },
+
+                               // validator:(val) => val.isEmpty ? "أدخل رقم الجوال" : null,//null means valid phone
+                                onChanged: (val){setState(() => phoneNumber=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.phone),
                                     labelText:  'رقم الجوال',
@@ -95,12 +113,12 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                     focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: Colors.lightBlueAccent))),
                               )
-                          ),*/
+                          ),
 
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.length < 6 ? "enter a password 6+ chars long" : null,  //null means valid password
+                                validator: (val) => val.length < 6 ? "يجب أن تكون كلمة المرور أكثر من ستة خانات" : null,  //null means valid password
                                 onChanged: (val){ setState(() => password =val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.lock_outline),
@@ -112,18 +130,21 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                               )
                           ),
 
-                          /*Directionality(
+                          Directionality(
                             //padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
+
+                                validator: (val) => password.toString()!= Vpassword.toString()? "كلمة المرور غير متطابقة " : null,  //null means valid password
+                                onChanged: (val){ setState(() => Vpassword =val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.lock_outline),
                                     labelText: 'تأكيد كلمة المرور',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent ), )),
-                                obscureText: true,
+                               obscureText: true,
                               )
-                          ),*/
+                          ),
                         ],
                       )
                   ),
@@ -152,13 +173,30 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                         elevation: 7.0,
                         child: GestureDetector(
                           onTap: () async {
-                            if (_formKey.currentState.validate()){
-                             dynamic result = await _auth.registerWithEmailAndPassword(email,password);
-                              if (result == null ){setState(() => error= 'please supply a valid email');}
-                               else{uid=result;
-                              // print(result);
+                            if (_formKey.currentState.validate()) {
+                              dynamic result = await _auth
+                                  .registerWithEmailAndPassword(
+                                  email, password);
+                              if (result == null) {
+                                setState(() =>
+                                error = 'البريد الألكتروني غير صحيح');
+                                Fluttertoast.showToast(
+                                msg: "البريد الألكتروني مستخدم",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.TOP,
+                                timeInSecForIos: 5
+                                );
+                              }//if result=null
+                              else {
+                                uid = result;
+                                // print(result);
+                                if (password.toString() == Vpassword.toString())
+                                  pass = true;
+                                if (pass)
+                                  sendData();
                               }
-                            sendData();}
+                            }
+
                           },
                           child: Center(
                             child: Text( 'تسجيل ',
@@ -186,4 +224,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
 
     );
   }
+
+
 }
+

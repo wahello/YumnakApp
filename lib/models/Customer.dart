@@ -25,6 +25,7 @@ class Customer{
   String email;
   String password;
   var uid;
+  String phoneNumber;
       Customer();
 
 
