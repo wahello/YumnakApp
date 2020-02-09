@@ -23,7 +23,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     database.push().set({
       'name' : name,
       'email': email,
-      'password': password,
+      //'password': password,
       'uid': uid,
       'phoneNumber': phoneNumber,
     });

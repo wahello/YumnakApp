@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:yumnak/services/auth.dart';
 
@@ -10,7 +11,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-
+  //final DatabaseReference database= FirebaseDatabase.instance.reference().child("Service Provider");
   String email="";
   String password="";
   String error="";
