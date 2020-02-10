@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/CustMyOrders.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifyCustInfo.dart';
@@ -78,10 +79,22 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           if (_formKey.currentState.validate()){
                             dynamic result = await _auth.signOut();
-                            print(result.toString);
-                            Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => Main()
-                            ));
+
+                            if(result == null){
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => Main()
+                              ));
+                            }else{
+                              Fluttertoast.showToast(
+                                  msg: result,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIos: 20,
+                                  backgroundColor: Colors.red[100],
+                                  textColor: Colors.red[800]
+                              );
+                            }
+
                           }
                         },
                       ),

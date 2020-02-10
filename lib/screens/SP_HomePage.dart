@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:yumnak/screens/Main.dart';
+import 'package:yumnak/services/auth.dart';
 
 class SP_HomePage extends StatefulWidget {
   @override
@@ -7,6 +9,8 @@ class SP_HomePage extends StatefulWidget {
 
 class _SP_HomePageState extends State<SP_HomePage> {
 
+
+  final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
  // List<int> text = [1,2,3,4];
 var _name="شهد";
@@ -131,7 +135,21 @@ return new Card(
                       ),
                       new Divider(),
                       new Divider(),
+                      new ListTile(
+                        leading: Icon(Icons.exit_to_app),
+                        title: new Text("تسجيل خروج",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                        onTap: () async {
+                          if (_formKey.currentState.validate()){
+                            dynamic result = await _auth.signOut();
+                            if(result != null){
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => Main()
+                              ));
+                            }
 
+                          }
+                        },
+                      ),
 
                       new Divider(),
                     ],

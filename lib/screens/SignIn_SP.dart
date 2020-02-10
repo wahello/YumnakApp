@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
+import 'package:yumnak/screens/SP_HomePage.dart';
 import 'package:yumnak/screens/SignUp_SP.dart';
 import 'package:yumnak/services/auth.dart';
 
@@ -68,7 +69,7 @@ class _SignIn_SPState extends State<SignIn_SP> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.isEmpty ? "Enter an email" : null,  //null means valid email
+                                validator: (val) => val.isEmpty ? "أدخل البريد الإلكتروني" : null,  //null means valid email
                                 decoration: InputDecoration(
                                     labelText:  'البريد الإلكتروني',
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
@@ -81,7 +82,7 @@ class _SignIn_SPState extends State<SignIn_SP> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.length < 6 ? "enter a password 6+ chars long" : null,  //null means valid password
+                                validator: (val) => val.isEmpty ? "أدخل كلمة المرور" : null,  //null means valid password
                                 decoration: InputDecoration(
                                     labelText: 'كلمة المرور ',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
@@ -123,6 +124,10 @@ class _SignIn_SPState extends State<SignIn_SP> {
                                       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                                       if (result == null ){
                                         setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+                                      }else{
+                                        Navigator.push(context, new MaterialPageRoute(
+                                            builder: (context) => SP_HomePage()
+                                        ));
                                       }
                                     }
                                   },

@@ -1,5 +1,6 @@
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/SignUp_Cust.dart';
@@ -74,7 +75,7 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.isEmpty ? "Enter an email" : null,  //null means valid email
+                                validator: (val) => val.isEmpty ? "أدخل البريد الإلكتروني" : null,  //null means valid email
                                 decoration: InputDecoration(
                                     labelText:  'البريد الإلكتروني',
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
@@ -87,7 +88,7 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.length < 6 ? "enter a password 6+ chars long" : null,  //null means valid password
+                                validator: (val) => val.isEmpty ? "أدخل كلمة المرور" : null,  //null means valid password
                                 decoration: InputDecoration(
                                     labelText: 'كلمة المرور ',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
@@ -125,21 +126,22 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                     if (_formKey.currentState.validate()){
                                        result = await _auth.signInWithEmailAndPassword(email, password);
                                       if (result == null ){
-                                        setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+                                        setState(() => error = "");
                                       }
                                     else{
-                                      print("signed in");
 
-                                     db=  FirebaseDatabase.instance.reference().child("Customer").child("-M-Tcn7P9yohEGmOEwlM");
+                                     /*db=  FirebaseDatabase.instance.reference().child("Customer").child("-M-Tcn7P9yohEGmOEwlM");
                                       db.once().then((DataSnapshot snapshot){
                                         Map<dynamic, dynamic> values=snapshot.value;
                                         print(values["name"]);
-                                      } );
+                                      } );*/
 
                                       print("This is uid "+result);
                                       Navigator.push(context, new MaterialPageRoute(
                                           builder: (context) => HomePage()
                                     ));
+
+
                                     }
                                     }
                                   },
