@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:yumnak/services/auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class SignUp_SP extends StatefulWidget {
   @override
@@ -11,10 +13,26 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  //final DatabaseReference database= FirebaseDatabase.instance.reference().child("Service Provider");
+  final DatabaseReference database= FirebaseDatabase.instance.reference().child("Service Provider");
+
+  sendData(){
+    database.push().set({
+      //'name' : name,
+      'email': email,
+      //'password': password,
+      'uid': uid,
+      //'phoneNumber': phoneNumber,
+    });
+  }
   String email="";
   String password="";
+  String Vpassword="";
   String error="";
+  var uid;
+  bool Female;
+  String phoneNumber="";
+  bool pass=false;
+
 
   var services= ["1","2","3"];
   var type= ["1","2","3"];
@@ -46,7 +64,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                       child: Column(
                         children: <Widget>[
 
-                          /* Directionality(
+                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
                                 decoration: InputDecoration(
@@ -75,7 +93,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                     focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: Colors.lightBlueAccent))),
                               )
-                          ),*/
+                          ),
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
@@ -91,9 +109,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.length < 6 ? "enter a password 6+ chars long" : null,  //null means valid password
+                                validator: (val) => val.length < 6 ? "يجب أن تكون كلمة المرور أكثر من ستة خانات" : null,  //null means valid password
                                 onChanged: (val){ setState(() => password =val);},
                                 decoration: InputDecoration(
+                                    icon: Icon(Icons.lock_outline),
                                     labelText: 'كلمة المرور ',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(
@@ -102,11 +121,15 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               )
                           ),
 
-/*
+
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
+
+                                validator: (val) => password.toString()!= Vpassword.toString()? "كلمة المرور غير متطابقة " : null,  //null means valid password
+                                onChanged: (val){ setState(() => Vpassword =val);},
                                 decoration: InputDecoration(
+                                    icon: Icon(Icons.lock_outline),
                                     labelText: 'تأكيد كلمة المرور',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent ), )),
@@ -185,7 +208,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               )
                           ),
 
-                          Directionality(
+                          /*Directionality(
                               textDirection: TextDirection.rtl,
                               child: Row(
                                 children: <Widget>[
@@ -241,10 +264,27 @@ class _SignUp_SPState extends State<SignUp_SP> {
                             if (_formKey.currentState.validate()){
                               dynamic result = await _auth.registerWithEmailAndPassword(email,password);
                               if (result == null ){
-                                setState(() => error= 'please supply a valid email');
+                                setState(() =>
+                                error = '  البريد الألكتروني غير صحيح');
+                                Fluttertoast.showToast(
+                                    msg: " البريد الألكتروني غير صحيح أو مستخدم",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIos: 5,
+                                    backgroundColor: Colors.red[100],
+                                    textColor: Colors.red[800]
+                                );
                               }
-                              else{print("signed up"); }
+                              else {
+                                uid = result;
+
+                                if (password.toString() == Vpassword.toString())
+                                  pass = true;
+                                if (pass)
+                                  sendData();
+                              }
                             }
+
                           },
                           child: Center(
                             child: Text( 'تسجيل ',
@@ -256,7 +296,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                           ),
                         ),
                       )
-                  ),
+                   ),
 
                   SizedBox(height:20.0),
 

@@ -131,7 +131,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           ),
 
                           Directionality(
-                            //padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
 
@@ -179,17 +178,17 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                   email, password);
                               if (result == null) {
                                 setState(() =>
-                                error = 'البريد الألكتروني غير صحيح');
+                                error = '  البريد الألكتروني غير صحيح');
                                 Fluttertoast.showToast(
-                                msg: "البريد الألكتروني مستخدم",
+                                msg: " البريد الألكتروني غير صحيح أو مستخدم",
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.TOP,
                                 timeInSecForIos: 5
                                 );
-                              }//if result=null
+                              }
                               else {
                                 uid = result;
-                                // print(result);
+
                                 if (password.toString() == Vpassword.toString())
                                   pass = true;
                                 if (pass)

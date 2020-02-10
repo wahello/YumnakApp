@@ -13,7 +13,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final _formKey = GlobalKey<FormState>();
 
   String email="";
-
+String erorr;
+bool isExit=false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   Container(
                     padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
                     child: Text(
-                      'سيتم إسال رابط إعادة أعداد كلمة المرور إلى بريدك الألكتروني',textAlign: TextAlign.center,
+                      'سيتم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الألكتروني',textAlign: TextAlign.center,
                       style:
                       TextStyle(color: Colors.grey[600], fontSize: 15.0, fontFamily: "Montserrat"),
                     ),
@@ -67,17 +68,20 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
                           child: RaisedButton(
                             //onPressed: ,
-                            child: Text("إرسال", style: TextStyle(fontSize: 15.0, color: Colors.white),),elevation: 7.0,
+
+                            child: Text("إرسال", style: TextStyle(fontSize: 15.0, color: Colors.white),),elevation: 7.0,color: Colors.green[300],
+
                             onPressed: ()async {
                               if (_formKey.currentState.validate()){
-                                dynamic result = _auth.sendPasswordResetEmail(email);
+                         dynamic result = _auth.sendPasswordResetEmail(email);
+                         
                                 Fluttertoast.showToast(
                                     msg: "تم إرسال رابط تغير كلمة المرور إليك",
                                     toastLength: Toast.LENGTH_LONG,
                                     gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 5,
-                                    backgroundColor: Colors.yellowAccent,
-                                    textColor: Colors.black
+                                    backgroundColor: Colors.lightBlueAccent,
+                                    textColor: Colors.white
                                 );
                               }
                             },
