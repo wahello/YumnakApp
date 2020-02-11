@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:yumnak/models/Order.dart';
+import 'package:yumnak/screens/Addhours.dart';
 import 'package:yumnak/screens/Main.dart';
+import 'package:yumnak/screens/ModifySPInfo.dart';
 import 'package:yumnak/services/auth.dart';
 
 class SP_HomePage extends StatefulWidget {
@@ -12,8 +16,10 @@ class _SP_HomePageState extends State<SP_HomePage> {
 
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
- // List<int> text = [1,2,3,4];
-var _name="شهد";
+
+ static var  o = new Order("شهد","مها","1","20-2-2020","pending","llll","loc",3);
+
+var _name= o.cusName;
 var date;
 var orderStatus;
 var remainingTime;
@@ -109,8 +115,8 @@ return new Card(
                         leading: Icon(Icons.access_time),
                         title: new Text("أوقات عملي المتاحة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                       /*   Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) =>  CustMyOrders()  ));*/
+                         Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) =>  Addhours()  ));
                         },
                       ),
                       new Divider(),
@@ -129,8 +135,8 @@ return new Card(
                         leading: Icon(Icons.settings),
                         title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                        /*  Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) =>   ModifyCustInfo() ));*/
+                         Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) =>   ModifySPInfo() ));
                         },
                       ),
                       new Divider(),
@@ -141,10 +147,19 @@ return new Card(
                         onTap: () async {
                           if (_formKey.currentState.validate()){
                             dynamic result = await _auth.signOut();
-                            if(result != null){
+                            if(result == null){
                               Navigator.push(context, new MaterialPageRoute(
                                   builder: (context) => Main()
                               ));
+                            }else{
+                              Fluttertoast.showToast(
+                                  msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIos: 20,
+                                  backgroundColor: Colors.red[100],
+                                  textColor: Colors.red[800]
+                              );
                             }
 
                           }
@@ -164,8 +179,16 @@ return new Card(
                // crossAxisAlignment: CrossAxisAlignment.start,
                 //mainAxisSize: MainAxisSize.max,
            children: <Widget>[
-             //for (var i in text )  Text(card();)
-            // card()
+             Container(
+                 child: card()
+             ),
+             Container(
+                 child: card()
+             ),
+             Container(
+                 child: card()
+             )
+
 
            ],
 

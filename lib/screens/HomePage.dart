@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:yumnak/screens/Care.dart';
 import 'package:yumnak/screens/CustMyOrders.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifyCustInfo.dart';
+import 'package:yumnak/screens/beauty.dart';
+import 'package:yumnak/screens/events.dart';
+import 'package:yumnak/screens/training.dart';
 import 'package:yumnak/services/auth.dart';
 
 class HomePage extends StatefulWidget {
@@ -79,14 +83,13 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           if (_formKey.currentState.validate()){
                             dynamic result = await _auth.signOut();
-
                             if(result == null){
                               Navigator.push(context, new MaterialPageRoute(
                                   builder: (context) => Main()
                               ));
                             }else{
                               Fluttertoast.showToast(
-                                  msg: result,
+                                  msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
                                   toastLength: Toast.LENGTH_LONG,
                                   gravity: ToastGravity.CENTER,
                                   timeInSecForIos: 20,
@@ -130,8 +133,11 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.tealAccent,
-                          onPressed: () {},
+                          color: Colors.deepOrangeAccent,
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) => Care()
+                          ));},
                           child: Text("مجالسة", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
@@ -157,7 +163,9 @@ class _HomePageState extends State<HomePage> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.lightGreenAccent,
-                          onPressed: () {},
+                          onPressed: () {Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) => beauty()
+                          ));},
                           child: Text("تجميل", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
@@ -173,8 +181,11 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.purpleAccent,
-                            onPressed: () {},
+                          child: RaisedButton(color: Colors.amber,
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => events()
+                              ));},
                             child: Text("تنظيم مناسبات",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 20.0, fontFamily: 'Montserrat', )),
                           )
@@ -183,7 +194,10 @@ class _HomePageState extends State<HomePage> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.grey[300],
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => training()
+                            ));},
                           child: Text("تعليم وتدريب" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),

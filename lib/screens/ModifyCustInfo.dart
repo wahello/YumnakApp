@@ -8,12 +8,16 @@ class ModifyCustInfo extends StatefulWidget {
 
 class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
+  String name;
+  String phone;
+
   var _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
+        title: new Center(child: new Text("        إعدادات الحساب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
         backgroundColor: Colors.grey[200],
         automaticallyImplyLeading: false,
         actions: <Widget>[
@@ -33,21 +37,22 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
           SliverList(
 
             delegate: SliverChildListDelegate([
-              Container(
+             /* Container(
                 padding: EdgeInsets.fromLTRB(90.0, 0.0, 0.0, 0.0),
                 child: Text('إعدادات الحساب',
                   style:
                   TextStyle(color: Colors.lightBlueAccent, fontSize: 30.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
                 ),
               ),
-
+*/
               Container(
                   padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                   child: Column(
                     children: <Widget>[
                       Directionality(
                           textDirection: TextDirection.rtl,
-                          child:TextField(
+                          child:TextFormField(
+                            onChanged: (val){setState(() => name=val);},
                             decoration: InputDecoration(
                                 labelText:  'الاسم',
                                 labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
@@ -57,7 +62,8 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                       ),
                       Directionality(
                           textDirection: TextDirection.rtl,
-                          child:TextField(
+                          child:TextFormField(
+                            onChanged: (val){setState(() => phone=val);},
                             decoration: InputDecoration(
                                 labelText:  'رقم الجوال',
                                 labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
@@ -65,7 +71,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                     borderSide: BorderSide(color: Colors.lightBlueAccent))),
                           )
                       ),
-                      Directionality(
+                   /*   Directionality(
                           textDirection: TextDirection.rtl,
                           child:TextField(
                             decoration: InputDecoration(
@@ -74,27 +80,26 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                 focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.lightBlueAccent))),
                           )
-                      ),
-                      Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:TextField(
-                            controller: _controller,
-                            decoration: InputDecoration(
+                      ),*/
+                      SizedBox(height:20.0),
 
-                              suffixIcon: IconButton(
-                                onPressed: () => _controller.clear(),
-                                icon: Icon(Icons.clear),
-                              ),
 
-                              labelText: 'كلمة المرور ',
-                              labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.lightBlueAccent),
-                              ),
-                            ),
-                            obscureText: true,
-                          )
+                      FlatButton(
+                        color: Colors.green[300],
+                        textColor: Colors.white,
+                        disabledColor: Colors.grey,
+                        disabledTextColor: Colors.black,
+                        padding: EdgeInsets.all(5.0),
+                        splashColor: Colors.blueAccent,
+                        onPressed: () {
+                          //  _auth.sendPasswordResetEmail(email);
+                        },
+                        child: Text(
+                          " تغير كلمة المرور",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
                       ),
+
 
                     ],
                   )

@@ -74,15 +74,7 @@ bool isExit=false;
 
                             onPressed: ()async {
                               if (_formKey.currentState.validate()){
-                         dynamic result = _auth.sendPasswordResetEmail(email);
-                                Fluttertoast.showToast(
-                                    msg: "تم إرسال رابط تغير كلمة المرور إليك",
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIos: 5,
-                                    backgroundColor: Colors.lightBlueAccent,
-                                    textColor: Colors.white
-                                );
+                                _auth.sendPasswordResetEmail(email);
                               }
                             },
                           ),

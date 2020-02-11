@@ -147,7 +147,41 @@ Future signOut() async {
 }
 
   Future sendPasswordResetEmail(String email) async {
-      return await _auth.sendPasswordResetEmail(email: email);
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+      Fluttertoast.showToast(
+          msg: "تم إرسال رابط تغير كلمة المرور إليك",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 25,
+          backgroundColor: Colors.lightBlueAccent,
+          textColor: Colors.white
+      );
+      return  null;
+    }catch(e){
+      if(e.toString() == "PlatformException(ERROR_INVALID_EMAIL, The email address is badly formatted., null)"){
+        Fluttertoast.showToast(
+            msg: ("البريد الإلكتروني غير صحيح"),
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 20,
+            backgroundColor: Colors.red[100],
+            textColor: Colors.red[800]
+        );
+      }
+      if(e.toString() == "PlatformException(ERROR_USER_NOT_FOUND, There is no user record corresponding to this identifier. The user may have been deleted., null)"){
+        Fluttertoast.showToast(
+            msg: ("البريد الإلكتروني غير موجود"),
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 20,
+            backgroundColor: Colors.red[100],
+            textColor: Colors.red[800]
+        );
+      }
+      print(e.toString());
+   return "."; }
+
   }
 
 
