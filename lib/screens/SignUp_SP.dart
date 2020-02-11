@@ -17,21 +17,26 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
   sendData(){
     database.push().set({
-      //'name' : name,
+      'name' : name,
       'email': email,
       //'password': password,
       'uid': uid,
-      //'phoneNumber': phoneNumber,
+      'phoneNumber': phoneNumber,
+      'gender': gender
+
     });
   }
+  String name;
   String email="";
   String password="";
   String Vpassword="";
   String error="";
   var uid;
-  bool Female;
+  //bool Female;
   String phoneNumber="";
   bool pass=false;
+  int group=1;
+var gender=null;
 
 
   var services= ["1","2","3"];
@@ -66,8 +71,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
                            Directionality(
                               textDirection: TextDirection.rtl,
-                              child:TextFormField(
-                                decoration: InputDecoration(
+                              child:TextFormField(onChanged: (val){setState(() => name=val);},
+                                decoration: InputDecoration(icon: Icon(Icons.person),
                                     labelText:  'الاسم',
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(
@@ -79,15 +84,40 @@ class _SignUp_SPState extends State<SignUp_SP> {
                             children: <Widget>[
                               SizedBox(width:100.0),
                               new Text("ذكر"),
-                              new Radio(value: 1, groupValue: null, activeColor: Colors.grey, onChanged: null),
+                              new Radio(value: 1,
+                                  groupValue: group ,
+                                  activeColor: Colors.grey,  onChanged: (T){
+                                    gender="male";
+                                    setState(() {
+                                      group=T;
+                                    });
+
+                                  }),
                               new Text("أنثى"),
-                              new Radio(value: 1, groupValue: null, activeColor: Colors.grey, onChanged: null)
+                              new Radio(value: 2, groupValue: group, activeColor: Colors.grey, onChanged: (T){
+                                gender="female";
+                                setState(() {
+                                  group=T;
+                                });
+
+                              })
                             ],
                           ),
                          Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                decoration: InputDecoration(
+                                validator: (String v){
+                                  if (v.isEmpty) {
+                                    return  "أدخل رقم الجوال";
+                                  }
+                                  if (v.length!=10) {
+                                    return'أدخل رقم الجوال الصحيح';
+                                  }
+                                  return null;
+
+                                },
+                                onChanged: (val){setState(() => phoneNumber=val);},
+                                decoration: InputDecoration(icon: Icon(Icons.phone),
                                     labelText:  'رقم الجوال',
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(
@@ -99,7 +129,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               child:TextFormField(
                                 validator: (val) => val.isEmpty ? "Enter an email" : null,  //null means valid email
                                 onChanged: (val){setState(() => email=val);},
-                                decoration: InputDecoration(
+                                decoration: InputDecoration(icon: Icon(Icons.email),
                                     labelText:  'البريد الإلكتروني',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(
