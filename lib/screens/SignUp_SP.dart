@@ -22,7 +22,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
       //'password': password,
       'uid': uid,
       'phoneNumber': phoneNumber,
-      'gender': gender
+      'gender': gender,
+      'service': service,
+      'subService':subService
 
     });
   }
@@ -37,10 +39,13 @@ class _SignUp_SPState extends State<SignUp_SP> {
   bool pass=false;
   int group=1;
   var gender=null;
+  String service;
+  String subService;
+  bool enable=false;
 
 
-  var services= ["1","2","3"];
-  var type= ["1","2","3"];
+ // var services= ["1","3","3"];
+  //var type= ["1","2","3"];
 
 
   static const List<String> longItems = const [
@@ -51,14 +56,13 @@ class _SignUp_SPState extends State<SignUp_SP> {
     'تعليم و تدريب',
     "تنظيم مناسبات"
   ];
-  static const List<String> longItems2 = const [
-    'فئة ١',
-    'فئه ٢',
-    'فئه ٣',
-    'فئه ٤',
-    'فئه ٥',
 
-  ];
+
+  static const List<String> longItems2 = const [
+    'دروس خصوصية', 'تحفيظ قرآن' , 'تدريب قيادة' , 'تدريب رياضي' , 'رقص' , 'موسيقي' ];
+
+  static const List<String> longItems3 = const [
+    'صبابات', 'تنسيق حفلات' , 'تجهيز طعام' ];
 
 
   String longSpinnerValue = longItems[0];
@@ -107,18 +111,18 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 children: <Widget>[
                                   SizedBox(width:100.0),
                                   new Text("ذكر"),
-                                  new Radio(value: 1,
+                                  new Radio(value: 2,
                                       groupValue: group ,
-                                      activeColor: Colors.grey,  onChanged: (T){
-                                        gender="male";
+                                      activeColor: Colors.lightBlueAccent,  onChanged: (T){
+                                        gender="ذكر";
                                         setState(() {
                                           group=T;
                                         });
 
                                       }),
                                   new Text("أنثى"),
-                                  new Radio(value: 2, groupValue: group, activeColor: Colors.grey, onChanged: (T){
-                                    gender="female";
+                                  new Radio(value: 1, groupValue: group, activeColor: Colors.lightBlueAccent, onChanged: (T){
+                                    gender="أنثي";
                                     setState(() {
                                       group=T;
                                     });
@@ -197,10 +201,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                     SizedBox(width:50.0),
 
                                     Container(
-                                        padding: EdgeInsets.fromLTRB(90.0, 20.0, 0.0, .0),
+                                        padding: EdgeInsets.fromLTRB(95.0, 20.0, 0.0, .0),
                                         child: Text('الخدمة المقدمة',
                                           style:
-                                          TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
+                                          TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.normal, fontFamily: "Montserrat"),
                                         )),
 
 
@@ -211,7 +215,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                           isExpanded: true,
                                           value: longSpinnerValue,
                                           onChanged: (String text) {
-                                            setState(() { longSpinnerValue = text; });
+                                            setState(() { longSpinnerValue = text;
+                                            service=text;});
                                           },
                                           selectedItemBuilder: (BuildContext context) {
                                             return longItems.map<Widget>((String text) {
@@ -234,47 +239,63 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               ),
 
 
-                              Directionality(
-                                textDirection: TextDirection.rtl,
 
-                                child: Column(
-                                  children: <Widget>[
-                                    SizedBox(width:50.0),
 
-                                    Container(
-                                        padding: EdgeInsets.fromLTRB(170.0, 20.0, 0.0, .0),
-                                        child: Text('الفئة',
-                                          style:
-                                          TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                                        )),
-                                    Column(
-                                      children: <Widget>[
-                                        //SizedBox(height: 32),
-                                        DropdownButton<String>(
-                                          isExpanded: true,
-                                          value: longSpinnerValue2,
-                                          onChanged: (String text) {
-                                            setState(() { longSpinnerValue2 = text; });
-                                          },
-                                          selectedItemBuilder: (BuildContext context) {
-                                            return longItems2.map<Widget>((String text) {
-                                              return Text(text, overflow: TextOverflow.ellipsis);
-                                            }).toList();
-                                          },
-                                          items: longItems2.map<DropdownMenuItem<String>>((String text) {
-                                            return DropdownMenuItem<String>(
-                                              value: text,
-                                              child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis),
-                                            );
-                                          }).toList(),
-                                        ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
 
-                                      ],
-                                    ),
+                                  child: Column(
+                                    children: <Widget>[
+                                      SizedBox(width: 50.0),
 
-                                  ],
+                                      Container(
+                                          padding: EdgeInsets.fromLTRB(
+                                              170.0, 20.0, 0.0, .0),
+                                          child: Text('الفئة',
+                                            style:
+                                            TextStyle(color: Colors.grey[600],
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "Montserrat"),
+                                          )),
+                                      Column(
+                                        children: <Widget>[
+                                          //SizedBox(height: 32),
+                                          DropdownButton<String>(
+                                            isExpanded: true,
+                                            value: longSpinnerValue2,
+                                            onChanged: (String text) {
+                                              setState(() {
+                                                longSpinnerValue2 = text;
+                                              });
+                                            },
+                                            selectedItemBuilder: (
+                                                BuildContext context) {
+                                              return longItems2.map<Widget>((
+                                                  String text) {
+                                                return Text(text,
+                                                    overflow: TextOverflow
+                                                        .ellipsis);
+                                              }).toList();
+                                            },
+                                            items: longItems2.map<
+                                                DropdownMenuItem<String>>((
+                                                String text) {
+                                              return DropdownMenuItem<String>(
+                                                value: text,
+                                                child: Text(text, maxLines: 1,
+                                                    overflow: TextOverflow
+                                                        .ellipsis),
+                                              );
+                                            }).toList(),
+                                          ),
+
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
                                 ),
-                              ),
 
 
 

@@ -52,12 +52,13 @@ bool isExit=false;
                       textDirection: TextDirection.rtl,
                       child:TextFormField(
                         validator: (val) => val.isEmpty ? "فضلاً أدخل البريد الإلكتروني" : null,  //null means valid email
+                        onChanged: (val){setState(() => email=val);},
                         decoration: InputDecoration(
                             labelText:  'البريد الإلكتروني',
                             labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                                onChanged: (val){setState(() => email=val);},
+
                       )
                   ),
 
