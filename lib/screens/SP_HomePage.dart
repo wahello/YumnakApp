@@ -17,69 +17,79 @@ class _SP_HomePageState extends State<SP_HomePage> {
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
- static var  o = new Order("شهد","مها","1","20-2-2020","pending","llll","loc",3);
+ static var  o = new Order("شهد","مها","1","20-2-2020","قيد الانتظار","llll","loc",3);
 
 var _name= o.cusName;
 var date;
 var orderStatus;
 var remainingTime;
 
-card(){
 
-return new Card(
-  margin: new EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 5.0),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-  elevation: 4.0,
-
-  child: new Padding( padding: new EdgeInsets.all(10.0),
-    child: new Column(
+  Widget _buildList(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.only(top: 20.0),
+    //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
       children: <Widget>[
-
-        Align(
-            alignment: Alignment.centerRight,
-            child: Column(
-              children: <Widget>[
-                new Container(
-                    child: Text("الاسم: $_name" , textAlign: TextAlign.right, style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
-                ),
-                new Container(
-                    child: Text("$_name", textAlign: TextAlign.right, style: TextStyle(fontSize: 15))
-                ),
-                new Container(
-                    child: Text("حالة الطلب: $_name" , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
-                ),
-                new Container(
-                    child: Text("الوقت المتبقي: $_name" , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
-                ),
-              ],
-            )
-        ),
-
-
-        new Padding(padding: new EdgeInsets.only(top: 10.0)),
-        new RaisedButton(
-          color: Colors.green[300],
-          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0),),
-          padding: new EdgeInsets.all(3.0),
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Text( 'تفاصيل الطلب',
-                style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold,color: Colors.white),
-              ),
-            ],
-          ),
-          onPressed: () {},
-        ),
+        for (var i=0 ;i<5;i++)
+        _buildListItem(context,o)
       ],
-    ),
-  ),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, Order o) {
+    return Card(
+      margin: new EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 5.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      elevation: 4.0,
+
+      child: new Padding( padding: new EdgeInsets.all(10.0),
+        child: new Column(
+          children: <Widget>[
+
+            Align(
+                alignment: Alignment.centerRight,
+                child: Column(
+                  children: <Widget>[
+                    new Container(
+                        child: Text("الاسم: $_name" , textAlign: TextAlign.right, style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)
+                    ),
+                    new Container(
+                        child: Text("$_name", textAlign: TextAlign.right, style: TextStyle(fontSize: 15))
+                    ),
+                    new Container(
+                        child: Text("حالة الطلب: $_name" , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
+                    ),
+                    new Container(
+                        child: Text("الوقت المتبقي: $_name" , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
+                    ),
+                  ],
+                )
+            ),
+
+
+            new Padding(padding: new EdgeInsets.only(top: 10.0)),
+            new RaisedButton(
+              color: Colors.green[300],
+              shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0),),
+              padding: new EdgeInsets.all(3.0),
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Text( 'تفاصيل الطلب',
+                    style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold,color: Colors.white),
+                  ),
+                ],
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
 
 
 
-);
-}
-
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,31 +183,8 @@ return new Card(
 
       ),
 
-      body: new SingleChildScrollView(
-        padding: new EdgeInsets.only(bottom: 20.0),
-         child: Column(
-               // crossAxisAlignment: CrossAxisAlignment.start,
-                //mainAxisSize: MainAxisSize.max,
-           children: <Widget>[
-             Container(
-                 child: card()
-             ),
-             Container(
-                 child: card()
-             ),
-             Container(
-                 child: card()
-             )
-
-
-           ],
-
-
-
-              ),
-          //  ),
-
-      ),
+      body: _buildList(context),
+      
 
 
     );

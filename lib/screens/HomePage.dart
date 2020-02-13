@@ -4,6 +4,7 @@ import 'package:yumnak/screens/Care.dart';
 import 'package:yumnak/screens/CustMyOrders.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifyCustInfo.dart';
+import 'package:yumnak/screens/availableSP.dart';
 import 'package:yumnak/screens/beauty.dart';
 import 'package:yumnak/screens/events.dart';
 import 'package:yumnak/screens/training.dart';
@@ -125,7 +126,11 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.grey[400],
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP()
+                              ));
+                            },
                             child: Text("إصلاح أجهزة ذكية", textAlign: TextAlign.center , style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 20.0, fontFamily: 'Montserrat', )),
                           )
