@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP()
+                                  builder: (context) => availableSP("مجالسة")
                               ));
                             },
                             child: Text("إصلاح أجهزة ذكية", textAlign: TextAlign.center , style: TextStyle(
