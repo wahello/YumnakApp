@@ -24,8 +24,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
       'phoneNumber': phoneNumber,
       'gender': gender,
       'service': service,
-      'subService':subService
-
+      'subService':subService,
+       'subService1':subService1,
+      'qualifications':qualifications
     });
   }
   String name;
@@ -41,8 +42,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
   var gender=null;
   String service;
   String subService;
+  String subService1;
   bool enable=false;
-
+  String qualifications;
 
  // var services= ["1","3","3"];
   //var type= ["1","2","3"];
@@ -58,15 +60,13 @@ class _SignUp_SPState extends State<SignUp_SP> {
   ];
 
 
-  static const List<String> longItems2 = const [
-    'دروس خصوصية', 'تحفيظ قرآن' , 'تدريب قيادة' , 'تدريب رياضي' , 'رقص' , 'موسيقي' ];
-
-  static const List<String> longItems3 = const [
-    'صبابات', 'تنسيق حفلات' , 'تجهيز طعام' ];
+  static List<String> longItems2=[""];
+  static List<String> longItems3=[""];
 
 
   String longSpinnerValue = longItems[0];
-  String longSpinnerValue2 = longItems2 [0];
+  String longSpinnerValue2;
+  String longSpinnerValue3;
 
 
 
@@ -216,7 +216,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                           value: longSpinnerValue,
                                           onChanged: (String text) {
                                             setState(() { longSpinnerValue = text;
-                                            service=text;});
+                                            service=text;
+                                            services();});
                                           },
                                           selectedItemBuilder: (BuildContext context) {
                                             return longItems.map<Widget>((String text) {
@@ -267,6 +268,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             onChanged: (String text) {
                                               setState(() {
                                                 longSpinnerValue2 = text;
+                                                subService=text;
+                                                services1();
                                               });
                                             },
                                             selectedItemBuilder: (
@@ -302,8 +305,70 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
 
                               Directionality(
+                                textDirection: TextDirection.rtl,
+
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(width: 50.0),
+
+                                    Container(
+                                        padding: EdgeInsets.fromLTRB(
+                                            170.0, 20.0, 0.0, .0),
+                                        child: Text('الفئة١',
+                                          style:
+                                          TextStyle(color: Colors.grey[600],
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Montserrat"),
+                                        )),
+                                    Column(
+                                      children: <Widget>[
+                                        //SizedBox(height: 32),
+                                        DropdownButton<String>(
+                                          isExpanded: true,
+                                          value: longSpinnerValue3,
+                                          onChanged: (String text) {
+                                            setState(() {
+                                              longSpinnerValue3 = text;
+                                              subService1=text;
+                                            });
+                                          },
+                                          selectedItemBuilder: (
+                                              BuildContext context) {
+                                            return longItems3.map<Widget>((
+                                                String text) {
+                                              return Text(text,
+                                                  overflow: TextOverflow
+                                                      .ellipsis);
+                                            }).toList();
+                                          },
+                                          items: longItems3.map<
+                                              DropdownMenuItem<String>>((
+                                              String text) {
+                                            return DropdownMenuItem<String>(
+                                              value: text,
+                                              child: Text(text, maxLines: 1,
+                                                  overflow: TextOverflow
+                                                      .ellipsis),
+                                            );
+                                          }).toList(),
+                                        ),
+
+                                      ],
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+
+
+
+
+
+
+                              Directionality(
                                   textDirection: TextDirection.rtl,
-                                  child:TextFormField(
+                                  child:TextFormField(onChanged: (val){setState(() => qualifications=val);},
                                     decoration: InputDecoration(
                                         labelText:  'المؤهلات',
                                         labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
@@ -423,4 +488,69 @@ class _SignUp_SPState extends State<SignUp_SP> {
         )
     );
   }
-}
+
+
+  void services(){
+   // longSpinnerValue2= longItems2 [0];
+
+    if(service=="تعليم و تدريب") {
+      longItems2=[ 'تدريب قيادة', 'تحفيظ قرآن' , 'دروس خصوصية' , 'تدريب رياضي' , 'رقص' , 'موسيقي' ];
+      longSpinnerValue2= longItems2 [0];
+
+    }
+    else if ( service=="تنظيم مناسبات"){
+      longItems2=['صبابات', 'تنسيق حفلات' , 'تجهيز طعام' ];
+      longSpinnerValue2= longItems2 [0];
+    }
+
+    else if(service=="تجميل"){
+      longItems2=['عناية واسترخاء', 'شعر' , 'مكياج' ];
+      longSpinnerValue2= longItems2 [0];
+      }
+
+    else if(service=="تجميل"){
+      longItems2=['عناية واسترخاء', 'شعر' , 'مكياج' ];
+      longSpinnerValue2= longItems2 [0];}
+
+    else if(service=="مجالسة"){
+      longItems2=['مربية أطفال', 'كبار السن' ];
+      longSpinnerValue2= longItems2 [0];}
+
+else{
+      longItems2=["لا يوجد فئة"];
+      longItems3=["لا يوجد فئة"];
+      longSpinnerValue2= longItems2 [0];
+      longSpinnerValue3= longItems3 [0];
+
+    }
+  }//end method
+
+
+  void services1(){
+    // longSpinnerValue2= longItems2 [0];
+
+    if(subService=="دروس خصوصية") {
+      longItems3=[ 'كيمياء' , 'فيزياء' , 'رياضيات' , 'اللغة الأنجليزبة' , 'اللغة العربية' ,'المرحلة الأبتدائية'];
+      longSpinnerValue3= longItems3 [0];
+
+    }
+    else{
+     // longItems2=["لا يوجد فئة"];
+      longItems3=["لا يوجد فئة"];
+     // longSpinnerValue2= longItems2 [0];
+      longSpinnerValue3= longItems3 [0];
+
+
+    }
+
+  }//end method
+
+}//end class
+
+
+
+
+
+
+
+
