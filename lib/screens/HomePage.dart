@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.deepOrangeAccent,
+                          color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
                               builder: (context) => Care()
@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.lightBlueAccent,
+                          child: RaisedButton(color: Colors.cyan[200],
                             onPressed: () {},
                             child: Text("تصوير",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 20.0, fontFamily: 'Montserrat', )),
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.lightGreenAccent,
+                          color: Colors.green[300],
                           onPressed: () {Navigator.push(context, new MaterialPageRoute(
                               builder: (context) => beauty()
                           ));},
@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.amber,
+                          child: RaisedButton(color: Colors.purple[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
                                   builder: (context) => events()

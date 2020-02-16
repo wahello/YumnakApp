@@ -39,7 +39,7 @@ class _trainingState extends State<training> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.deepOrangeAccent,
+                          color: Colors.tealAccent[100],
                           onPressed: () {Navigator.push(context, new MaterialPageRoute(
                               builder: (context) => privateTraining()
                           ));},
@@ -58,7 +58,7 @@ class _trainingState extends State<training> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.lightBlueAccent,
+                          child: RaisedButton(color: Colors.cyan[200],
                             onPressed: () {},
                             child: Text("دروس بدنية",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
@@ -67,7 +67,7 @@ class _trainingState extends State<training> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.lightGreenAccent,
+                          color: Colors.green[300],
                           onPressed: () {},
                           child: Text("قيادة", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
@@ -84,7 +84,7 @@ class _trainingState extends State<training> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.amber,
+                          child: RaisedButton(color: Colors.purple[200],
                             onPressed: () {},
                             child: Text("موسيقى",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),

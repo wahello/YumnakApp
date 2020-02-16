@@ -43,7 +43,7 @@ class _beautyState extends State<beauty> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.deepOrangeAccent,
+                          color: Colors.tealAccent[100],
                           onPressed: () {},
                           child: Text("مكياج" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
@@ -63,7 +63,7 @@ class _beautyState extends State<beauty> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.lightGreenAccent,
+                          color: Colors.green[300],
                           onPressed: () {Navigator.push(context, new MaterialPageRoute(
                               builder: (context) => beauty()
                           ));},

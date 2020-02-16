@@ -42,7 +42,7 @@ class _eventsState extends State<events> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.deepOrangeAccent,
+                          color: Colors.tealAccent[100],
                           onPressed: () {},
                           child: Text("صبابات" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
@@ -62,7 +62,7 @@ class _eventsState extends State<events> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.lightGreenAccent,
+                          color: Colors.green[300],
                           onPressed: () {},
                           child: Text("تجهيز طعام", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
