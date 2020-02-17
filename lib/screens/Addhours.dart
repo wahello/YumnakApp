@@ -1,12 +1,25 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import "dart:core";
 
 class Addhours extends StatefulWidget {
   @override
-  _AddhoursState createState() => _AddhoursState();
+  String email;
+  Addhours(String email){this.email=email;}
+  _AddhoursState createState() => _AddhoursState(email);
 }
 
+
+
+//--------------------------------------------------------------------
+
+
+
 class _AddhoursState extends State<Addhours> {
+
+   String e;
+  _AddhoursState(String email){e=email;}
 
 
   static const List<String> startTime = const [
@@ -19,6 +32,36 @@ class _AddhoursState extends State<Addhours> {
   String startTimeValue = startTime[0];
   String endTimeValue = endTime[0];
 
+
+
+
+   Future<void> updateUserStatus() async {
+     var keys;
+
+     DatabaseReference ref = FirebaseDatabase.instance.reference();
+     ref.child('Service Provider').orderByChild("email").equalTo(e).
+     once().then(
+             (DataSnapshot snap) async {
+       print(e);
+       keys = snap.value.keys;
+       print(keys);
+       keys=keys.subString(1,21);
+       print(keys);
+
+
+             } );
+
+     //keys= keys.substring(1);
+     //print(keys);
+     //keys2=keys2.substring(keys2.length-1);
+    // print(keys2);
+     ref.child('Service Provider').child("").child('name').update({
+       "name": "shahad12"
+     });
+
+     ref.child('Service Provider').child("-M0J3Ma6dZpQWfd-NaDB").update({ "name": "shahad12"});
+
+    }
 
 
   bool _lights=false;
@@ -56,7 +99,7 @@ class _AddhoursState extends State<Addhours> {
                 Container(
                    child: DropdownButton<String>(
                       //isExpanded: true,
-                     items: startTime.map<DropdownMenuItem<String>>((String text) {
+                       items: startTime.map<DropdownMenuItem<String>>((String text) {
                        return DropdownMenuItem<String>(
                          value: text,
                          child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -66,7 +109,7 @@ class _AddhoursState extends State<Addhours> {
                       onChanged: (String newValueSelected) {
                         setState(() {
                           startTimeValue = newValueSelected;
-                        start=newValueSelected;});
+                          start=newValueSelected;});
                       },
                     ),
 
@@ -127,7 +170,17 @@ class _AddhoursState extends State<Addhours> {
                 Container(
                  child: CupertinoSwitch(
                     value: _lights,
-                    onChanged: (bool value) { setState(() { _lights = value; }); },
+                    onChanged: (bool value) {
+                      setState(() {
+                        _lights = value;
+                        if(int.parse(end.substring(0,2))  > int.parse(start.substring(0,2)) ){
+                          updateUserStatus();
+                          print(end);print(start);
+
+                        }
+                      });
+
+                      },
                   ),
                 )
 

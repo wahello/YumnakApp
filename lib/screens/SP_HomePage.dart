@@ -8,10 +8,15 @@ import 'package:yumnak/services/auth.dart';
 
 class SP_HomePage extends StatefulWidget {
   @override
-  _SP_HomePageState createState() => _SP_HomePageState();
+  String e;
+  SP_HomePage(String email){e =email;}
+
+  _SP_HomePageState createState() => _SP_HomePageState(e);
 }
 
 class _SP_HomePageState extends State<SP_HomePage> {
+  String email;
+  _SP_HomePageState(String email){this.email=email; print(email);}
 
 
   final AuthService  _auth = AuthService();
@@ -126,7 +131,7 @@ var remainingTime;
                         title: new Text("أوقات عملي المتاحة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
                          Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) =>  Addhours()  ));
+                              builder: (context) =>  Addhours(email)  ));
                         },
                       ),
                       new Divider(),

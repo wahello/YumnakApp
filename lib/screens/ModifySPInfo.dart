@@ -29,10 +29,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
             IconButton(
               icon: Icon(Icons.arrow_forward),
               color: Colors.grey,
-              onPressed: () {
+              onPressed: () {/*
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => SP_HomePage()
-                ));},
+                ));*/},
             ),],
 
         ),

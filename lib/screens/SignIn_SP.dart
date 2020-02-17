@@ -126,7 +126,7 @@ class _SignIn_SPState extends State<SignIn_SP> {
                                         setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
                                       }else{
                                         Navigator.push(context, new MaterialPageRoute(
-                                            builder: (context) => SP_HomePage()
+                                            builder: (context) => SP_HomePage(email)
                                         ));
                                       }
                                     }

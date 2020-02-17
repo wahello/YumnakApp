@@ -26,7 +26,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
       'service': service,
       'subService':subService,
        'subService1':subService1,
-      'qualifications':qualifications
+      'qualifications':qualifications,
+      'available':available,
+
     });
   }
   String name;
@@ -45,6 +47,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
   String subService1;
   bool enable=false;
   String qualifications;
+  String available="false";
 
  // var services= ["1","3","3"];
   //var type= ["1","2","3"];
@@ -459,8 +462,16 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
                                     if (password.toString() == Vpassword.toString())
                                       pass = true;
-                                    if (pass)
+                                    if (pass){
                                       sendData();
+                                      Fluttertoast.showToast(
+                                          msg: ("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني"),
+                                          toastLength: Toast.LENGTH_LONG,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIos: 20,
+                                          backgroundColor: Colors.red[100],
+                                          textColor: Colors.red[800]
+                                      );}
                                   }
                                 }
 
