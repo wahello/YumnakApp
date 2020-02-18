@@ -13,7 +13,18 @@ class Addhours extends StatefulWidget {
 
 
 //--------------------------------------------------------------------
+List<myData> allData = [];
+List<myData> _SPData = [];
 
+
+//--------------------------------------------------------------------
+
+
+class myData {
+  String  available;
+
+  myData(this.available);
+}
 
 
 class _AddhoursState extends State<Addhours> {
@@ -23,43 +34,66 @@ class _AddhoursState extends State<Addhours> {
 
 
   static const List<String> startTime = const [
-    '13:00','14:00','15:00', '16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','0:00' ,'1:00', '2:00', '3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00'];
+    '8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00', '16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','0:00' ,'1:00', '2:00', '3:00','4:00','5:00','6:00','7:00'];
 
   static const List<String> endTime = const [
-    '13:00','14:00','15:00', '16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','0:00' ,'1:00', '2:00', '3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00'];
+    '8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00', '16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','0:00' ,'1:00', '2:00', '3:00','4:00','5:00','6:00','7:00'];
 
 
   String startTimeValue = startTime[0];
   String endTimeValue = endTime[0];
 
+   String state;
 
 
+   Future checkState() async{
+
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Service Provider').orderByChild("email").equalTo(e).
+    once().then((DataSnapshot snap) async{
+    var keys = snap.value.keys;
+    var data = snap.value;
+
+  allData.clear();
+  myData d;
+  for (var key1 in keys) {
+  d = new myData(data[key1]['available']);
+  await allData.add(d);
+  }
+
+    for (var i = 0; i < allData.length; i++) {
+      state=allData[i].available.toString();
+    }
+
+   } );
+    updateUserStatus();
+
+   }
 
    Future<void> updateUserStatus() async {
-     var keys;
+     var _keys;
+     var key;
+
+
 
      DatabaseReference ref = FirebaseDatabase.instance.reference();
      ref.child('Service Provider').orderByChild("email").equalTo(e).
      once().then(
              (DataSnapshot snap) async {
-       print(e);
-       keys = snap.value.keys;
-       print(keys);
-       keys=keys.subString(1,21);
-       print(keys);
+       _keys = snap.value.keys;
+       key = _keys.toString();
+       key=key.substring(1,21);
+
+
+       if(state == "true"){
+         ref.child('Service Provider').child(key).update(
+             { "available": "false"});
+       }if(state == "false"){
+         ref.child('Service Provider').child(key).update({ "available": "true"});
+       }
 
 
              } );
-
-     //keys= keys.substring(1);
-     //print(keys);
-     //keys2=keys2.substring(keys2.length-1);
-    // print(keys2);
-     ref.child('Service Provider').child("").child('name').update({
-       "name": "shahad12"
-     });
-
-     ref.child('Service Provider').child("-M0J3Ma6dZpQWfd-NaDB").update({ "name": "shahad12"});
 
     }
 
@@ -172,12 +206,32 @@ class _AddhoursState extends State<Addhours> {
                     value: _lights,
                     onChanged: (bool value) {
                       setState(() {
-                        _lights = value;
-                        if(int.parse(end.substring(0,2))  > int.parse(start.substring(0,2)) ){
-                          updateUserStatus();
-                          print(end);print(start);
 
+                        int now = new DateTime.now().hour;
+                        print(now);
+
+                        int startTime = int.parse(start.substring(0,2));
+                        int endTime = int.parse(end.substring(0,2));
+                        print(startTime);
+                        print(endTime);
+
+                        if( startTime  <  endTime && startTime > now){
+                          _lights = value;
+                          checkState();
                         }
+
+                        //int wait = endTime-startTime;
+                        int wait = 20;
+
+
+                        Future.delayed(Duration(seconds: wait), () async{
+                          setState(() {
+                            checkState();
+                           _lights = false;
+                          });
+
+                        });
+
                       });
 
                       },
