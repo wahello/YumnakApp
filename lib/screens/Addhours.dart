@@ -14,7 +14,6 @@ class Addhours extends StatefulWidget {
 
 //--------------------------------------------------------------------
 List<myData> allData = [];
-List<myData> _SPData = [];
 
 
 //--------------------------------------------------------------------
@@ -29,7 +28,7 @@ class myData {
 
 class _AddhoursState extends State<Addhours> {
 
-   String e;
+  String e;
   _AddhoursState(String email){e=email;}
 
 
@@ -107,6 +106,9 @@ class _AddhoursState extends State<Addhours> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.black38, //change your color here
+        ),
         title: new Center(child: new Text("أوقات عملي المتاحة", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
         backgroundColor: Colors.grey[200],
       ),
@@ -225,8 +227,9 @@ class _AddhoursState extends State<Addhours> {
 
 
                         Future.delayed(Duration(seconds: wait), () async{
+                         // dispose();
                           setState(() {
-                            checkState();
+                           checkState();
                            _lights = false;
                           });
 
@@ -248,4 +251,5 @@ class _AddhoursState extends State<Addhours> {
 
     );
   }
+
 }

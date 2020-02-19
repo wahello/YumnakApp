@@ -151,7 +151,7 @@ var remainingTime;
                         title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
                          Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) =>   ModifySPInfo() ));
+                              builder: (context) =>   ModifySPInfo(email) ));
                         },
                       ),
                       new Divider(),
