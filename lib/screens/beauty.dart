@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'availableSP.dart';
 
 class beauty extends StatefulWidget {
   @override
@@ -35,7 +36,11 @@ class _beautyState extends State<beauty> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.grey[400],
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP("شعر")
+                              ));
+                            },
                             child: Text("شعر",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
                           )
@@ -44,7 +49,11 @@ class _beautyState extends State<beauty> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.tealAccent[100],
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("مكياج")
+                            ));
+                          },
                           child: Text("مكياج" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
@@ -64,9 +73,11 @@ class _beautyState extends State<beauty> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.green[300],
-                          onPressed: () {Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) => beauty()
-                          ));},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("عناية واسترخاء")
+                            ));
+                          },
                           child: Text("عناية واسترخاء", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),

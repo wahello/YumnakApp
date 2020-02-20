@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'availableSP.dart';
 
 class events extends StatefulWidget {
   @override
@@ -34,7 +35,11 @@ class _eventsState extends State<events> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.grey[400],
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP("منسقة حفلات")
+                              ));
+                            },
                             child: Text("منسقة حفلات",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
                           )
@@ -43,7 +48,11 @@ class _eventsState extends State<events> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.tealAccent[100],
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("صبابات")
+                            ));
+                          },
                           child: Text("صبابات" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
@@ -63,7 +72,11 @@ class _eventsState extends State<events> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.green[300],
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("تجهيز طعام")
+                            ));
+                          },
                           child: Text("تجهيز طعام", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),

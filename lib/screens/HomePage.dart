@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("مجالسة")
+                                  builder: (context) => availableSP("إصلاح أجهزة ذكية")
                               ));
                             },
                             child: Text("إصلاح أجهزة ذكية", textAlign: TextAlign.center , style: TextStyle(
@@ -159,7 +159,11 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.cyan[200],
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP("تصوير")
+                              ));
+                            },
                             child: Text("تصوير",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 20.0, fontFamily: 'Montserrat', )),
                           )

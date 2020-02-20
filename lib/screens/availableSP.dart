@@ -8,13 +8,14 @@ class availableSP extends StatefulWidget {
   @override
   _availableSPState createState() => _availableSPState(_cat);
 }
-int countSP;
-List<myData> allData = [];
-List<myData> _SPData = [];
-
 
 //--------------------------------------------------------------------
 
+int countSP;
+List<myData> allData = [];
+List<myData> SPData = [];
+
+//--------------------------------------------------------------------
 
 class myData {
   String email,name, phoneNumber, service,subService;
@@ -23,78 +24,8 @@ class myData {
   myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid);
 }
 
+//--------------------------------------------------------------------
 
-Widget _buildList() {
-  return ListView(
-    padding: const EdgeInsets.only(top: 20.0),
-    //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
-    children: <Widget>[
-      for (var i=0 ;i<_SPData.length;i++)
-        _buildListItem(_SPData[i])
-    ],
-  );
-}
-
-
-Widget _buildListItem(myData d) {
-  return Card(
-    margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 5.0),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-    elevation: 4.0,
-
-    child: new Padding( padding: new EdgeInsets.all(10.0),
-      child: new Column(
-        children: <Widget>[
-          new Directionality(
-            textDirection: TextDirection.rtl,
-
-            child: new ListTile(
-              leading: Icon(Icons.account_circle , color:Colors.green[400], size:60),
-              title: Text(d.name,style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-              subtitle: Text(d.phoneNumber),
-                onTap: () { /* react to the tile being tapped */ }
-            ),
-
-          ),
-          Directionality(
-            textDirection: TextDirection.rtl,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Column(
-                   children: <Widget>[
-                     Padding(
-                     padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                     child: Text("السعر",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                   ),
-                   Text("100")]
-                  ),
-                  Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                          child: Text("المسافة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                        ),
-                        Text("xxxxx")]
-                  ),
-                  Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                          child: Text("التقييم",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                        ),
-                        Text("★ 5")]
-                  ),
-                ]
-            ),
-          ),
-
-        ],
-      ),
-    ),
-
-  );
-}
 
 /*   SORTING
 List<double> numbers = [1, 2, 3];
@@ -103,7 +34,6 @@ numbers.sort((b, a) => a.compareTo(b));
 print(numbers);  // [two, four, three]
 */
 
-
 class _availableSPState extends State<availableSP> {
   String c;
   _availableSPState(String cat){
@@ -111,9 +41,10 @@ class _availableSPState extends State<availableSP> {
     print(c);
   }
 
-
+  @override
   void initState() {
     super.initState();
+
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref.child('Service Provider').once().then((DataSnapshot snap) async {
       var keys = snap.value.keys;
@@ -132,22 +63,91 @@ class _availableSPState extends State<availableSP> {
         );
        await allData.add(d);
       }
-
+      SPData.clear();
       for (var i = 0; i < allData.length; i++) {
         if(allData[i].service == c){
-          _SPData.add(allData[i]);
-          print(allData[i].name);
-          print(allData[i].phoneNumber);
-          print(allData[i].service);
-          print(allData[i].subService);}
+          SPData.add(allData[i]);
+        }
       }
-
-
-    }
-    );
-
+      for(var i=0; i<SPData.length; i++){
+        print(SPData[i].name);
+        print(SPData[i].phoneNumber);
+        print(SPData[i].service);
+      }
+      print("------------------------------");
+    });
   }
 
+  Widget _buildList() {
+    print(SPData);
+    return ListView(
+      padding: const EdgeInsets.only(top: 20.0),
+      //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
+      children: <Widget>[
+        for (var i=0 ;i<SPData.length;i++)
+          _buildListItem(SPData[i])
+      ],
+    );
+  }
+
+
+  Widget _buildListItem(myData d) {
+    return Card(
+      margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 5.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      elevation: 4.0,
+
+      child: new Padding( padding: new EdgeInsets.all(10.0),
+        child: new Column(
+          children: <Widget>[
+            new Directionality(
+              textDirection: TextDirection.rtl,
+
+              child: new ListTile(
+                  leading: Icon(Icons.account_circle , color:Colors.green[400], size:60),
+                  title: Text(d.name,style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                  subtitle: Text(d.phoneNumber),
+                  onTap: () { /* react to the tile being tapped */ }
+              ),
+
+            ),
+            Directionality(
+              textDirection: TextDirection.rtl,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                            child: Text("السعر",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                          ),
+                          Text("100")]
+                    ),
+                    Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                            child: Text("المسافة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                          ),
+                          Text("xxxxx")]
+                    ),
+                    Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                            child: Text("التقييم",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                          ),
+                          Text("★ 5")]
+                    ),
+                  ]
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,8 +172,7 @@ class _availableSPState extends State<availableSP> {
       ),
 
 
-        body:_buildList()
-
+        body: _buildList(),
     );
   }
 }

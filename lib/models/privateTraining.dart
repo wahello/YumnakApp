@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:yumnak/screens/availableSP.dart';
 
 class privateTraining extends StatefulWidget {
   @override
@@ -32,7 +32,11 @@ class _privateTrainingState extends State<privateTraining> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.grey[400],
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP("اللغة العربية")
+                              ));
+                            },
                             child: Text("اللغة العربية", textAlign: TextAlign.center , style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
                           )
@@ -41,8 +45,12 @@ class _privateTrainingState extends State<privateTraining> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.deepOrangeAccent,
-                          onPressed: () {},
-                          child: Text("المرحلة الإبتدائية", textAlign: TextAlign.center ,style: TextStyle(
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("المرحلة الابتدائية")
+                            ));
+                          },
+                          child: Text("المرحلة الابتدائية", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
                         ),
@@ -58,7 +66,11 @@ class _privateTrainingState extends State<privateTraining> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.lightBlueAccent,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP("رياضيات")
+                              ));
+                            },
                             child: Text("رياضيات",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
                           )
@@ -67,7 +79,11 @@ class _privateTrainingState extends State<privateTraining> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.lightGreenAccent,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("اللغة الإنجليزية")
+                            ));
+                          },
                           child: Text("اللغة الإنجليزية", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
@@ -84,7 +100,11 @@ class _privateTrainingState extends State<privateTraining> {
                       SizedBox(
                           width: 130.0, height: 130.0,
                           child: RaisedButton(color: Colors.amber,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => availableSP("كيمياء")
+                              ));
+                            },
                             child: Text("كيمياء",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
                           )
@@ -93,7 +113,11 @@ class _privateTrainingState extends State<privateTraining> {
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
                           color: Colors.grey[300],
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) => availableSP("فيزياء")
+                            ));
+                          },
                           child: Text("فيزياء" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),
