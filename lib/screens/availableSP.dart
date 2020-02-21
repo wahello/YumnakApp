@@ -5,6 +5,7 @@ import 'package:yumnak/screens/HomePage.dart';
 class availableSP extends StatefulWidget {
   String _cat;
   availableSP(this._cat);
+
   @override
   _availableSPState createState() => _availableSPState(_cat);
 }
@@ -35,7 +36,15 @@ print(numbers);  // [two, four, three]
 */
 
 class _availableSPState extends State<availableSP> {
+
   String c;
+  static const List<String> longItems = const [
+    'التقييم الأعلى أولًا',
+    'السعر الأقل أولًا',
+    'المسافة الأقرب أولًا',
+  ];
+  String longSpinnerValue;
+
   _availableSPState(String cat){
     c=cat;
     print(c);
@@ -81,13 +90,12 @@ class _availableSPState extends State<availableSP> {
   Widget _buildList() {
     print(SPData);
     return ListView(
-      padding: const EdgeInsets.only(top: 20.0),
-      //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
-      children: <Widget>[
-        for (var i=0 ;i<SPData.length;i++)
-          _buildListItem(SPData[i])
-      ],
-    );
+          //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
+          children: <Widget>[
+            for (var i=0 ;i<SPData.length;i++)
+            _buildListItem(SPData[i])
+          ],
+        );
   }
 
 
@@ -157,22 +165,75 @@ class _availableSPState extends State<availableSP> {
        // title: new Center(child: new Text("موفري الخدمة المتاحين", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
        //automaticallyImplyLeading: false,     //عشان يروح سهم الرجوع
         backgroundColor: Colors.grey[200],
-
-          actions: <Widget>[
-      Padding(
-      padding: EdgeInsets.only(right: 20.0),
-        child: GestureDetector(
-          onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage()));},
-          child: Icon(Icons.home,
-            color: Colors.black26,
-            size: 26.0,),
-        )
-    ),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage()));},
+                child: Icon(
+                  Icons.home,
+                  color: Colors.black26,
+                  size: 26.0,),
+              )
+            ),
           ]
       ),
 
 
         body: _buildList(),
+//        Column(
+//            children: <Widget>[
+//            SizedBox(height: 20.0),
+//            Row(
+//              children: <Widget>[
+//                Padding(
+//                  padding: EdgeInsets.all(10.0),
+//                ),
+//                DropdownButton<String>(
+//                  items: longItems.map<DropdownMenuItem<String>>((String text) {
+//                    return DropdownMenuItem<String>(
+//                      value: text,
+//                      child: Text(
+//                          text,
+//                          style: TextStyle(
+//                            fontSize:14,
+//                            color: Colors.grey[600],
+//                          ),
+//                          overflow: TextOverflow.fade),
+//                    );
+//                  }).toList(),
+//
+//                  selectedItemBuilder: (BuildContext context) {
+//                    return longItems.map<Widget>((String text) {
+//                      return Text(text, overflow: TextOverflow.fade);
+//                    }).toList();
+//                  },
+//
+//                  value: longSpinnerValue,
+//
+//                  hint: new Text('  ...تـرتيـب بـحسب  '),
+//
+//                  onChanged: (String text) {
+//                    setState(() {longSpinnerValue = text;});
+//                  },
+//
+//                  style: TextStyle(
+//                      fontSize:18,
+//                      fontWeight: FontWeight.bold,
+//                      color: Colors.grey[600]
+//                  ),
+//
+//                  underline: Container(
+//                    height: 2,
+//                    color: Colors.black12,
+//                  ),
+//
+//                  icon: Icon(Icons.sort),
+//                ),
+//              ],
+//            ),
+//          ],
+//        ),
     );
   }
 }
