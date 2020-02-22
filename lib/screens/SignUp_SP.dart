@@ -212,6 +212,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                                 .lightBlueAccent))),
                                   )
                               ),
+
+
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
@@ -370,7 +372,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 ),
                               ),
 
-                              if (service== "دروس خصوصية")
+                              if (service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية')
                               Directionality(
                                 textDirection: TextDirection.rtl,
 
@@ -425,7 +427,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               ),
 
 
-                               if(service=='تعليم و تدريب' || service=='مجالسة' )
+                               if(service=='رياضيات' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية' )
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
