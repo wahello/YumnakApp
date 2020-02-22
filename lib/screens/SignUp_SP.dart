@@ -195,7 +195,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                   child: TextFormField(
                                     validator: (val) =>
                                     val.isEmpty
-                                        ? "Enter an email"
+                                        ? "ادخل البريد الألكتروني"
                                         : null, //null means valid email
                                     onChanged: (val) {
                                       setState(() => email = val);
@@ -271,6 +271,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       children: <Widget>[
                                         SizedBox(height: 32),
                                         DropdownButton<String>(
+                                          /*validator: (value) =>
+                                          value == null? "يجب اختيار الخدمة المقدمة" : null,*/
                                           isExpanded: true,
                                           onChanged: (String text) {
                                             setState(() {
@@ -280,6 +282,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
                                             });
                                           },
+
                                           hint: new Text('أختر الخدمة'),
                                           value: longSpinnerValue,
                                           selectedItemBuilder: (
@@ -310,7 +313,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
                               ),
 
-
+                             // if(service == "تعليم و تدريب" ||service == "مجالسة" || service == "تجميل" || service == "تنظيم مناسبات" )
                               Directionality(
                                 textDirection: TextDirection.rtl,
 
@@ -327,6 +330,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                           value: longSpinnerValue2,
                                           onChanged: (String text) {
                                             setState(() {
+                                              if (text=='-أختر -'){
+                                                error = 'يجب أختيار الخدمة';}
+                                              else
                                               longSpinnerValue2 = text;
                                               service=text;
                                               subService = text;
@@ -364,7 +370,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 ),
                               ),
 
-
+                              if (service== "دروس خصوصية")
                               Directionality(
                                 textDirection: TextDirection.rtl,
 
@@ -381,6 +387,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                           value: longSpinnerValue3,
                                           onChanged: (String text) {
                                             setState(() {
+                                              if (text=='-أختر -'){
+                                                error = 'يجب أختيار الخدمة';}
+                                              else
                                               longSpinnerValue3 = text;
                                               service=text;
                                               subService1 = text;
@@ -416,6 +425,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               ),
 
 
+                               if(service=='تعليم و تدريب' || service=='مجالسة' )
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
@@ -433,8 +443,27 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             borderSide: BorderSide(color: Colors
                                                 .lightBlueAccent))),
                                   )
-                              ),
+                               ),
 
+                             if(service=='تنظيم مناسبات' || service=="تجميل " || service=='تصوير' || service=='إصلاح أجهزة ذكية')
+                                Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: TextFormField(
+                                      onChanged: (val) {
+                                        setState(() => price = val);
+                                      },
+                                      decoration: InputDecoration(
+                                          icon: Icon(Icons.monetization_on),
+                                          labelText: 'السعر بالحد الأدنى',
+                                          labelStyle: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: Colors
+                                                  .lightBlueAccent))),
+                                    )
+                                ),
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(onChanged: (val) {
@@ -593,7 +622,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (service == "تعليم و تدريب") {
-      longItems2 = [
+      longItems2 = ['-أختر -',
         'تدريب قيادة',
         'تحفيظ قرآن',
         'دروس خصوصية',
@@ -604,14 +633,14 @@ class _SignUp_SPState extends State<SignUp_SP> {
       longSpinnerValue2 = longItems2 [0];
     }
     else if (service == "تنظيم مناسبات") {
-      longItems2 = ['صبابات', 'تنسيق حفلات', 'تجهيز طعام'];
+      longItems2 = ['-أختر -','صبابات', 'تنسيق حفلات', 'تجهيز طعام'];
       longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
 
     else if (service == "تجميل") {
-      longItems2 = ['عناية واسترخاء', 'شعر', 'مكياج'];
+      longItems2 = ['-أختر -','عناية واسترخاء', 'شعر', 'مكياج'];
       longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
@@ -619,7 +648,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
 
     else if (service == "مجالسة") {
-      longItems2 = ['مربية أطفال', 'كبار السن'];
+      longItems2 = ['-أختر -','مربية أطفال', 'كبار السن'];
       longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
@@ -638,13 +667,13 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (subService == "دروس خصوصية") {
-      longItems3 = [
+      longItems3 = ['-أختر -'
         'كيمياء',
         'فيزياء',
         'رياضيات',
-        'اللغة الأنجليزبة',
+        'اللغة الأنجليزية',
         'اللغة العربية',
-        'المرحلة الأبتدائية'
+        'المرحلة الابتدائية'
       ];
       longSpinnerValue3 = longItems3 [0];
     }
@@ -675,7 +704,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
     Random random = new Random();
     //int randomNumber = random.nextInt(100000000000) + 10;
-    int randomNumber = random.nextInt(100);
+    int randomNumber = random.nextInt(10000000);
     String randm=randomNumber.toString();
     try {
         file = await FilePicker.getFile(type: FileType.IMAGE);
@@ -683,7 +712,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
           //fileName = p.basename(file.path);
 
           fileName=randm;
-
 
         });
         //print(fileName);
@@ -711,55 +739,4 @@ class _SignUp_SPState extends State<SignUp_SP> {
     }}
 
 
-    /*Widget _addSecondDropdown() {
-     if(service=='تعليم و تدريب'||service=='تنظيم مناسبات'||service=='مجالسة'||service=='تجميل') {
-       DropdownButton<String>(
-         isExpanded: false,
-         value: longSpinnerValue2,
-         onChanged: (String text) {
-           setState(() {
-             longSpinnerValue2 = text;
-             service = text;
-             subService = text;
-             services1();
-           });
-         },
-         hint: new Text('أختر الخدمة'),
-         selectedItemBuilder: (BuildContext context) {
-           return longItems2.map<Widget>((String text) {
-             return Text(text,
-                 overflow: TextOverflow
-                     .ellipsis);
-           }).toList();
-         },
-         items: longItems2.map<
-             DropdownMenuItem<String>>((String text) {
-           return DropdownMenuItem<String>(
-             value: text,
-             child: Text(text, maxLines: 1,
-                 overflow: TextOverflow
-                     .ellipsis),
-           );
-         }).toList(),
-       );
-     }//end if
-
-
-  else{
-    return Container();
-     }
-
-
-  }//end method
-
-
-*/
-
-
 }//class
-
-
-
-
-
-
