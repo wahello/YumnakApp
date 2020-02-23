@@ -315,7 +315,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
                               ),
 
-                             // if(service == "تعليم و تدريب" ||service == "مجالسة" || service == "تجميل" || service == "تنظيم مناسبات" )
+                              if(service == "تعليم و تدريب" ||service == "مجالسة" || service == "تجميل" || service == "تنظيم مناسبات" || service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء' ||service=='-أختر -'||service=='مربية أطفال'||service=='كبار السن'|| service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام'
+                                 || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي')
                               Directionality(
                                 textDirection: TextDirection.rtl,
 
@@ -372,7 +373,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 ),
                               ),
 
-                              if (service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية')
+                              if (service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء')
                               Directionality(
                                 textDirection: TextDirection.rtl,
 
@@ -427,7 +428,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               ),
 
 
-                               if(service=='رياضيات' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية' )
+                               if(service=='كيمياء' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'||service=='مربية أطفال'||service=='كبار السن' || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي' || service=='تعليم و تدريب' || service=='دروس خصوصية' )
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
@@ -447,7 +448,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                   )
                                ),
 
-                             if(service=='تنظيم مناسبات' || service=="تجميل " || service=='تصوير' || service=='إصلاح أجهزة ذكية')
+                             if(service=='تنظيم مناسبات' || service=="تجميل " || service=='تصوير' || service=='إصلاح أجهزة ذكية' || service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام')
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
@@ -669,7 +670,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (subService == "دروس خصوصية") {
-      longItems3 = ['-أختر -'
+      longItems3 = ['-أختر -',
         'كيمياء',
         'فيزياء',
         'رياضيات',
