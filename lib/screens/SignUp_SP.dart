@@ -278,6 +278,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                           isExpanded: true,
                                           onChanged: (String text) {
                                             setState(() {
+                                              if ( text.isEmpty) {
+                                                error = 'يجب أختيار الخدمة';}
+                                              else
                                               longSpinnerValue = text;
                                               service = text;
                                               services();
@@ -333,7 +336,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                           value: longSpinnerValue2,
                                           onChanged: (String text) {
                                             setState(() {
-                                              if (text=='-أختر -'){
+                                              if (text=='-أختر -' ||  text.isEmpty) {
                                                 error = 'يجب أختيار الخدمة';}
                                               else
                                               longSpinnerValue2 = text;
@@ -432,6 +435,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
+                                    validator: (val) =>
+                                    val.isEmpty
+                                        ? "يجب تحديد السعر"
+                                        : null,
                                     onChanged: (val) {
                                       setState(() => price = val);
                                     },
@@ -452,6 +459,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
+                                      validator: (val) =>
+                                      val.isEmpty
+                                          ? "يجب تحديد السعر"
+                                          : null,
                                       onChanged: (val) {
                                         setState(() => price = val);
                                       },
