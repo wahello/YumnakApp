@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
@@ -11,6 +12,12 @@ class SignIn_SP extends StatefulWidget {
   _SignIn_SPState createState() => _SignIn_SPState();
 }
 
+class myData {
+  String email;
+
+  myData(this.email);
+}
+
 class _SignIn_SPState extends State<SignIn_SP> {
 
   final AuthService  _auth = AuthService();
@@ -20,6 +27,30 @@ class _SignIn_SPState extends State<SignIn_SP> {
   String password="";
   String error="";
 
+  List<myData> allData = [];
+  var keys;
+  bool found= false;
+
+  @override
+  void initState() {
+    myData d;
+
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Service Provider').once().then((DataSnapshot snap) async {
+      keys = snap.value.keys;
+      var data = snap.value;
+
+      allData.clear();
+
+      for (var key in keys) {
+        d = new myData(
+            data[key]['email']
+        );
+        await allData.add(d);
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,16 +151,38 @@ class _SignIn_SPState extends State<SignIn_SP> {
                                   //اذا دخل ايميل وباسورد مو موجودات مايطلع له مسج !!
 
                                   onTap: () async {
-                                    if (_formKey.currentState.validate()){
-                                      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-                                      if (result == null ){
-                                        setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
-                                      }else{
-                                        Navigator.push(context, new MaterialPageRoute(
-                                            builder: (context) => SP_HomePage(email)
-                                        ));
+
+                                    for (int i=0; i<allData.length; i++) {
+                                      if(allData[i].email==email){
+                                        found=true;
                                       }
                                     }
+
+                                    if(found){
+                                      if (_formKey.currentState.validate()){
+                                        dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                                        if (result == null ){
+                                          setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+                                        }else{
+                                          print("This is uid "+result);
+                                          Navigator.push(context, new MaterialPageRoute(
+                                              builder: (context) => SP_HomePage(email)
+                                          ));
+                                        }
+                                      }
+                                    }
+
+                                    else{
+                                      Fluttertoast.showToast(
+                                          msg: ("خطأ بالدخول"),
+                                          toastLength: Toast.LENGTH_LONG,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIos: 20,
+                                          backgroundColor: Colors.red[100],
+                                          textColor: Colors.red[800]
+                                      );
+                                    }
+
                                   },
                                   child: Center(
                                     child: Text( 'تسجيل الدخول',
@@ -149,7 +202,7 @@ class _SignIn_SPState extends State<SignIn_SP> {
                                 borderRadius: BorderRadius.circular(20.0),
                                 shadowColor: Colors.lightBlueAccent,
                                 color: Colors.green[300],
-                                elevation: 7.0,
+                                elevation: 3.0,
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.push(context, new MaterialPageRoute(

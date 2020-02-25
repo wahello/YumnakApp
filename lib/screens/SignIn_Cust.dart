@@ -1,11 +1,10 @@
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/SignUp_Cust.dart';
 import 'package:yumnak/services/auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 
@@ -15,6 +14,11 @@ class SignIn_Cust extends StatefulWidget {
 }
 
 
+class myData {
+  String email;
+
+  myData(this.email);
+}
 
 class _SignIn_CustState extends State<SignIn_Cust> {
 
@@ -24,11 +28,35 @@ class _SignIn_CustState extends State<SignIn_Cust> {
   String email="";
   String password="";
   var uid;
+
   String error="";
   dynamic result;
   var db;
 
+  List<myData> allData = [];
+  var keys;
+  bool found= false;
 
+  @override
+  void initState() {
+    myData d;
+
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Customer').once().then((DataSnapshot snap) async {
+      keys = snap.value.keys;
+      var data = snap.value;
+
+      allData.clear();
+
+      for (var key in keys) {
+        d = new myData(
+            data[key]['email']
+        );
+        await allData.add(d);
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,27 +151,39 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                 elevation: 7.0,
                                 child: GestureDetector(
                                   onTap: () async {
-                                    if (_formKey.currentState.validate()){
-                                       result = await _auth.signInWithEmailAndPassword(email, password);
-                                      if (result == null ){
-                                        setState(() => error = "");
+
+                                    for (int i=0; i<allData.length; i++) {
+                                      if(allData[i].email==email){
+                                        found=true;
                                       }
+                                    }
+
+                                    if(found){
+                                      if (_formKey.currentState.validate()){
+                                        result = await _auth.signInWithEmailAndPassword(email, password);
+                                        if (result == null ){
+                                          setState(() => error = "");
+                                        }
+                                        else{
+                                          print("This is uid "+result);
+                                          Navigator.push(context, new MaterialPageRoute(
+                                              builder: (context) => HomePage()
+                                          ));
+                                        }
+                                      }
+                                    }
                                     else{
-
-                                     /*db=  FirebaseDatabase.instance.reference().child("Customer").child("-M-Tcn7P9yohEGmOEwlM");
-                                      db.once().then((DataSnapshot snapshot){
-                                        Map<dynamic, dynamic> values=snapshot.value;
-                                        print(values["name"]);
-                                      } );*/
-
-                                      print("This is uid "+result);
-                                      Navigator.push(context, new MaterialPageRoute(
-                                          builder: (context) => HomePage()
-                                    ));
-
-
+                                      Fluttertoast.showToast(
+                                          msg: ("خطأ بالدخول"),
+                                          toastLength: Toast.LENGTH_LONG,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIos: 20,
+                                          backgroundColor: Colors.red[100],
+                                          textColor: Colors.red[800]
+                                      );
                                     }
-                                    }
+
+
                                   },
                                   child: Center(
                                     child: Text( 'تسجيل الدخول',

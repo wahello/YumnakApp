@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:yumnak/models/user.dart';
 
 class Customer extends User{
-
 
   String name;
   String email;
   String password;
   var uid;
   String phoneNumber;
-      Customer();
+  var lat;
+  var lng;
+  String locComment;
 
-
+  Customer();
 
 }
 

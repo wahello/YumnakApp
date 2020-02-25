@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:yumnak/models/Customer.dart';
 import 'package:yumnak/screens/Main.dart';
+import 'package:yumnak/services/CurrentLocation.dart';
 import 'package:yumnak/services/auth.dart';
 import "package:firebase_database/firebase_database.dart";
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 class SignUp_Cust extends StatefulWidget {
   @override
   _SignUp_CustState createState() => _SignUp_CustState();
@@ -12,11 +14,9 @@ class SignUp_Cust extends StatefulWidget {
 
 class _SignUp_CustState extends State<SignUp_Cust> {
 
-  Customer _customer = Customer();
 
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-
 
   final DatabaseReference database= FirebaseDatabase.instance.reference().child("Customer");
 
@@ -43,9 +43,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                 },
               ),
             ],
-
           ),
-
         );
       },
     );
@@ -55,9 +53,11 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     database.push().set({
       'name' : name,
       'email': email,
-      //'password': password,
       'uid': uid,
       'phoneNumber': phoneNumber,
+      'latitude':lat,
+      'longitude' :  lng,
+      'locComment': comment,
     });
   }
 
@@ -69,6 +69,13 @@ class _SignUp_CustState extends State<SignUp_Cust> {
   String error="";
   String phoneNumber="";
   bool pass=false;
+
+  Map<String, dynamic> pickedLoc;
+  var lat;
+  var lng;
+  String comment;
+  bool picked=false;
+  LatLng loc;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +107,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
+                                validator: (val) => val.isEmpty ? "أدخل الاسم" : null,
                                 onChanged: (val){setState(() => name=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.person),
@@ -126,14 +134,9 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
                                 validator: (String v){
-                                  if (v.isEmpty) {
-                                    return  "أدخل رقم الجوال";
-                                  }
-                                  if (v.length!=10) {
-                                    return'أدخل رقم الجوال الصحيح';
-                                  }
+                                  if (v.isEmpty) {return  "أدخل رقم الجوال";}
+                                  if (v.length!=10) {return'أدخل رقم الجوال الصحيح';}
                                   return null;
-
                                 },
 
                                // validator:(val) => val.isEmpty ? "أدخل رقم الجوال" : null,//null means valid phone
@@ -180,21 +183,52 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                       )
                   ),
 
+                  SizedBox(height: 30.0),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
 
-                  Container(
-                      padding: EdgeInsets.fromLTRB(300.0, 20.0, 0.0, .0),
-                      child: Text('موقعك',
-                        style:
-                        TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                      )),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
-                      child: Image(
-                        image:  AssetImage("assets/map.png"),
-                        width: 40.0,
-                        height: 200.0,
-                      )
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(width:20.0),
+                        Text('موقعك',
+                          style:TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Montserrat"
+                          ),
+                        ),
+
+                        SizedBox(width:20.0),
+                        ButtonTheme(
+                            minWidth: 30.0,
+                            height: 10.0,
+                            child: RaisedButton(
+                                onPressed: _pickLocation,
+                                color: Colors.grey[200],
+                                child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.add_location,
+                                        color: Colors.grey[600],
+                                      ),
+                                      Text("  إضافة الموقع     ",
+                                          textDirection: TextDirection.rtl,
+                                          textAlign: TextAlign.justify,
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 24.0,
+                                            fontFamily: 'Montserrat',)),
+                                    ]
+                                )
+                            )
+                        ),
+
+                      ],
+                    ),
                   ),
+                  SizedBox(height:20.0),
                   Container(
                       height: 40.0,
                       child: Material(
@@ -204,23 +238,38 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                         elevation: 7.0,
                         child: GestureDetector(
                           onTap: () async {
-                            if (_formKey.currentState.validate()) {
-                              dynamic result = await _auth.registerWithEmailAndPassword(
-                                  email, password);
+                            print("ZEFT Picked: $picked");
+                            if(picked){
+                              if (_formKey.currentState.validate()) {
+                                dynamic result = await _auth.registerWithEmailAndPassword(
+                                    email, password);
 
-                              if (result == null) {
-                                setState(() =>
-                                error = '  البريد الألكتروني مستخدم');
-                              }
-                              else {
-                                uid = result;
-                                if (password.toString() == Vpassword.toString())
-                                  pass = true;
-                                if (pass){
-                                  sendData();
-                                _showDialog();}
-                              }
+                                if (result == null) {
+                                  setState(() =>
+                                  error = '  البريد الألكتروني مستخدم');
+                                }
+                                else {
+                                  uid = result;
+                                  if (password.toString() == Vpassword.toString())
+                                    pass = true;
+                                  if (pass){
+                                    sendData();
+                                    _showDialog();}
+                                }
+                                print("ZEFT Picked: $picked");
+                              }}
+                            else{
+                              Fluttertoast.showToast(
+                                  msg: ("الرجاء إضافة الموقع"),
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIos: 20,
+                                  backgroundColor: Colors.red[100],
+                                  textColor: Colors.red[800]
+                              );
+                              print("ZEFT Picked: $picked");
                             }
+
 
                           },
                           child: Center(
@@ -236,11 +285,8 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                   ),
 
                   SizedBox(height:20.0),
-
-
                 ]),
               ),
-
             ],
           ),
         )
@@ -250,6 +296,34 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     );
   }
 
+  _pickLocation() async {
+    pickedLoc = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => CurrentLocation(),
+        fullscreenDialog: true,
+      ),
+    );
 
+    print("Zeft: $pickedLoc");
+
+    if (pickedLoc == null) {
+      return;
+    }
+    else{
+
+      lat=pickedLoc['latitude'];
+      lng=pickedLoc['longitude'];
+      comment=pickedLoc['comments'];
+      picked=pickedLoc['prickedLocation'];
+
+      print("Zeft: PickLocation latitude: $lat");
+      print("Zeft: PickLocation longitude: $lng");
+      print("Zeft: PickLocation comments: $comment");
+      print("Zeft: PickLocation comments: $picked");
+
+      loc=new LatLng(lat, lng);
+      print("Zeft: PickLocation LatLng: $loc");
+    }
+  }
 }
 
