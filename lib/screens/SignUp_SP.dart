@@ -633,7 +633,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (service == "تعليم و تدريب") {
-      longItems2 = [
+      longItems2 = ['-أختر -',
         'تدريب قيادة',
         'تحفيظ قرآن',
         'دروس خصوصية',
@@ -641,26 +641,26 @@ class _SignUp_SPState extends State<SignUp_SP> {
         'رقص',
         'موسيقي'
       ];
-     // longSpinnerValue2 = longItems2 [0];
+      longSpinnerValue2 = longItems2 [0];
     }
     else if (service == "تنظيم مناسبات") {
-      longItems2 = ['صبابات', 'تنسيق حفلات', 'تجهيز طعام'];
-     // longSpinnerValue2 = longItems2 [0];
+      longItems2 = ['-أختر -','صبابات', 'تنسيق حفلات', 'تجهيز طعام'];
+      longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
 
     else if (service == "تجميل") {
-      longItems2 = ['عناية واسترخاء', 'شعر', 'مكياج'];
-    //  longSpinnerValue2 = longItems2 [0];
+      longItems2 = ['-أختر -','عناية واسترخاء', 'شعر', 'مكياج'];
+      longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
 
 
     else if (service == "مجالسة") {
-      longItems2 = ['مربية أطفال', 'كبار السن'];
-    //  longSpinnerValue2 = longItems2 [0];
+      longItems2 = ['-أختر -','مربية أطفال', 'كبار السن'];
+      longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
@@ -678,7 +678,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (subService == "دروس خصوصية") {
-      longItems3 = [
+      longItems3 = ['-أختر -',
         'كيمياء',
         'فيزياء',
         'رياضيات',
@@ -686,7 +686,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
         'اللغة العربية',
         'المرحلة الابتدائية'
       ];
-     // longSpinnerValue3 = longItems3 [0];
+      longSpinnerValue3 = longItems3 [0];
     }
     else {
       // longItems2=["لا يوجد فئة"];
