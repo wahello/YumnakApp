@@ -267,195 +267,196 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               Directionality(
                                 textDirection: TextDirection.rtl,
                                 child:Column(
-                                   crossAxisAlignment: CrossAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
 
 
-                                      children: <Widget>[
-                                        SizedBox(height: 32),
-                                        DropdownButton<String>(
-                                          /*validator: (value) =>
-                                          value == null? "يجب اختيار الخدمة المقدمة" : null,*/
-                                          isExpanded: true,
-                                          onChanged: (String text) {
-                                            setState(() {
-                                              if ( text.isEmpty) {
-                                                error = 'يجب أختيار الخدمة';}
-                                              else
-                                              longSpinnerValue = text;
-                                              service = text;
-                                              services();
+                                  children: <Widget>[
+                                    SizedBox(height: 32),
+                                    DropdownButtonFormField<String>(
+                                      validator: (value) => value == null ? 'يجب اختيار الخدمة المقدمة' : null,
+                                      isExpanded: true,
+                                      onChanged: (String text) {
+                                        setState(() {
+                                          if ( text.isEmpty) {
+                                            error = 'يجب أختيار الخدمة';}
+                                          else
+                                            longSpinnerValue = text;
+                                          service = text;
+                                          services();
 
-                                            });
-                                          },
+                                        });
+                                      },
 
-                                          hint: new Text('أختر الخدمة'),
-                                          value: longSpinnerValue,
-                                          selectedItemBuilder: (
-                                              BuildContext context) {
-                                            return longItems.map<Widget>((
-                                                String text) {
-                                              return Text(text,
-                                                  overflow: TextOverflow
-                                                      .ellipsis);
-                                            }).toList();
-                                          },
-                                          items: longItems.map<
-                                              DropdownMenuItem<String>>((
-                                              String text) {
-                                            return DropdownMenuItem<String>(
-                                              value: text,
-                                              child: Text(text, maxLines: 1,
-                                                  overflow: TextOverflow
-                                                      .ellipsis),
-                                            );
-                                          }).toList(),
-                                        ),
-
-                                      ],
+                                      hint: new Text('أختر الخدمة'),
+                                      value: longSpinnerValue,
+                                      selectedItemBuilder: (
+                                          BuildContext context) {
+                                        return longItems.map<Widget>((
+                                            String text) {
+                                          return Text(text,
+                                              overflow: TextOverflow
+                                                  .ellipsis);
+                                        }).toList();
+                                      },
+                                      items: longItems.map<
+                                          DropdownMenuItem<String>>((
+                                          String text) {
+                                        return DropdownMenuItem<String>(
+                                          value: text,
+                                          child: Text(text, maxLines: 1,
+                                              overflow: TextOverflow
+                                                  .ellipsis),
+                                        );
+                                      }).toList(),
                                     ),
+
+                                  ],
+                                ),
 
 
 
                               ),
 
                               if(service == "تعليم و تدريب" ||service == "مجالسة" || service == "تجميل" || service == "تنظيم مناسبات" || service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء' ||service=='-أختر -'||service=='مربية أطفال'||service=='كبار السن'|| service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام'
-                                 || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي')
-                              Directionality(
-                                textDirection: TextDirection.rtl,
+                                  || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي')
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
 
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: <Widget>[
-                                    SizedBox(width: 50.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      SizedBox(width: 50.0),
 
-                                    Column(
-                                      children: <Widget>[
-                                        //SizedBox(height: 32),
-                                        DropdownButton<String>(
-                                          isExpanded: true,
-                                          value: longSpinnerValue2,
-                                          onChanged: (String text) {
-                                            setState(() {
-                                              if (text=='-أختر -' ||  text.isEmpty) {
-                                                error = 'يجب أختيار الخدمة';}
-                                              else
-                                              longSpinnerValue2 = text;
-                                              service=text;
-                                              subService = text;
-                                              services1();
+                                      Column(
+                                        children: <Widget>[
+                                          //SizedBox(height: 32),
+                                          DropdownButtonFormField<String>(
+                                            validator: (value) => value == null ? 'يجب اختيار الخدمة' : null,
+                                            isExpanded: true,
+                                            value: longSpinnerValue2,
+                                            onChanged: (String text) {
+                                              setState(() {
+                                                if (text=='-أختر -' ||  text.isEmpty) {
+                                                  error = 'يجب أختيار الخدمة';}
+                                                else
+                                                  longSpinnerValue2 = text;
+                                                service=text;
+                                                subService = text;
+                                                services1();
 
-                                            });
+                                              });
 
-                                          },
-                                          hint: new Text('- أختر -'),
-                                          selectedItemBuilder: (
-                                              BuildContext context) {
-                                            return longItems2.map<Widget>((
+                                            },
+                                            hint: new Text('- أختر -'),
+                                            selectedItemBuilder: (
+                                                BuildContext context) {
+                                              return longItems2.map<Widget>((
+                                                  String text) {
+                                                return Text(text,
+                                                    overflow: TextOverflow
+                                                        .ellipsis);
+                                              }).toList();
+                                            },
+                                            items: longItems2.map<
+                                                DropdownMenuItem<String>>((
                                                 String text) {
-                                              return Text(text,
-                                                  overflow: TextOverflow
-                                                      .ellipsis);
-                                            }).toList();
-                                          },
-                                          items: longItems2.map<
-                                              DropdownMenuItem<String>>((
-                                              String text) {
-                                            return DropdownMenuItem<String>(
-                                              value: text,
-                                              child: Text(text, maxLines: 1,
-                                                  overflow: TextOverflow
-                                                      .ellipsis),
-                                            );
-                                          }).toList(),
-                                        ),
+                                              return DropdownMenuItem<String>(
+                                                value: text,
+                                                child: Text(text, maxLines: 1,
+                                                    overflow: TextOverflow
+                                                        .ellipsis),
+                                              );
+                                            }).toList(),
+                                          ),
 
-                                      ],
-                                    ),
+                                        ],
+                                      ),
 
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
 
                               if (service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء')
-                              Directionality(
-                                textDirection: TextDirection.rtl,
-
-                                child: Column(
-                                  children: <Widget>[
-                                    SizedBox(width: 50.0),
-
-
-                                    Column(
-                                      children: <Widget>[
-                                        //SizedBox(height: 32),
-                                        DropdownButton<String>(
-                                          isExpanded: true,
-                                          value: longSpinnerValue3,
-                                          onChanged: (String text) {
-                                            setState(() {
-                                              if (text=='-أختر -'){
-                                                error = 'يجب أختيار الخدمة';}
-                                              else
-                                              longSpinnerValue3 = text;
-                                              service=text;
-                                              subService1 = text;
-                                            });
-                                          },
-                                          hint: new Text('-أختر -'),
-                                          selectedItemBuilder: (
-                                              BuildContext context) {
-                                            return longItems3.map<Widget>((
-                                                String text) {
-                                              return Text(text,
-                                                  overflow: TextOverflow
-                                                      .ellipsis);
-                                            }).toList();
-                                          },
-                                          items: longItems3.map<
-                                              DropdownMenuItem<String>>((
-                                              String text) {
-                                            return DropdownMenuItem<String>(
-                                              value: text,
-                                              child: Text(text, maxLines: 1,
-                                                  overflow: TextOverflow
-                                                      .ellipsis),
-                                            );
-                                          }).toList(),
-                                        ),
-
-                                      ],
-                                    ),
-
-                                  ],
-                                ),
-                              ),
-
-
-                               if(service=='كيمياء' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'||service=='مربية أطفال'||service=='كبار السن' || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي' || service=='تعليم و تدريب' || service=='دروس خصوصية' )
-                              Directionality(
+                                Directionality(
                                   textDirection: TextDirection.rtl,
-                                  child: TextFormField(
-                                    validator: (val) =>
-                                    val.isEmpty
-                                        ? "يجب تحديد السعر"
-                                        : null,
-                                    onChanged: (val) {
-                                      setState(() => price = val);
-                                    },
-                                    decoration: InputDecoration(
-                                        icon: Icon(Icons.monetization_on),
-                                        labelText: 'السعر بالساعة',
-                                        labelStyle: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey),
-                                        focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors
-                                                .lightBlueAccent))),
-                                  )
-                               ),
 
-                             if(service=='تنظيم مناسبات' || service=="تجميل " || service=='تصوير' || service=='إصلاح أجهزة ذكية' || service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام')
+                                  child: Column(
+                                    children: <Widget>[
+                                      SizedBox(width: 50.0),
+
+
+                                      Column(
+                                        children: <Widget>[
+                                          //SizedBox(height: 32),
+                                          DropdownButtonFormField<String>(
+                                            validator: (value) => value == null ? 'يجب اختيار الخدمة' : null,
+                                            isExpanded: true,
+                                            value: longSpinnerValue3,
+                                            onChanged: (String text) {
+                                              setState(() {
+                                                if (text=='-أختر -'){
+                                                  error = 'يجب أختيار الخدمة';}
+                                                else
+                                                  longSpinnerValue3 = text;
+                                                service=text;
+                                                subService1 = text;
+                                              });
+                                            },
+                                            hint: new Text('-أختر -'),
+                                            selectedItemBuilder: (
+                                                BuildContext context) {
+                                              return longItems3.map<Widget>((
+                                                  String text) {
+                                                return Text(text,
+                                                    overflow: TextOverflow
+                                                        .ellipsis);
+                                              }).toList();
+                                            },
+                                            items: longItems3.map<
+                                                DropdownMenuItem<String>>((
+                                                String text) {
+                                              return DropdownMenuItem<String>(
+                                                value: text,
+                                                child: Text(text, maxLines: 1,
+                                                    overflow: TextOverflow
+                                                        .ellipsis),
+                                              );
+                                            }).toList(),
+                                          ),
+
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+
+
+                              if(service=='كيمياء' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'||service=='مربية أطفال'||service=='كبار السن' || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي' || service=='تعليم و تدريب' || service=='دروس خصوصية' )
+                                Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: TextFormField(
+                                      validator: (val) =>
+                                      val.isEmpty
+                                          ? "يجب تحديد السعر"
+                                          : null,
+                                      onChanged: (val) {
+                                        setState(() => price = val);
+                                      },
+                                      decoration: InputDecoration(
+                                          icon: Icon(Icons.monetization_on),
+                                          labelText: 'السعر بالساعة',
+                                          labelStyle: TextStyle(
+                                              fontFamily: 'Montserrat',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: Colors
+                                                  .lightBlueAccent))),
+                                    )
+                                ),
+
+                              if(service=='تنظيم مناسبات' || service=="تجميل " || service=='تصوير' || service=='إصلاح أجهزة ذكية' || service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام')
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
@@ -502,27 +503,27 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
 
 
-                              SizedBox(height: 10.0),
-                              ButtonTheme(minWidth: 30.0, height: 10.0,
-                                  child: RaisedButton(onPressed:filePicker ,
-                                      color: Colors.white,
+                      SizedBox(height: 10.0),
+                      ButtonTheme(minWidth: 30.0, height: 10.0,
+                          child: RaisedButton(onPressed:filePicker ,
+                              color: Colors.white,
 
-                                      child: Row(children: <Widget>[
-                                        Text("   إضافة مرفقات  +            ",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 24.0,
-                                              fontFamily: 'Montserrat',)),
-                                        Icon(Icons.attach_file),
+                              child: Row(children: <Widget>[
+                                Text("   إضافة مرفقات  +            ",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24.0,
+                                      fontFamily: 'Montserrat',)),
+                                Icon(Icons.attach_file),
 
-                                      ]
-                                      )
-                                  )
-                              ),
+                              ]
+                              )
+                          )
+                      ),
 
-                              /*Directionality(
+                      /*Directionality(
                               textDirection: TextDirection.rtl,
                               child:Row(
                                 children: <Widget>[
@@ -532,15 +533,11 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       groupValue: group,
                                       activeColor: Colors.lightBlueAccent,
                                       onChanged: (T) {}),
-
-
                                   new Text("بالساعة"),
                                   new Radio(value: 1,
                                       groupValue: group,
                                       activeColor: Colors.lightBlueAccent,
                                       onChanged: (T) { })
-
-
                                 ],
                               ),
                           ),*/
@@ -636,7 +633,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (service == "تعليم و تدريب") {
-      longItems2 = ['-أختر -',
+      longItems2 = [
         'تدريب قيادة',
         'تحفيظ قرآن',
         'دروس خصوصية',
@@ -644,26 +641,26 @@ class _SignUp_SPState extends State<SignUp_SP> {
         'رقص',
         'موسيقي'
       ];
-      longSpinnerValue2 = longItems2 [0];
+     // longSpinnerValue2 = longItems2 [0];
     }
     else if (service == "تنظيم مناسبات") {
-      longItems2 = ['-أختر -','صبابات', 'تنسيق حفلات', 'تجهيز طعام'];
-      longSpinnerValue2 = longItems2 [0];
+      longItems2 = ['صبابات', 'تنسيق حفلات', 'تجهيز طعام'];
+     // longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
 
     else if (service == "تجميل") {
-      longItems2 = ['-أختر -','عناية واسترخاء', 'شعر', 'مكياج'];
-      longSpinnerValue2 = longItems2 [0];
+      longItems2 = ['عناية واسترخاء', 'شعر', 'مكياج'];
+    //  longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
 
 
     else if (service == "مجالسة") {
-      longItems2 = ['-أختر -','مربية أطفال', 'كبار السن'];
-      longSpinnerValue2 = longItems2 [0];
+      longItems2 = ['مربية أطفال', 'كبار السن'];
+    //  longSpinnerValue2 = longItems2 [0];
       longItems3 = ["لا يوجد فئة"];
       longSpinnerValue3 = longItems3 [0];
     }
@@ -681,7 +678,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // longSpinnerValue2= longItems2 [0];
 
     if (subService == "دروس خصوصية") {
-      longItems3 = ['-أختر -',
+      longItems3 = [
         'كيمياء',
         'فيزياء',
         'رياضيات',
@@ -689,7 +686,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
         'اللغة العربية',
         'المرحلة الابتدائية'
       ];
-      longSpinnerValue3 = longItems3 [0];
+     // longSpinnerValue3 = longItems3 [0];
     }
     else {
       // longItems2=["لا يوجد فئة"];
@@ -703,14 +700,14 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
   Future<void> _uploadFile(File file, String filename) async {
     StorageReference storageReference;
-      storageReference =
-          FirebaseStorage.instance.ref().child("images/$filename");
+    storageReference =
+        FirebaseStorage.instance.ref().child("images/$filename");
 
 
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
-   // print("URL is $url");
+    // print("URL is $url");
   }
 
 
@@ -721,15 +718,15 @@ class _SignUp_SPState extends State<SignUp_SP> {
     int randomNumber = random.nextInt(10000000);
     String randm=randomNumber.toString();
     try {
-        file = await FilePicker.getFile(type: FileType.IMAGE);
-        setState(() {
-          //fileName = p.basename(file.path);
+      file = await FilePicker.getFile(type: FileType.IMAGE);
+      setState(() {
+        //fileName = p.basename(file.path);
 
-          fileName=randm;
+        fileName=randm;
 
-        });
-        //print(fileName);
-        _uploadFile(file,randm);
+      });
+      //print(fileName);
+      _uploadFile(file,randm);
 
 
     } on Exception catch (e) {

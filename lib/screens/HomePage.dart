@@ -4,6 +4,7 @@ import 'package:yumnak/screens/Care.dart';
 import 'package:yumnak/screens/CustMyOrders.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifyCustInfo.dart';
+import 'package:yumnak/screens/SP_details.dart';
 import 'package:yumnak/screens/availableSP.dart';
 import 'package:yumnak/screens/beauty.dart';
 import 'package:yumnak/screens/events.dart';
@@ -61,8 +62,8 @@ class _HomePageState extends State<HomePage> {
                         leading: Icon(Icons.help),
                         title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                          //Navigator.push(context, new MaterialPageRoute(
-                          //  builder: (context) =>    ));
+                          Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) =>  SP_details()  ));
                         },
                       ),
                       new Divider(),

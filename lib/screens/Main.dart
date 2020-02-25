@@ -20,13 +20,15 @@ class _MainState extends State<Main> {
               child: Stack(
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.fromLTRB(65.0, 70.0, 0.0, 0.0),
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
                       child: Image(image:  AssetImage("assets/logo1.png"), width: 250.0, height: 250.0)
                   ),
                 ],
               ),
             ),
             Container(
+              width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.fromLTRB(70.0, 0.0, 5.0, 25.0),
               child: Text( 'الي ماتعداك',
                   style: TextStyle(
@@ -35,6 +37,7 @@ class _MainState extends State<Main> {
             ),
 
             Container(
+              width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.fromLTRB(160.0, 1.0, 5.0, 10.0),
               child: Text( '..أنا',
                   style: TextStyle(color: Colors.lightBlueAccent, fontWeight: FontWeight.bold, fontSize: 25.0, fontFamily: 'Montserrat',)
@@ -42,6 +45,7 @@ class _MainState extends State<Main> {
             ),
 
             Container(
+                width: MediaQuery.of(context).size.width,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[

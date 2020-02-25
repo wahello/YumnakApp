@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yumnak/models/privateTraining.dart';
+import 'package:yumnak/screens/privateTraining.dart';
 import 'availableSP.dart';
 
 class training extends StatefulWidget {
