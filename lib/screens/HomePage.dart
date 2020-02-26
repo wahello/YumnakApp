@@ -33,79 +33,79 @@ class _HomePageState extends State<HomePage> {
             child: Form(
                 key: _formKey,  //for validation
                 child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: ListView(
-                    children: <Widget>[
-                      new UserAccountsDrawerHeader(accountName: new Text(""), accountEmail: new Text(""),
-                          decoration: BoxDecoration(color: Colors.grey[50])
-                      ),
+                    textDirection: TextDirection.rtl,
+                    child: ListView(
+                      children: <Widget>[
+                        new UserAccountsDrawerHeader(accountName: new Text(""), accountEmail: new Text(""),
+                            decoration: BoxDecoration(color: Colors.grey[50])
+                        ),
 
-                      new ListTile(
-                        leading: Icon(Icons.home),
-                        title: new Text("الصفحة الرئيسية",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                        onTap: (){ Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) => HomePage()));},
-                      ),
-                      new Divider(),
+                        new ListTile(
+                          leading: Icon(Icons.home),
+                          title: new Text("الصفحة الرئيسية",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                          onTap: (){ Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) => HomePage()));},
+                        ),
+                        new Divider(),
 
-                      new ListTile(
-                        leading: Icon(Icons.list),
-                        title: new Text("طلباتي",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                        onTap: (){
-                          Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>  CustMyOrders()  ));
-                        },
-                      ),
-                      new Divider(),
-
-                      new ListTile(
-                        leading: Icon(Icons.help),
-                        title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                        onTap: (){
-                          Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) =>  SP_details()  ));
-                        },
-                      ),
-                      new Divider(),
-
-                      new ListTile(
-                        leading: Icon(Icons.settings),
-                        title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                        onTap: (){
+                        new ListTile(
+                          leading: Icon(Icons.list),
+                          title: new Text("طلباتي",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                          onTap: (){
                             Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) =>   ModifyCustInfo() ));
-                        },
-                      ),
-                      new Divider(),
-                      new Divider(),
+                                builder: (context) =>  CustMyOrders()  ));
+                          },
+                        ),
+                        new Divider(),
 
-                      new ListTile(
-                        leading: Icon(Icons.exit_to_app),
-                        title: new Text("تسجيل خروج",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                        onTap: () async {
-                          if (_formKey.currentState.validate()){
-                            dynamic result = await _auth.signOut();
-                            if(result == null){
-                              Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => Main()
-                              ));
-                            }else{
-                              Fluttertoast.showToast(
-                                  msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.CENTER,
-                                  timeInSecForIos: 20,
-                                  backgroundColor: Colors.red[100],
-                                  textColor: Colors.red[800]
-                              );
+                        new ListTile(
+                          leading: Icon(Icons.help),
+                          title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                          onTap: (){
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) =>  SP_details()  ));
+                          },
+                        ),
+                        new Divider(),
+
+                        new ListTile(
+                          leading: Icon(Icons.settings),
+                          title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                          onTap: (){
+                            Navigator.push(context, new MaterialPageRoute(
+                                builder: (context) =>   ModifyCustInfo() ));
+                          },
+                        ),
+                        new Divider(),
+                        new Divider(),
+
+                        new ListTile(
+                          leading: Icon(Icons.exit_to_app),
+                          title: new Text("تسجيل خروج",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                          onTap: () async {
+                            if (_formKey.currentState.validate()){
+                              dynamic result = await _auth.signOut();
+                              if(result == null){
+                                Navigator.push(context, new MaterialPageRoute(
+                                    builder: (context) => Main()
+                                ));
+                              }else{
+                                Fluttertoast.showToast(
+                                    msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIos: 20,
+                                    backgroundColor: Colors.red[100],
+                                    textColor: Colors.red[800]
+                                );
+                              }
+
                             }
-
-                          }
-                        },
-                      ),
-                      new Divider(),
-                    ],
-                  ))
+                          },
+                        ),
+                        new Divider(),
+                      ],
+                    ))
             )
 
         ),
@@ -142,8 +142,8 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) => Care()
-                          ));},
+                                builder: (context) => Care()
+                            ));},
                           child: Text("مجالسة", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
                           ),),

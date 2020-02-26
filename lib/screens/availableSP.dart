@@ -70,7 +70,7 @@ class _availableSPState extends State<availableSP> {
           data[key]['subService'],
           data[key]['uid'],
         );
-       await allData.add(d);
+        await allData.add(d);
       }
       SPData.clear();
       for (var i = 0; i < allData.length; i++) {
@@ -90,12 +90,12 @@ class _availableSPState extends State<availableSP> {
   Widget _buildList() {
     print(SPData);
     return ListView(
-          //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
-          children: <Widget>[
-            for (var i=0 ;i<SPData.length;i++)
-            _buildListItem(SPData[i])
-          ],
-        );
+      //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
+      children: <Widget>[
+        for (var i=0 ;i<SPData.length;i++)
+          _buildListItem(SPData[i])
+      ],
+    );
   }
 
 
@@ -161,26 +161,26 @@ class _availableSPState extends State<availableSP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: new Center(child: new Text(c, textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
-       // title: new Center(child: new Text("موفري الخدمة المتاحين", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
-       //automaticallyImplyLeading: false,     //عشان يروح سهم الرجوع
-        backgroundColor: Colors.grey[200],
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage()));},
-                child: Icon(
-                  Icons.home,
-                  color: Colors.black26,
-                  size: 26.0,),
-              )
+          title: new Center(child: new Text(c, textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
+          // title: new Center(child: new Text("موفري الخدمة المتاحين", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
+          //automaticallyImplyLeading: false,     //عشان يروح سهم الرجوع
+          backgroundColor: Colors.grey[200],
+          actions: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage()));},
+                  child: Icon(
+                    Icons.home,
+                    color: Colors.black26,
+                    size: 26.0,),
+                )
             ),
           ]
       ),
 
 
-        body: _buildList(),
+      body: _buildList(),
 //        Column(
 //            children: <Widget>[
 //            SizedBox(height: 20.0),
