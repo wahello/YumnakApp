@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yumnak/models/Customer.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/services/CurrentLocation.dart';
 import 'package:yumnak/services/auth.dart';
@@ -80,8 +79,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-
       body: Container(
         child: Form(
           key: _formKey,  //for validation
@@ -89,7 +86,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
             slivers: <Widget>[
 
               SliverList(
-
                 delegate: SliverChildListDelegate([
                   Container(
                     padding: EdgeInsets.fromLTRB(60.0, 60.0, 0.0, 0.0),
@@ -224,7 +220,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                 )
                             )
                         ),
-
                       ],
                     ),
                   ),
@@ -269,8 +264,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                               );
                               print("ZEFT Picked: $picked");
                             }
-
-
                           },
                           child: Center(
                             child: Text( 'تسجيل ',
@@ -283,7 +276,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                         ),
                       )
                   ),
-
                   SizedBox(height:20.0),
                 ]),
               ),
@@ -291,8 +283,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
           ),
         )
     )
-
-
     );
   }
 
@@ -326,4 +316,3 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     }
   }
 }
-

@@ -12,6 +12,7 @@ class _privateTrainingState extends State<privateTraining> {
     return Scaffold(
         appBar: new AppBar(
           backgroundColor: Colors.grey[200],
+          iconTheme: IconThemeData(color: Colors.black38),
         ),
 
 
@@ -19,12 +20,12 @@ class _privateTrainingState extends State<privateTraining> {
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-
+              SizedBox(height: 40.0),
               Container(
                 padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 10.0),
                 child: Text('دروس خصوصية', style: TextStyle(color: Colors.lightBlueAccent, fontSize: 40.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),),
               ),
-
+              SizedBox(height: 20.0),
               Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -44,7 +45,7 @@ class _privateTrainingState extends State<privateTraining> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.deepOrangeAccent,
+                          color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
                                 builder: (context) => availableSP("المرحلة الابتدائية")
@@ -65,7 +66,7 @@ class _privateTrainingState extends State<privateTraining> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.lightBlueAccent,
+                          child: RaisedButton(color: Colors.cyan[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
                                   builder: (context) => availableSP("رياضيات")
@@ -78,7 +79,7 @@ class _privateTrainingState extends State<privateTraining> {
                       SizedBox(
                         width: 130.0, height: 130.0,
                         child: RaisedButton(
-                          color: Colors.lightGreenAccent,
+                          color: Colors.green[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
                                 builder: (context) => availableSP("اللغة الإنجليزية")
@@ -99,7 +100,7 @@ class _privateTrainingState extends State<privateTraining> {
                     children: <Widget>[
                       SizedBox(
                           width: 130.0, height: 130.0,
-                          child: RaisedButton(color: Colors.amber,
+                          child: RaisedButton(color: Colors.purple[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
                                   builder: (context) => availableSP("كيمياء")
