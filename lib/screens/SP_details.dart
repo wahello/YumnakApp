@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yumnak/screens/HomePage.dart';
+import 'package:yumnak/screens/request_service.dart';
 
 class SP_details extends StatefulWidget {
   @override
@@ -8,11 +9,10 @@ class SP_details extends StatefulWidget {
 
 class _SP_detailsState extends State<SP_details>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
   }
 
   Future<void> showAttach(){
@@ -269,7 +269,7 @@ class _SP_detailsState extends State<SP_details>
                       borderRadius: BorderRadius.circular(20.0),
                       shadowColor: Colors.lightBlueAccent,
                       color: Colors.green[300],elevation: 3.0,
-                      child: GestureDetector(onTap: () { },
+                      child: GestureDetector(onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => request_service())); },
                         child: Center(
                           child: Text( 'طلب',
                             style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,

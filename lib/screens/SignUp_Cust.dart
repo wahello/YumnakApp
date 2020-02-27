@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:yumnak/models/Customer.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/services/CurrentLocation.dart';
 import 'package:yumnak/services/auth.dart';
 import "package:firebase_database/firebase_database.dart";
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 
 class SignUp_Cust extends StatefulWidget {
   @override
@@ -89,7 +86,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
             slivers: <Widget>[
 
               SliverList(
-
                 delegate: SliverChildListDelegate([
                   Container(
                     padding: EdgeInsets.fromLTRB(60.0, 60.0, 0.0, 0.0),
@@ -102,7 +98,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
 
                   Container(
                       padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                      child: Column (
+                      child: Column(
                         children: <Widget>[
                           Directionality(
                               textDirection: TextDirection.rtl,
@@ -208,7 +204,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                 color: Colors.grey[200],
                                 child: Row(
                                     children: <Widget>[
-
                                       Icon(
                                         Icons.add_location,
                                         color: Colors.grey[600],
@@ -221,13 +216,10 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 24.0,
                                             fontFamily: 'Montserrat',)),
-
                                     ]
-
                                 )
                             )
                         ),
-
                       ],
                     ),
                   ),
@@ -272,8 +264,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                               );
                               print("ZEFT Picked: $picked");
                             }
-
-
                           },
                           child: Center(
                             child: Text( 'تسجيل ',
@@ -286,7 +276,6 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                         ),
                       )
                   ),
-
                   SizedBox(height:20.0),
                 ]),
               ),
@@ -294,11 +283,8 @@ class _SignUp_CustState extends State<SignUp_Cust> {
           ),
         )
     )
-
-
     );
   }
-
 
   _pickLocation() async {
     pickedLoc = await Navigator.of(context).push(
@@ -330,4 +316,3 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     }
   }
 }
-
