@@ -8,6 +8,7 @@ class Home extends StatelessWidget {
 // مساء السكر
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Home Page"),
@@ -20,8 +21,6 @@ class Home extends StatelessWidget {
           })
         ],
       ),
-
-
 
     );
   }

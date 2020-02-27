@@ -8,6 +8,9 @@ class Addhours extends StatefulWidget {
   String email;
   Addhours(String email){this.email=email;}
   _AddhoursState createState() => _AddhoursState(email);
+
+
+
 }
 
 
@@ -101,6 +104,9 @@ class _AddhoursState extends State<Addhours> {
 
   String start;
   String end;
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +237,7 @@ class _AddhoursState extends State<Addhours> {
                           setState(() {
                            checkState();
                            _lights = false;
+                          // activated = true;
                           });
 
                         });

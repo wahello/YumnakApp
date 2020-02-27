@@ -39,12 +39,14 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   String price;
   //String attachment;
   //String loc;
-  String dbName;
+  String  dbName;
+
+  static int i=1;
 
 
 
-  @override
-  void initState() {
+  String Zft(){
+
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref.child('Service Provider').orderByChild("email").equalTo(e).
     once().then((DataSnapshot snap) async{
@@ -60,7 +62,31 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
       for (var i = 0; i < allData.length; i++) {
         dbName=allData[i].name.toString();
-        print(dbName);
+       // print(dbName);
+  }
+
+
+
+  @override
+  void initState() {
+Zft();
+//
+//    DatabaseReference ref = FirebaseDatabase.instance.reference();
+//    ref.child('Service Provider').orderByChild("email").equalTo(e).
+//    once().then((DataSnapshot snap) async{
+//      var keys = snap.value.keys;
+//      var data = snap.value;
+//
+//      allData.clear();
+//      myData d;
+//      for (var key1 in keys) {
+//        d = new myData(data[key1]['name']);
+//        await allData.add(d);
+//      }
+//
+//      for (var i = 0; i < allData.length; i++) {
+//        dbName=allData[i].name.toString();
+//        print(dbName);
       }
 
     } );
@@ -69,8 +95,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
   @override
   Widget build(BuildContext context) {
-
-String hint=dbName;
+String hint=Zft();
 print(hint);
 
 
@@ -142,7 +167,7 @@ print(hint);
                                 onChanged: (val){setState(() => name=val);},
                                 decoration: InputDecoration(
                                     labelText:  'الاسم',
-                                    hintText: dbName,
+                                    hintText: "$hint",
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: Colors.lightBlueAccent))),
@@ -317,4 +342,6 @@ print(hint);
 
       );
     }
+
+
 }

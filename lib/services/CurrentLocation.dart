@@ -5,14 +5,12 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
 
-
 class CurrentLocation extends StatefulWidget {
   @override
   _CurrentLocationState createState() => _CurrentLocationState();
 }
 
 class _CurrentLocationState extends State<CurrentLocation> {
-
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   Completer<GoogleMapController> _controller = Completer();
   Position positionCurrent;
@@ -28,7 +26,7 @@ class _CurrentLocationState extends State<CurrentLocation> {
   @override
   void initState() {
     super.initState();
-    _checkGPSAvailability();
+     _checkGPSAvailability();
   }
 
   void _checkGPSAvailability() async {

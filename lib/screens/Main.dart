@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yumnak/screens/SignIn_Cust.dart';
 import 'package:yumnak/screens/SignIn_SP.dart';
+import 'package:yumnak/services/location_service.dart';
 
 
 class Main extends StatefulWidget {
@@ -11,6 +12,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         backgroundColor: Colors.grey[200] ,
         body: Column(
@@ -66,7 +68,7 @@ class _MainState extends State<Main> {
                         color: Colors.white,
                         onPressed: () {
                           Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) => SignIn_Cust()
+                              builder: (context) => SignIn_Cust(),
                           ));
                           },
                         child: Text("أبحث عن خدمة  ", style: TextStyle(
