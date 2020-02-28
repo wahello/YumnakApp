@@ -1,16 +1,14 @@
 import 'dart:io';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:yumnak/services/auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:path/path.dart' as p;
 import 'dart:math';
-
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yumnak/services/CurrentLocation.dart';
+import 'Main.dart';
 
 class SignUp_SP extends StatefulWidget {
   @override
@@ -21,14 +19,12 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  final DatabaseReference database = FirebaseDatabase.instance.reference()
-      .child("Service Provider");
+  final DatabaseReference database = FirebaseDatabase.instance.reference().child("Service Provider");
 
   sendData() {
     database.push().set({
       'name': name,
       'email': email,
-      //'password': password,
       'uid': uid,
       'phoneNumber': phoneNumber,
       'gender': gender,
@@ -36,8 +32,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
       'qualifications': qualifications,
       'available':available,
       'fileName': fileName,
-      'price': price
-
+      'price': price,
+      'latitude':lat,
+      'longitude' :  lng,
+      'locComment': comment,
     });
   }
 
@@ -48,7 +46,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
   String error = "";
   var uid;
 
-  //bool Female;
   String phoneNumber = "";
   bool pass = false;
   int group = 1;
@@ -60,8 +57,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
   String qualifications;
   File sampleImage;
   String available="false";
-  // var services= ["1","3","3"];
-  //var type= ["1","2","3"];
 
   String fileType = '';
   File file;
@@ -71,6 +66,12 @@ class _SignUp_SPState extends State<SignUp_SP> {
   String result = '';
   String price;
 
+  Map<String, dynamic> pickedLoc;
+  var lat;
+  var lng;
+  String comment;
+  bool picked=false;
+  LatLng loc;
 
   static const List<String> longItems = const [
     'مجالسة',
@@ -81,15 +82,12 @@ class _SignUp_SPState extends State<SignUp_SP> {
     "تنظيم مناسبات"
   ];
 
-
   static List<String> longItems2 = [""];
   static List<String> longItems3 = [""];
-
 
   String longSpinnerValue;
   String longSpinnerValue2;
   String longSpinnerValue3;
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +117,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
                           padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                           child: Column(
                             children: <Widget>[
-
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(onChanged: (val) {
@@ -133,11 +130,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey),
                                         focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors
-                                                .lightBlueAccent))),
+                                            borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                   )
-
                               ),
+
                               Row(
                                 children: <Widget>[
                                   SizedBox(width: 100.0),
@@ -163,6 +159,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       })
                                 ],
                               ),
+
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
@@ -186,17 +183,14 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey),
                                         focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors
-                                                .lightBlueAccent))),
+                                            borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                   )
                               ),
+
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
-                                    validator: (val) =>
-                                    val.isEmpty
-                                        ? "ادخل البريد الألكتروني"
-                                        : null, //null means valid email
+                                    validator: (val) => val.isEmpty ? "ادخل البريد الألكتروني" : null,
                                     onChanged: (val) {
                                       setState(() => email = val);
                                     },
@@ -208,19 +202,15 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey),
                                         focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors
-                                                .lightBlueAccent))),
+                                            borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                   )
                               ),
-
 
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
                                     validator: (val) =>
-                                    val.length < 6
-                                        ? "يجب أن تكون كلمة المرور أكثر من ستة خانات"
-                                        : null, //null means valid password
+                                    val.length < 6 ? "يجب أن تكون كلمة المرور أكثر من ستة خانات" : null,
                                     onChanged: (val) {
                                       setState(() => password = val);
                                     },
@@ -232,21 +222,16 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey),
                                         focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors
-                                                .lightBlueAccent))),
+                                            borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                     obscureText: true,
                                   )
                               ),
 
-
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
-
-                                    validator: (val) =>
-                                    password.toString() != Vpassword.toString()
-                                        ? "كلمة المرور غير متطابقة "
-                                        : null, //null means valid password
+                                    validator: (val) => password.toString() != Vpassword.toString() ?
+                                    "كلمة المرور غير متطابقة " : null,
                                     onChanged: (val) {
                                       setState(() => Vpassword = val);
                                     },
@@ -268,8 +253,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 textDirection: TextDirection.rtl,
                                 child:Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
-
-
                                   children: <Widget>[
                                     SizedBox(height: 32),
                                     DropdownButtonFormField<String>(
@@ -277,101 +260,79 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       isExpanded: true,
                                       onChanged: (String text) {
                                         setState(() {
-                                          if ( text.isEmpty) {
+                                          if (text.isEmpty) {
                                             error = 'يجب أختيار الخدمة';}
                                           else
                                             longSpinnerValue = text;
+
                                           service = text;
                                           services();
-
                                         });
                                       },
-
                                       hint: new Text('أختر الخدمة'),
                                       value: longSpinnerValue,
-                                      selectedItemBuilder: (
-                                          BuildContext context) {
-                                        return longItems.map<Widget>((
-                                            String text) {
+                                      selectedItemBuilder: (BuildContext context) {
+                                        return longItems.map<Widget>((String text) {
                                           return Text(text,
-                                              overflow: TextOverflow
-                                                  .ellipsis);
+                                              overflow: TextOverflow.ellipsis);
                                         }).toList();
                                       },
-                                      items: longItems.map<
-                                          DropdownMenuItem<String>>((
-                                          String text) {
+                                      items: longItems.map<DropdownMenuItem<String>>((String text) {
                                         return DropdownMenuItem<String>(
                                           value: text,
                                           child: Text(text, maxLines: 1,
-                                              overflow: TextOverflow
-                                                  .ellipsis),
+                                              overflow: TextOverflow.ellipsis),
                                         );
                                       }).toList(),
                                     ),
-
                                   ],
                                 ),
-
-
-
                               ),
 
-                              if(service == "تعليم و تدريب" ||service == "مجالسة" || service == "تجميل" || service == "تنظيم مناسبات" || service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء' ||service=='-أختر -'||service=='مربية أطفال'||service=='كبار السن'|| service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام'
-                                  || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي')
+                              if(service == "تعليم و تدريب" ||service == "مجالسة" || service == "تجميل" || service == "تنظيم مناسبات" || service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'
+                                  ||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء' ||service=='-أختر -' ||service=='مربية أطفال'||service=='كبار السن'|| service=='عناية واسترخاء'|| service== 'شعر'||service== 'مكياج'
+                                  || service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام' || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='دروس بدية' || service=='رقص'|| service=='موسيقى')
                                 Directionality(
                                   textDirection: TextDirection.rtl,
-
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
                                       SizedBox(width: 50.0),
-
                                       Column(
                                         children: <Widget>[
-                                          //SizedBox(height: 32),
                                           DropdownButtonFormField<String>(
                                             validator: (value) => value == null ? 'يجب اختيار الخدمة' : null,
                                             isExpanded: true,
                                             value: longSpinnerValue2,
                                             onChanged: (String text) {
                                               setState(() {
-                                                if (text=='-أختر -' ||  text.isEmpty) {
-                                                  error = 'يجب أختيار الخدمة';}
+                                                if (text=='-أختر -' ||  text.isEmpty)
+                                                  error = 'يجب أختيار الخدمة';
                                                 else
                                                   longSpinnerValue2 = text;
+
                                                 service=text;
                                                 subService = text;
                                                 services1();
-
                                               });
-
                                             },
                                             hint: new Text('- أختر -'),
-                                            selectedItemBuilder: (
-                                                BuildContext context) {
-                                              return longItems2.map<Widget>((
-                                                  String text) {
+                                            selectedItemBuilder: (BuildContext context) {
+                                              return longItems2.map<Widget>((String text) {
                                                 return Text(text,
-                                                    overflow: TextOverflow
-                                                        .ellipsis);
+                                                    overflow: TextOverflow.ellipsis);
                                               }).toList();
                                             },
-                                            items: longItems2.map<
-                                                DropdownMenuItem<String>>((
-                                                String text) {
+                                            items: longItems2.map<DropdownMenuItem<String>>((String text) {
                                               return DropdownMenuItem<String>(
                                                 value: text,
                                                 child: Text(text, maxLines: 1,
-                                                    overflow: TextOverflow
-                                                        .ellipsis),
+                                                    overflow: TextOverflow.ellipsis),
                                               );
                                             }).toList(),
                                           ),
-
                                         ],
                                       ),
-
                                     ],
                                   ),
                                 ),
@@ -379,67 +340,54 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               if (service== "دروس خصوصية" || service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'|| service=='كيمياء')
                                 Directionality(
                                   textDirection: TextDirection.rtl,
-
                                   child: Column(
                                     children: <Widget>[
                                       SizedBox(width: 50.0),
-
-
                                       Column(
                                         children: <Widget>[
-                                          //SizedBox(height: 32),
                                           DropdownButtonFormField<String>(
                                             validator: (value) => value == null ? 'يجب اختيار الخدمة' : null,
                                             isExpanded: true,
                                             value: longSpinnerValue3,
                                             onChanged: (String text) {
                                               setState(() {
-                                                if (text=='-أختر -'){
-                                                  error = 'يجب أختيار الخدمة';}
+                                                if (text=='-أختر -')
+                                                  error = 'يجب أختيار الخدمة';
                                                 else
                                                   longSpinnerValue3 = text;
+
                                                 service=text;
                                                 subService1 = text;
                                               });
                                             },
                                             hint: new Text('-أختر -'),
-                                            selectedItemBuilder: (
-                                                BuildContext context) {
-                                              return longItems3.map<Widget>((
-                                                  String text) {
+                                            selectedItemBuilder: (BuildContext context) {
+                                              return longItems3.map<Widget>((String text) {
                                                 return Text(text,
-                                                    overflow: TextOverflow
-                                                        .ellipsis);
+                                                    overflow: TextOverflow.ellipsis);
                                               }).toList();
                                             },
-                                            items: longItems3.map<
-                                                DropdownMenuItem<String>>((
-                                                String text) {
+                                            items: longItems3.map<DropdownMenuItem<String>>((String text) {
                                               return DropdownMenuItem<String>(
                                                 value: text,
                                                 child: Text(text, maxLines: 1,
-                                                    overflow: TextOverflow
-                                                        .ellipsis),
+                                                    overflow: TextOverflow.ellipsis),
                                               );
                                             }).toList(),
                                           ),
-
                                         ],
                                       ),
-
                                     ],
                                   ),
                                 ),
 
-
-                              if(service=='كيمياء' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'||service=='مربية أطفال'||service=='كبار السن' || service=='تدريب قيادة'||service=='تحفيظ قرآن'||service=='تدريب رياضي' || service=='رقص'|| service=='موسيقي' || service=='تعليم و تدريب' || service=='دروس خصوصية' )
+                              if(service=='كيمياء' || service=='مجالسة' ||service=='فيزياء' || service=='رياضيات' || service=='اللغة الأنجليزية'||service=='اللغة العربية'||service=='المرحلة الابتدائية'||service=='مربية أطفال'||service=='كبار السن'
+                                  || service=='تدريب قيادة'||service=='تحفيظ قرآن' ||service=='دروس بدنية' || service=='رقص'|| service=='موسيقى' || service=='تعليم و تدريب' || service=='دروس خصوصية' )
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
                                       validator: (val) =>
-                                      val.isEmpty
-                                          ? "يجب تحديد السعر"
-                                          : null,
+                                      val.isEmpty ? "يجب تحديد السعر" : null,
                                       onChanged: (val) {
                                         setState(() => price = val);
                                       },
@@ -451,8 +399,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                               fontWeight: FontWeight.bold,
                                               color: Colors.grey),
                                           focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(color: Colors
-                                                  .lightBlueAccent))),
+                                              borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                     )
                                 ),
 
@@ -460,10 +407,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
-                                      validator: (val) =>
-                                      val.isEmpty
-                                          ? "يجب تحديد السعر"
-                                          : null,
+                                      validator: (val) => val.isEmpty ? "يجب تحديد السعر" : null,
                                       onChanged: (val) {
                                         setState(() => price = val);
                                       },
@@ -475,15 +419,17 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                               fontWeight: FontWeight.bold,
                                               color: Colors.grey),
                                           focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(color: Colors
-                                                  .lightBlueAccent))),
+                                              borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                     )
                                 ),
+
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(onChanged: (val) {
                                     setState(() => qualifications = val);
                                   },
+                                    maxLines: 6,
+                                    minLines: 2,
                                     decoration: InputDecoration(
                                         icon: Icon(Icons.subject),
                                         labelText: 'المؤهلات',
@@ -492,74 +438,94 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey),
                                         focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors
-                                                .lightBlueAccent))),
+                                            borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                   )
                               ),
                             ],
                           )
                       ),
 
+                      SizedBox(height: 20.0),
 
-
-
-                      SizedBox(height: 10.0),
-                      ButtonTheme(minWidth: 30.0, height: 10.0,
-                          child: RaisedButton(onPressed:filePicker ,
-                              color: Colors.white,
-
-                              child: Row(children: <Widget>[
-                                Text("   إضافة مرفقات  +            ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 24.0,
-                                      fontFamily: 'Montserrat',)),
-                                Icon(Icons.attach_file),
-
-                              ]
-                              )
-                          )
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width:75.0),
+                            ButtonTheme(
+                                minWidth: 30.0,
+                                height: 10.0,
+                                child: RaisedButton(
+                                    onPressed: filePicker,
+                                    color: Colors.grey[200],
+                                    child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.attach_file,
+                                            color: Colors.grey[600],
+                                          ),
+                                          Text("  إضافة المرفقات     ",
+                                              textDirection: TextDirection.rtl,
+                                              textAlign: TextAlign.justify,
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 24.0,
+                                                fontFamily: 'Montserrat',)),
+                                        ]
+                                    )
+                                )
+                            ),
+                          ],
+                        ),
                       ),
+                      SizedBox(height: 20.0),
 
-                      /*Directionality(
-                              textDirection: TextDirection.rtl,
-                              child:Row(
-                                children: <Widget>[
-                                  SizedBox(width: 100.0),
-                                  new Text("الحد الأدنى"),
-                                  new Radio(value: 2,
-                                      groupValue: group,
-                                      activeColor: Colors.lightBlueAccent,
-                                      onChanged: (T) {}),
-                                  new Text("بالساعة"),
-                                  new Radio(value: 1,
-                                      groupValue: group,
-                                      activeColor: Colors.lightBlueAccent,
-                                      onChanged: (T) { })
-                                ],
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width:20.0),
+                            Text('موقعك',
+                              style:TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Montserrat"
                               ),
-                          ),*/
+                            ),
 
-
-                      Container(
-                          padding: EdgeInsets.fromLTRB(300.0, 20.0, 0.0, .0),
-                          child: Text('موقعك',
-                            style:
-                            TextStyle(color: Colors.grey[600],
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Montserrat"),
-                          )),
-                      Container(
-                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
-                          child: Image(
-                            image: AssetImage("assets/map.png"),
-                            width: 40.0,
-                            height: 200.0,
-                          )
+                            SizedBox(width:20.0),
+                            ButtonTheme(
+                                minWidth: 30.0,
+                                height: 10.0,
+                                child: RaisedButton(
+                                    onPressed: _pickLocation,
+                                    color: Colors.grey[200],
+                                    child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.add_location,
+                                            color: Colors.grey[600],
+                                          ),
+                                          Text("  إضافة الموقع     ",
+                                              textDirection: TextDirection.rtl,
+                                              textAlign: TextAlign.justify,
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 24.0,
+                                                fontFamily: 'Montserrat',)),
+                                        ]
+                                    )
+                                )
+                            ),
+                          ],
+                        ),
                       ),
+
+                      SizedBox(height:40.0),
+
                       Container(
                           height: 40.0,
                           child: Material(
@@ -569,39 +535,36 @@ class _SignUp_SPState extends State<SignUp_SP> {
                             elevation: 7.0,
                             child: GestureDetector(
                               onTap: () async {
-                                if (_formKey.currentState.validate()) {
-                                  dynamic result = await _auth
-                                      .registerWithEmailAndPassword(
-                                      email, password);
-                                  if (result == null) {
-                                    setState(() =>
-                                    error = '  البريد الألكتروني غير صحيح');
-                                    Fluttertoast.showToast(
-                                        msg: " البريد الألكتروني غير صحيح أو مستخدم",
-                                        toastLength: Toast.LENGTH_LONG,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIos: 5,
-                                        backgroundColor: Colors.red[100],
-                                        textColor: Colors.red[800]
-                                    );
-                                  }
-                                  else {
-                                    uid = result;
+                                print("ZEFT Picked: $picked");
+                                if(picked){
+                                  if (_formKey.currentState.validate()) {
+                                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
 
-                                    if (password.toString() ==
-                                        Vpassword.toString())
-                                      pass = true;
-                                    if (pass){
-                                      sendData();
-                                      Fluttertoast.showToast(
-                                          msg: ("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني"),
-                                          toastLength: Toast.LENGTH_LONG,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIos: 20,
-                                          backgroundColor: Colors.red[100],
-                                          textColor: Colors.red[800]
-                                      );}
+                                    if (result == null) {
+                                      setState(() => error = '  البريد الإلكتروني مستخدم');
+                                    }
+                                    else {
+                                      uid = result;
+                                      if (password.toString() == Vpassword.toString())
+                                        pass = true;
+                                      if (pass){
+                                        sendData();
+                                        _showDialog();
+                                      }
+                                    }
+                                    print("ZEFT Picked: $picked");
                                   }
+                                }
+                                else{
+                                  Fluttertoast.showToast(
+                                      msg: ("الرجاء إضافة الموقع"),
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIos: 20,
+                                      backgroundColor: Colors.red[100],
+                                      textColor: Colors.red[800]
+                                  );
+                                  print("ZEFT Picked: $picked");
                                 }
                               },
                               child: Center(
@@ -620,7 +583,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
                     ]),
                   ),
-
                 ],
               ),
             )
@@ -628,18 +590,15 @@ class _SignUp_SPState extends State<SignUp_SP> {
     );
   }
 
-
   void services() {
-    // longSpinnerValue2= longItems2 [0];
-
     if (service == "تعليم و تدريب") {
       longItems2 = ['-أختر -',
         'تدريب قيادة',
         'تحفيظ قرآن',
         'دروس خصوصية',
-        'تدريب رياضي',
+        'دروس بدنية',
         'رقص',
-        'موسيقي'
+        'موسيقى'
       ];
       longSpinnerValue2 = longItems2 [0];
     }
@@ -673,10 +632,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     }
   } //end method
 
-
   void services1() {
-    // longSpinnerValue2= longItems2 [0];
-
     if (subService == "دروس خصوصية") {
       longItems3 = ['-أختر -',
         'كيمياء',
@@ -688,21 +644,16 @@ class _SignUp_SPState extends State<SignUp_SP> {
       ];
       longSpinnerValue3 = longItems3 [0];
     }
+
     else {
-      // longItems2=["لا يوجد فئة"];
       longItems3 = ["لا يوجد فئة"];
-      // longSpinnerValue2= longItems2 [0];
       longSpinnerValue3 = longItems3 [0];
     }
   } //end method
 
-
-
   Future<void> _uploadFile(File file, String filename) async {
     StorageReference storageReference;
-    storageReference =
-        FirebaseStorage.instance.ref().child("images/$filename");
-
+    storageReference = FirebaseStorage.instance.ref().child("images/$filename");
 
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
@@ -710,9 +661,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     // print("URL is $url");
   }
 
-
   Future filePicker() async {
-
     Random random = new Random();
     //int randomNumber = random.nextInt(100000000000) + 10;
     int randomNumber = random.nextInt(10000000);
@@ -721,13 +670,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
       file = await FilePicker.getFile(type: FileType.IMAGE);
       setState(() {
         //fileName = p.basename(file.path);
-
         fileName=randm;
-
       });
       //print(fileName);
       _uploadFile(file,randm);
-
 
     } on Exception catch (e) {
       showDialog(
@@ -747,7 +693,65 @@ class _SignUp_SPState extends State<SignUp_SP> {
             );
           }
       );
-    }}
+    }
+  }
 
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return Directionality(
+          textDirection: TextDirection.rtl,
 
-}//class
+          child: new AlertDialog(
+            title: new Text("تفعيل الحساب",style:TextStyle( )),
+            content: new Text("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("موافق"),
+                onPressed: () {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => Main()
+                  ));
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _pickLocation() async {
+    pickedLoc = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => CurrentLocation(),
+        fullscreenDialog: true,
+      ),
+    );
+
+    print("Zeft: $pickedLoc");
+
+    if (pickedLoc == null) {
+      return;
+    }
+    else{
+
+      lat=pickedLoc['latitude'];
+      lng=pickedLoc['longitude'];
+      comment=pickedLoc['comments'];
+      picked=pickedLoc['prickedLocation'];
+
+      print("Zeft: PickLocation latitude: $lat");
+      print("Zeft: PickLocation longitude: $lng");
+      print("Zeft: PickLocation comments: $comment");
+      print("Zeft: PickLocation comments: $picked");
+
+      loc=new LatLng(lat, lng);
+      print("Zeft: PickLocation LatLng: $loc");
+    }
+  }
+}

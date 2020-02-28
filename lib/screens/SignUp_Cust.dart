@@ -19,44 +19,12 @@ class _SignUp_CustState extends State<SignUp_Cust> {
 
   final DatabaseReference database= FirebaseDatabase.instance.reference().child("Customer");
 
-  void _showDialog() {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return Directionality(
-          textDirection: TextDirection.rtl,
-
-          child: new AlertDialog(
-            title: new Text("تفعيل الحساب",style:TextStyle( )),
-            content: new Text("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              new FlatButton(
-                child: new Text("موافق"),
-                onPressed: () {
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => Main()
-                  ));
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   sendData(){
     database.push().set({
       'name' : name,
       'email': email,
       'uid': uid,
       'phoneNumber': phoneNumber,
-      'latitude':lat,
-      'longitude' :  lng,
-      'locComment': comment,
     });
   }
 
@@ -236,12 +204,10 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                             print("ZEFT Picked: $picked");
                             if(picked){
                               if (_formKey.currentState.validate()) {
-                                dynamic result = await _auth.registerWithEmailAndPassword(
-                                    email, password);
+                                dynamic result = await _auth.registerWithEmailAndPassword(email, password);
 
                                 if (result == null) {
-                                  setState(() =>
-                                  error = '  البريد الألكتروني مستخدم');
+                                  setState(() => error = '  البريد الإلكتروني مستخدم');
                                 }
                                 else {
                                   uid = result;
@@ -249,10 +215,12 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                                     pass = true;
                                   if (pass){
                                     sendData();
-                                    _showDialog();}
+                                    _showDialog();
+                                  }
                                 }
                                 print("ZEFT Picked: $picked");
-                              }}
+                              }
+                            }
                             else{
                               Fluttertoast.showToast(
                                   msg: ("الرجاء إضافة الموقع"),
@@ -283,6 +251,35 @@ class _SignUp_CustState extends State<SignUp_Cust> {
           ),
         )
     )
+    );
+  }
+
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return Directionality(
+          textDirection: TextDirection.rtl,
+
+          child: new AlertDialog(
+            title: new Text("تفعيل الحساب",style:TextStyle( )),
+            content: new Text("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("موافق"),
+                onPressed: () {
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (context) => Main()
+                  ));
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
