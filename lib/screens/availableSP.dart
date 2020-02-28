@@ -20,9 +20,10 @@ List<myData> SPData = [];
 
 class myData {
   String email,name, phoneNumber, service,subService;
-  var uid;
+  var uid,price;
 
-  myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid);
+
+  myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid,this.price);
 }
 
 //--------------------------------------------------------------------
@@ -50,12 +51,9 @@ class _availableSPState extends State<availableSP> {
     print(c);
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future getData() async {
 
-    DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref.child('Service Provider').once().then((DataSnapshot snap) async {
+     await FirebaseDatabase.instance.reference().child('Service Provider').once().then((DataSnapshot snap) async {
       var keys = snap.value.keys;
       var data = snap.value;
 
@@ -69,8 +67,10 @@ class _availableSPState extends State<availableSP> {
           data[key]['service'],
           data[key]['subService'],
           data[key]['uid'],
+          data[key]['price'],
+
         );
-        await allData.add(d);
+         allData.add(d);
       }
       SPData.clear();
       for (var i = 0; i < allData.length; i++) {
@@ -78,17 +78,21 @@ class _availableSPState extends State<availableSP> {
           SPData.add(allData[i]);
         }
       }
-      for(var i=0; i<SPData.length; i++){
+     /* for(var i=0; i<SPData.length; i++){
         print(SPData[i].name);
         print(SPData[i].phoneNumber);
         print(SPData[i].service);
+        print(SPData[i].price);
+
       }
-      print("------------------------------");
+      print("------------------------------");*/
     });
-  }
+  return SPData;}
+
+
+
 
   Widget _buildList() {
-    print(SPData);
     return ListView(
       //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
       children: <Widget>[
@@ -130,7 +134,7 @@ class _availableSPState extends State<availableSP> {
                             padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                             child: Text("السعر",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                           ),
-                          Text("100")]
+                          Text(d.phoneNumber), ]
                     ),
                     Column(
                         children: <Widget>[
@@ -180,7 +184,24 @@ class _availableSPState extends State<availableSP> {
       ),
 
 
-      body: _buildList(),
+      body: Container(
+        child: FutureBuilder(
+          future: getData(),
+          builder: (BuildContext context,AsyncSnapshot snapshot){
+            if(!snapshot.hasData)
+              return Container(child: Text("Loading.."),);
+            else
+              return Container(
+                child: _buildList(),
+              );
+          },),
+      )
+
+
+
+      //_buildList(),
+
+
 //        Column(
 //            children: <Widget>[
 //            SizedBox(height: 20.0),

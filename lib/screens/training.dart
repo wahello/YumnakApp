@@ -21,12 +21,11 @@ class _trainingState extends State<training> {
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 40.0),
               Container(
                 padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 10.0),
                 child: Text('تعليم وتدريب', style: TextStyle(color: Colors.lightBlueAccent, fontSize: 40.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),),
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 10.0),
               Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
