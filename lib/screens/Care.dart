@@ -3,11 +3,19 @@ import 'availableSP.dart';
 
 
 class Care extends StatefulWidget {
+
+  dynamic uid;
+  Care(dynamic u){uid=u;}
+
   @override
-  _CareState createState() => _CareState();
+  _CareState createState() => _CareState(uid);
 }
 
 class _CareState extends State<Care> {
+
+  static dynamic uid;
+  _CareState(dynamic u){uid=u; print('Care: $uid');}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +45,7 @@ class _CareState extends State<Care> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("كبار السن")
+                                  builder: (context) => availableSP(uid, "كبار السن")
                               ));
                             },
                             child: Text("كبار السن",  textAlign: TextAlign.center ,style: TextStyle(
@@ -50,7 +58,7 @@ class _CareState extends State<Care> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("مربية أطفال")
+                                builder: (context) => availableSP(uid, "مربية أطفال")
                             ));
                           },
                           child: Text("مربية أطفال" ,textAlign: TextAlign.center ,style: TextStyle(

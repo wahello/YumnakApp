@@ -4,12 +4,17 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yumnak/services/RequestLocation.dart';
 
 class request_service extends StatefulWidget {
+  dynamic uid;
+  request_service(dynamic u){uid=u;}
+
   @override
-  _request_serviceState createState() => _request_serviceState();
+  _request_serviceState createState() => _request_serviceState(uid);
 }
 
 class _request_serviceState extends State<request_service> {
 
+  static dynamic uid;
+  _request_serviceState(dynamic u){uid=u; print('request_service: $uid');}
 
   static const List<String> hours_list = const [
     'ساعة واحدة', 'ساعتين', 'ثلاث ساعات',

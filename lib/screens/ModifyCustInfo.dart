@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:yumnak/screens/HomePage.dart';
 
 class ModifyCustInfo extends StatefulWidget {
+  dynamic uid;
+  ModifyCustInfo(dynamic u){uid=u;}
+
   @override
-  _ModifyCustInfoState createState() => _ModifyCustInfoState();
+  _ModifyCustInfoState createState() => _ModifyCustInfoState(uid);
 }
 
 class _ModifyCustInfoState extends State<ModifyCustInfo> {
+
+  static dynamic uid;
+  _ModifyCustInfoState(dynamic u){uid=u; print('ModifyCustInfo: $uid');}
 
   String name;
   String phone;
@@ -26,7 +32,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
             color: Colors.grey,
             onPressed: () {
               Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => HomePage()
+                  builder: (context) => HomePage(uid)
               ));},
           ),],
 

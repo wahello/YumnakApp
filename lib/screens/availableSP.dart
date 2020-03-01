@@ -4,10 +4,11 @@ import 'package:yumnak/screens/HomePage.dart';
 
 class availableSP extends StatefulWidget {
   String _cat;
-  availableSP(this._cat);
+  dynamic uid;
+  availableSP(this.uid, this._cat);
 
   @override
-  _availableSPState createState() => _availableSPState(_cat);
+  _availableSPState createState() => _availableSPState(uid, _cat);
 }
 
 //--------------------------------------------------------------------
@@ -15,13 +16,13 @@ class availableSP extends StatefulWidget {
 int countSP;
 List<myData> allData = [];
 List<myData> SPData = [];
+List<myData> dummySearchList = List<myData>();
 
 //--------------------------------------------------------------------
 
 class myData {
   String email,name, phoneNumber, service,subService;
-  var uid,price;
-
+  var uid, price;
 
   myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid,this.price);
 }
@@ -37,8 +38,9 @@ print(numbers);  // [two, four, three]
 */
 
 class _availableSPState extends State<availableSP> {
-
   String c;
+  dynamic uid;
+
   static const List<String> longItems = const [
     'التقييم الأعلى أولًا',
     'السعر الأقل أولًا',
@@ -46,9 +48,12 @@ class _availableSPState extends State<availableSP> {
   ];
   String longSpinnerValue;
 
-  _availableSPState(String cat){
+  _availableSPState(dynamic u, String cat){
+    uid=u;
+    print('availableSP: $uid');
     c=cat;
     print(c);
+
   }
 
   Future getData() async {
@@ -78,32 +83,70 @@ class _availableSPState extends State<availableSP> {
           SPData.add(allData[i]);
         }
       }
-     /* for(var i=0; i<SPData.length; i++){
-        print(SPData[i].name);
-        print(SPData[i].phoneNumber);
-        print(SPData[i].service);
-        print(SPData[i].price);
-
-      }
-      print("------------------------------");*/
     });
-  return SPData;}
-
-
-
+     return SPData;
+  }
 
   Widget _buildList() {
-    return ListView(
-      //  children: this._filteredRecords.records.map((data) => _buildListItem(context, data)).toList(),
-      children: <Widget>[
-        for (var i=0 ;i<SPData.length;i++)
-          _buildListItem(SPData[i])
-      ],
+    return Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 20.0),
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(10.0),
+              ),
+              DropdownButton<String>(
+                items: longItems.map<DropdownMenuItem<String>>((String text) {
+                  return DropdownMenuItem<String>(
+                    value: text,
+                    child: Text(text,
+                        style: TextStyle(fontSize:14, color: Colors.grey[600],),
+                        overflow: TextOverflow.fade),
+                  );
+                }).toList(),
+
+                selectedItemBuilder: (BuildContext context) {
+                  return longItems.map<Widget>((String text) {
+                    return Text(text, overflow: TextOverflow.fade);
+                  }).toList();
+                },
+
+                value: longSpinnerValue,
+                hint: new Text('  ...تـرتيـب بـحسب  '),
+
+                onChanged: (String text) {
+                  setState(() {
+                    longSpinnerValue = text;
+                    print(text);
+                    if(text=='السعر الأقل أولًا')
+                      sortByPrice();
+                  });
+                },
+
+                style: TextStyle(fontSize:18, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                underline: Container(height: 2, color: Colors.black12,),
+                icon: Icon(Icons.sort),
+              ),
+            ],
+          ),
+          new Expanded(
+            child: ListView.builder(
+                itemCount: SPData.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return _buildListItem(SPData[index]);
+                }
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-
   Widget _buildListItem(myData d) {
+    String pp= d.price.toString();
+
     return Card(
       margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 5.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -134,7 +177,7 @@ class _availableSPState extends State<availableSP> {
                             padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                             child: Text("السعر",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                           ),
-                          Text(d.phoneNumber), ]
+                          Text(pp), ]
                     ),
                     Column(
                         children: <Widget>[
@@ -161,6 +204,29 @@ class _availableSPState extends State<availableSP> {
     );
   }
 
+  void sortByPrice(){
+    print("zeft entered");
+    dummySearchList.clear();
+    dummySearchList.addAll(SPData);
+    dummySearchList.sort((a, b) => a.price.compareTo(b.price));
+    for(var i=0; i<dummySearchList.length; i++){
+      print(dummySearchList[i].price);
+    }
+
+    setState(() {
+      SPData.clear();
+      SPData.addAll(dummySearchList);
+
+      for(var i=0; i<SPData.length; i++) {
+      print(SPData[i].name);
+      print(SPData[i].phoneNumber);
+      print(SPData[i].service);
+      print(SPData[i].price);
+      print('============');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,7 +239,7 @@ class _availableSPState extends State<availableSP> {
             Padding(
                 padding: EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
-                  onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage()));},
+                  onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},
                   child: Icon(
                     Icons.home,
                     color: Colors.black26,
@@ -182,7 +248,6 @@ class _availableSPState extends State<availableSP> {
             ),
           ]
       ),
-
 
       body: Container(
         child: FutureBuilder(
@@ -196,65 +261,6 @@ class _availableSPState extends State<availableSP> {
               );
           },),
       )
-
-
-
-      //_buildList(),
-
-
-//        Column(
-//            children: <Widget>[
-//            SizedBox(height: 20.0),
-//            Row(
-//              children: <Widget>[
-//                Padding(
-//                  padding: EdgeInsets.all(10.0),
-//                ),
-//                DropdownButton<String>(
-//                  items: longItems.map<DropdownMenuItem<String>>((String text) {
-//                    return DropdownMenuItem<String>(
-//                      value: text,
-//                      child: Text(
-//                          text,
-//                          style: TextStyle(
-//                            fontSize:14,
-//                            color: Colors.grey[600],
-//                          ),
-//                          overflow: TextOverflow.fade),
-//                    );
-//                  }).toList(),
-//
-//                  selectedItemBuilder: (BuildContext context) {
-//                    return longItems.map<Widget>((String text) {
-//                      return Text(text, overflow: TextOverflow.fade);
-//                    }).toList();
-//                  },
-//
-//                  value: longSpinnerValue,
-//
-//                  hint: new Text('  ...تـرتيـب بـحسب  '),
-//
-//                  onChanged: (String text) {
-//                    setState(() {longSpinnerValue = text;});
-//                  },
-//
-//                  style: TextStyle(
-//                      fontSize:18,
-//                      fontWeight: FontWeight.bold,
-//                      color: Colors.grey[600]
-//                  ),
-//
-//                  underline: Container(
-//                    height: 2,
-//                    color: Colors.black12,
-//                  ),
-//
-//                  icon: Icon(Icons.sort),
-//                ),
-//              ],
-//            ),
-//          ],
-//        ),
     );
   }
 }

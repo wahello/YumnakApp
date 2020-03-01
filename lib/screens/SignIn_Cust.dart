@@ -167,7 +167,7 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                         else{
                                           print("This is uid "+result);
                                           Navigator.push(context, new MaterialPageRoute(
-                                              builder: (context) => HomePage()
+                                              builder: (context) => HomePage(result)
                                           ));
                                         }
                                       }

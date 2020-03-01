@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'availableSP.dart';
 
 class beauty extends StatefulWidget {
+
+  dynamic uid;
+  beauty(dynamic u){uid=u;}
+
   @override
-  _beautyState createState() => _beautyState();
+  _beautyState createState() => _beautyState(uid);
 }
 
 class _beautyState extends State<beauty> {
+
+  static dynamic uid;
+  _beautyState(dynamic u){uid=u; print('beauty: $uid');}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +44,7 @@ class _beautyState extends State<beauty> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("شعر")
+                                  builder: (context) => availableSP(uid,"شعر")
                               ));
                             },
                             child: Text("شعر",  textAlign: TextAlign.center ,style: TextStyle(
@@ -49,7 +57,7 @@ class _beautyState extends State<beauty> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("مكياج")
+                                builder: (context) => availableSP(uid, "مكياج")
                             ));
                           },
                           child: Text("مكياج" ,textAlign: TextAlign.center ,style: TextStyle(
@@ -73,7 +81,7 @@ class _beautyState extends State<beauty> {
                           color: Colors.green[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("عناية واسترخاء")
+                                builder: (context) => availableSP(uid, "عناية واسترخاء")
                             ));
                           },
                           child: Text("عناية واسترخاء", textAlign: TextAlign.center ,style: TextStyle(

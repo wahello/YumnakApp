@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:yumnak/screens/availableSP.dart';
 
 class privateTraining extends StatefulWidget {
+  dynamic uid;
+  privateTraining(dynamic u){uid=u;}
+
   @override
-  _privateTrainingState createState() => _privateTrainingState();
+  _privateTrainingState createState() => _privateTrainingState(uid);
 }
 
 class _privateTrainingState extends State<privateTraining> {
+  static dynamic uid;
+  _privateTrainingState(dynamic u){uid=u; print('privateTraining: $uid');}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +40,7 @@ class _privateTrainingState extends State<privateTraining> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("اللغة العربية")
+                                  builder: (context) => availableSP(uid, "اللغة العربية")
                               ));
                             },
                             child: Text("اللغة العربية", textAlign: TextAlign.center , style: TextStyle(
@@ -47,7 +53,7 @@ class _privateTrainingState extends State<privateTraining> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("المرحلة الابتدائية")
+                                builder: (context) => availableSP(uid, "المرحلة الابتدائية")
                             ));
                           },
                           child: Text("المرحلة الابتدائية", textAlign: TextAlign.center ,style: TextStyle(
@@ -68,7 +74,7 @@ class _privateTrainingState extends State<privateTraining> {
                           child: RaisedButton(color: Colors.cyan[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("رياضيات")
+                                  builder: (context) => availableSP(uid, "رياضيات")
                               ));
                             },
                             child: Text("رياضيات",  textAlign: TextAlign.center ,style: TextStyle(
@@ -81,7 +87,7 @@ class _privateTrainingState extends State<privateTraining> {
                           color: Colors.green[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("اللغة الإنجليزية")
+                                builder: (context) => availableSP(uid, "اللغة الإنجليزية")
                             ));
                           },
                           child: Text("اللغة الإنجليزية", textAlign: TextAlign.center ,style: TextStyle(
@@ -102,7 +108,7 @@ class _privateTrainingState extends State<privateTraining> {
                           child: RaisedButton(color: Colors.purple[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("كيمياء")
+                                  builder: (context) => availableSP(uid, "كيمياء")
                               ));
                             },
                             child: Text("كيمياء",  textAlign: TextAlign.center ,style: TextStyle(
@@ -115,7 +121,7 @@ class _privateTrainingState extends State<privateTraining> {
                           color: Colors.grey[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("فيزياء")
+                                builder: (context) => availableSP(uid, "فيزياء")
                             ));
                           },
                           child: Text("فيزياء" ,textAlign: TextAlign.center ,style: TextStyle(

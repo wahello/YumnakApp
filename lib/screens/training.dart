@@ -3,11 +3,18 @@ import 'package:yumnak/screens/privateTraining.dart';
 import 'availableSP.dart';
 
 class training extends StatefulWidget {
+  dynamic uid;
+  training(dynamic u){uid=u;}
+
   @override
-  _trainingState createState() => _trainingState();
+  _trainingState createState() => _trainingState(uid);
 }
 
 class _trainingState extends State<training> {
+
+  static dynamic uid;
+  _trainingState(dynamic u){uid=u; print('training: $uid');}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +42,7 @@ class _trainingState extends State<training> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("تحفيظ القرآن")
+                                  builder: (context) => availableSP(uid, "تحفيظ القرآن")
                               ));
                             },
                             child: Text("تحفيظ القرآن", textAlign: TextAlign.center , style: TextStyle(
@@ -48,7 +55,7 @@ class _trainingState extends State<training> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) => privateTraining()
+                              builder: (context) => privateTraining(uid)
                           ));
                             },
                           child: Text("دروس خصوصية", textAlign: TextAlign.center ,style: TextStyle(
@@ -69,7 +76,7 @@ class _trainingState extends State<training> {
                           child: RaisedButton(color: Colors.cyan[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("دروس بدنية")
+                                  builder: (context) => availableSP(uid, "دروس بدنية")
                               ));
                             },
                             child: Text("دروس بدنية",  textAlign: TextAlign.center ,style: TextStyle(
@@ -82,7 +89,7 @@ class _trainingState extends State<training> {
                           color: Colors.green[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("قيادة")
+                                builder: (context) => availableSP(uid, "قيادة")
                             ));
                           },
                           child: Text("قيادة", textAlign: TextAlign.center ,style: TextStyle(
@@ -103,7 +110,7 @@ class _trainingState extends State<training> {
                           child: RaisedButton(color: Colors.purple[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("موسيقى")
+                                  builder: (context) => availableSP(uid, "موسيقى")
                               ));
                             },
                             child: Text("موسيقى",  textAlign: TextAlign.center ,style: TextStyle(
@@ -116,7 +123,7 @@ class _trainingState extends State<training> {
                           color: Colors.grey[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("رقص")
+                                builder: (context) => availableSP(uid, "رقص")
                             ));
                           },
                           child: Text("رقص" ,textAlign: TextAlign.center ,style: TextStyle(

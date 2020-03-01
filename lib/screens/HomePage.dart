@@ -12,11 +12,17 @@ import 'package:yumnak/screens/training.dart';
 import 'package:yumnak/services/auth.dart';
 
 class HomePage extends StatefulWidget {
+  dynamic uid;
+  HomePage(dynamic u){uid=u;}
+
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState(uid);
 }
 
 class _HomePageState extends State<HomePage> {
+
+  static dynamic uid;
+  _HomePageState(dynamic u){uid=u; print('HomePage: $uid');}
 
   final AuthService  _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
@@ -45,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                           leading: Icon(Icons.home),
                           title: new Text("الصفحة الرئيسية",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){ Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) => HomePage()));},
+                              builder: (context) => HomePage(uid)));},
                         ),
                         new Divider(),
 
@@ -54,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                           title: new Text("طلباتي",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) =>  CustMyOrders()  ));
+                                builder: (context) =>  CustMyOrders(uid)  ));
                           },
                         ),
                         new Divider(),
@@ -64,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                           title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) =>  SP_details()  ));
+                                builder: (context) =>  SP_details(uid)  ));
                           },
                         ),
                         new Divider(),
@@ -74,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                           title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) =>   ModifyCustInfo() ));
+                                builder: (context) =>   ModifyCustInfo(uid) ));
                           },
                         ),
                         new Divider(),
@@ -129,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("إصلاح أجهزة ذكية")
+                                  builder: (context) => availableSP(uid, "إصلاح أجهزة ذكية")
                               ));
                             },
                             child: Text("إصلاح أجهزة ذكية", textAlign: TextAlign.center , style: TextStyle(
@@ -142,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => Care()
+                                builder: (context) => Care(uid)
                             ));},
                           child: Text("مجالسة", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
@@ -162,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                           child: RaisedButton(color: Colors.cyan[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("تصوير")
+                                  builder: (context) => availableSP(uid, "تصوير")
                               ));
                             },
                             child: Text("تصوير",  textAlign: TextAlign.center ,style: TextStyle(
@@ -174,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                         child: RaisedButton(
                           color: Colors.green[300],
                           onPressed: () {Navigator.push(context, new MaterialPageRoute(
-                              builder: (context) => beauty()
+                              builder: (context) => beauty(uid)
                           ));},
                           child: Text("تجميل", textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',
@@ -194,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                           child: RaisedButton(color: Colors.purple[200],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => events()
+                                  builder: (context) => events(uid)
                               ));},
                             child: Text("تنظيم مناسبات",  textAlign: TextAlign.center ,style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold,fontSize: 20.0, fontFamily: 'Montserrat', )),
@@ -206,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.grey[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => training()
+                                builder: (context) => training(uid)
                             ));},
                           child: Text("تعليم وتدريب" ,textAlign: TextAlign.center ,style: TextStyle(
                             color: Colors.black,fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat',

@@ -34,29 +34,28 @@ class _SignUp_SPState extends State<SignUp_SP> {
       'fileName': fileName,
       'price': price,
       'latitude':lat,
-      'longitude' :  lng,
+      'longitude' : lng,
       'locComment': comment,
     });
   }
 
   String name;
   String email = "";
+  String phoneNumber = "";
+  String service;
+  String qualifications;
+  String available="false";
+  var uid;
+  var gender = null;
+  double price;
+
   String password = "";
   String Vpassword = "";
   String error = "";
-  var uid;
-
-  String phoneNumber = "";
   bool pass = false;
   int group = 1;
-  var gender = null;
-  String service;
   String subService;
   String subService1;
-  bool enable = false;
-  String qualifications;
-  File sampleImage;
-  String available="false";
 
   String fileType = '';
   File file;
@@ -64,12 +63,11 @@ class _SignUp_SPState extends State<SignUp_SP> {
   String operationText = '';
   bool isUploaded = true;
   String result = '';
-  String price;
 
   Map<String, dynamic> pickedLoc;
   var lat;
   var lng;
-  String comment;
+  String comment='';
   bool picked=false;
   LatLng loc;
 
@@ -389,7 +387,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       validator: (val) =>
                                       val.isEmpty ? "يجب تحديد السعر" : null,
                                       onChanged: (val) {
-                                        setState(() => price = val);
+                                        setState(() {
+                                          double p= double.parse(val);
+                                          return price = p;
+                                        });
                                       },
                                       decoration: InputDecoration(
                                           icon: Icon(Icons.monetization_on),
@@ -409,7 +410,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                     child: TextFormField(
                                       validator: (val) => val.isEmpty ? "يجب تحديد السعر" : null,
                                       onChanged: (val) {
-                                        setState(() => price = val);
+                                        setState(() {
+                                          double p= double.parse(val);
+                                          return price = p;
+                                        });
                                       },
                                       decoration: InputDecoration(
                                           icon: Icon(Icons.monetization_on),

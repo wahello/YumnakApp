@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'availableSP.dart';
 
 class events extends StatefulWidget {
+  dynamic uid;
+  events(dynamic u){uid=u;}
+
   @override
-  _eventsState createState() => _eventsState();
+  _eventsState createState() => _eventsState(uid);
 }
 
 class _eventsState extends State<events> {
+  static dynamic uid;
+  _eventsState(dynamic u){uid=u; print('events: $uid');}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +41,7 @@ class _eventsState extends State<events> {
                           child: RaisedButton(color: Colors.grey[400],
                             onPressed: () {
                               Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => availableSP("منسقة حفلات")
+                                  builder: (context) => availableSP(uid, "منسقة حفلات")
                               ));
                             },
                             child: Text("منسقة حفلات",  textAlign: TextAlign.center ,style: TextStyle(
@@ -48,7 +54,7 @@ class _eventsState extends State<events> {
                           color: Colors.tealAccent[100],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("صبابات")
+                                builder: (context) => availableSP(uid, "صبابات")
                             ));
                           },
                           child: Text("صبابات" ,textAlign: TextAlign.center ,style: TextStyle(
@@ -72,7 +78,7 @@ class _eventsState extends State<events> {
                           color: Colors.green[300],
                           onPressed: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => availableSP("تجهيز طعام")
+                                builder: (context) => availableSP(uid, "تجهيز طعام")
                             ));
                           },
                           child: Text("تجهيز طعام", textAlign: TextAlign.center ,style: TextStyle(

@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:yumnak/screens/HomePage.dart';
 
 class CustMyOrders extends StatefulWidget {
+  dynamic uid;
+  CustMyOrders(dynamic u){uid=u;}
+
   @override
-  _CustMyOrdersState createState() => _CustMyOrdersState();
+  _CustMyOrdersState createState() => _CustMyOrdersState(uid);
 }
 
 class _CustMyOrdersState extends State<CustMyOrders> {
+
+  static dynamic uid;
+  _CustMyOrdersState(dynamic u){uid=u; print('CustMyOrders: $uid');}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +27,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
           color: Colors.grey,
           onPressed: () {
             Navigator.push(context, new MaterialPageRoute(
-                builder: (context) => HomePage()
+                builder: (context) => HomePage(uid)
             ));
           },
         ),],
