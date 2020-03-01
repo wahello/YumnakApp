@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:yumnak/screens/HomePage.dart';
+import 'package:yumnak/screens/SP_details.dart';
 
 class availableSP extends StatefulWidget {
   String _cat;
@@ -21,21 +23,29 @@ List<myData> dummySearchList = List<myData>();
 //--------------------------------------------------------------------
 
 class myData {
-  String email,name, phoneNumber, service,subService;
-  var uid, price;
+  String email,name, phoneNumber, service,subService,qualifications;
+  var uid, price,latitude,longitude;
+  var loc='';
 
-  myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid,this.price);
+  myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid,this.price,this.qualifications,this.longitude,this.latitude);
 }
 
 //--------------------------------------------------------------------
 
 
-/*   SORTING
-List<double> numbers = [1, 2, 3];
-// Sort from shortest to longest.
-numbers.sort((b, a) => a.compareTo(b));
-print(numbers);  // [two, four, three]
-*/
+List<Cust_myData> Custs = [];
+Cust_myData ct ;
+//--------------------------------------------------------------------
+
+class Cust_myData {
+  var uid,latitude,longitude;
+
+  Cust_myData(this.uid,this.longitude,this.latitude);
+}
+
+
+//--------------------------------------------------------------------
+
 
 class _availableSPState extends State<availableSP> {
   String c;
@@ -73,6 +83,9 @@ class _availableSPState extends State<availableSP> {
           data[key]['subService'],
           data[key]['uid'],
           data[key]['price'],
+          data[key]['qualifications'],
+          data[key]['longitude'],
+          data[key]['latitude'],
 
         );
          allData.add(d);
@@ -84,6 +97,41 @@ class _availableSPState extends State<availableSP> {
         }
       }
     });
+
+    await FirebaseDatabase.instance.reference().child('Customer').once().then((DataSnapshot snap) async {
+       var keys = snap.value.keys;
+       var data = snap.value;
+
+       Custs.clear();
+       Cust_myData d;
+       for (var key in keys) {
+         d = new Cust_myData(
+           data[key]['uid'],
+           data[key]['longitude'],
+           data[key]['latitude'],
+         );
+         Custs.add(d);
+       }
+
+       ct=null;
+       for (var i = 0; i < Custs.length; i++) {
+         if(Custs[i].uid == uid){
+           print("----------------");
+           print(Custs[i].uid);
+           ct = Custs[i];
+         }
+       }
+     });
+
+    for(var i=0; i< SPData.length; i++ ){
+      double ddd = await Geolocator().distanceBetween(ct.latitude, ct.longitude, SPData[i].latitude, SPData[i].longitude)/1000;
+      SPData[i].loc=ddd.toStringAsFixed(2);
+      print(SPData[i].loc);
+
+    }
+
+
+
      return SPData;
   }
 
@@ -145,64 +193,99 @@ class _availableSPState extends State<availableSP> {
   }
 
   Widget _buildListItem(myData d) {
-    String pp= d.price.toString();
 
-    return Card(
-      margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 5.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      elevation: 4.0,
+    return GestureDetector(
+      onTap: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => SP_details(uid,d.uid))),
+      child: Card(
+        margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 5.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        elevation: 4.0,
 
-      child: new Padding( padding: new EdgeInsets.all(10.0),
-        child: new Column(
-          children: <Widget>[
-            new Directionality(
-              textDirection: TextDirection.rtl,
 
-              child: new ListTile(
+        child: new Padding( padding: new EdgeInsets.all(10.0),
+          child: new Column(
+            children: <Widget>[
+              new Directionality(
+                textDirection: TextDirection.rtl,
+
+                child: new ListTile(
                   leading: Icon(Icons.account_circle , color:Colors.green[400], size:60),
                   title: Text(d.name,style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                  subtitle: Text(d.phoneNumber),
-                  onTap: () { /* react to the tile being tapped */ }
-              ),
+                  subtitle: Text(d.qualifications,overflow: TextOverflow.ellipsis,),
+                ),
 
-            ),
-            Directionality(
-              textDirection: TextDirection.rtl,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                            child: Text("السعر",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                          ),
-                          Text(pp), ]
-                    ),
-                    Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                            child: Text("المسافة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                          ),
-                          Text("xxxxx")]
-                    ),
-                    Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                            child: Text("التقييم",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
-                          ),
-                          Text("★ 5")]
-                    ),
-                  ]
               ),
-            ),
-          ],
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+
+                      if(d.service=='تصوير' || d.service=='إصلاح أجهزة ذكية' || d.service=='عناية واسترخاء'|| d.service== 'شعر'||d.service== 'مكياج'|| d.service=='صبابات'|| d.service=='تنسيق حفلات'|| d.service=='تجهيز طعام')
+                        Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child: Text("السعر كحد أدنى",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                            ),
+                            Text(d.price.toString()), ]
+                      )
+                      else
+                        Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                                child: Text("السعر بالساعة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                              ),
+                              Text(d.price.toString()), ]
+                        ),
+
+
+
+
+                      Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child: Text("المسافة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                            ),
+
+                            Text(d.loc)]
+                      ),
+                      Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child: Text("التقييم",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
+                            ),
+                            Text("★ 5")]
+                      ),
+                    ]
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+
+  /*Future getLoc(double latitude,double longitude) async {
+    print(ct.latitude);
+    print(ct.longitude);
+    print(latitude);
+    print(longitude);
+
+
+    double ddd = await Geolocator().distanceBetween(ct.latitude, ct.longitude, latitude, longitude)/1000;
+    print(ddd);
+    dis=null;
+    dis=ddd.toStringAsFixed(2);
+    print("Zeft: Claculate Distance: $dis km");
+      return dis;
+  }*/
+
 
   void sortByPrice(){
     print("zeft entered");
@@ -254,7 +337,7 @@ class _availableSPState extends State<availableSP> {
           future: getData(),
           builder: (BuildContext context,AsyncSnapshot snapshot){
             if(!snapshot.hasData)
-              return Container(child: Text("Loading.."),);
+              return Container(child: Center(child: Text("Loading.."),));
             else
               return Container(
                 child: _buildList(),

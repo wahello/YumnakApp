@@ -68,9 +68,9 @@ class _HomePageState extends State<HomePage> {
                         new ListTile(
                           leading: Icon(Icons.help),
                           title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                          onTap: (){
+                          onTap: (){/*
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) =>  SP_details(uid)  ));
+                                builder: (context) =>  SP_details(uid)  ));*/
                           },
                         ),
                         new Divider(),
