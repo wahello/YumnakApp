@@ -6,9 +6,9 @@ import 'package:yumnak/services/ModifyLocation.dart';
 class ModifySPInfo extends StatefulWidget {
   @override
 
-  String email;
-  ModifySPInfo(String email){this.email=email;}
-  _ModifySPInfoState createState() => _ModifySPInfoState(email);
+  String spID;
+  ModifySPInfo(String uid){this.spID=uid;}
+  _ModifySPInfoState createState() => _ModifySPInfoState(spID);
 }
 
 List<myData> allData = [];
@@ -18,15 +18,14 @@ List<myData> allData = [];
 class myData {
   String  name,phone,qualifications,price;
   myData(this.name);
-
 }
 
 class _ModifySPInfoState extends State<ModifySPInfo> {
 
   final  _formKey = GlobalKey<FormState>();
 
-  String e;
-  _ModifySPInfoState(String email){e=email;}
+  String spID;
+  _ModifySPInfoState(String uid){spID=uid;}
 
   String name;
   String phone;
@@ -45,7 +44,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   String Zft(){
 
     DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref.child('Service Provider').orderByChild("email").equalTo(e).
+    ref.child('Service Provider').orderByChild("uid").equalTo(spID).
     once().then((DataSnapshot snap) async{
       var keys = snap.value.keys;
       var data = snap.value;
@@ -60,34 +59,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       for (var i = 0; i < allData.length; i++) {
         dbName=allData[i].name.toString();
        // print(dbName);
-  }
-
-  @override
-  void initState() {
-Zft();
-//
-//    DatabaseReference ref = FirebaseDatabase.instance.reference();
-//    ref.child('Service Provider').orderByChild("email").equalTo(e).
-//    once().then((DataSnapshot snap) async{
-//      var keys = snap.value.keys;
-//      var data = snap.value;
-//
-//      allData.clear();
-//      myData d;
-//      for (var key1 in keys) {
-//        d = new myData(data[key1]['name']);
-//        await allData.add(d);
-//      }
-//
-//      for (var i = 0; i < allData.length; i++) {
-//        dbName=allData[i].name.toString();
-//        print(dbName);
       }
-
-    } );
+    });
   }
-
-
+  
   @override
   Widget build(BuildContext context) {
     String hint=Zft();
@@ -98,7 +73,7 @@ Zft();
       var key;
 
       DatabaseReference ref = FirebaseDatabase.instance.reference();
-      ref.child('Service Provider').orderByChild("email").equalTo(e).
+      ref.child('Service Provider').orderByChild("uid").equalTo(spID).
       once().then(
               (DataSnapshot snap) async {
                 _keys = snap.value.keys;

@@ -166,7 +166,7 @@ class _SignIn_SPState extends State<SignIn_SP> {
                                         }else{
                                           print("This is uid "+result);
                                           Navigator.push(context, new MaterialPageRoute(
-                                              builder: (context) => SP_HomePage(email)
+                                              builder: (context) => SP_HomePage(result)
                                           ));
                                         }
                                       }

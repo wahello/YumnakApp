@@ -5,19 +5,12 @@ import "dart:core";
 
 class Addhours extends StatefulWidget {
   @override
-  String email;
-  Addhours(String email){this.email=email;}
-  _AddhoursState createState() => _AddhoursState(email);
-
-
-
+  String spID;
+  Addhours(String uid){this.spID=uid;}
+  _AddhoursState createState() => _AddhoursState(spID);
 }
-
-
-
 //--------------------------------------------------------------------
 List<myData> allData = [];
-
 
 //--------------------------------------------------------------------
 
@@ -31,8 +24,8 @@ class myData {
 
 class _AddhoursState extends State<Addhours> {
 
-  String e;
-  _AddhoursState(String email){e=email;}
+  String spID;
+  _AddhoursState(String uid){spID=uid;}
 
 
   static const List<String> startTime = const [
@@ -51,7 +44,7 @@ class _AddhoursState extends State<Addhours> {
    Future checkState() async{
 
     DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref.child('Service Provider').orderByChild("email").equalTo(e).
+    ref.child('Service Provider').orderByChild("uid").equalTo(spID).
     once().then((DataSnapshot snap) async{
     var keys = snap.value.keys;
     var data = snap.value;
@@ -79,7 +72,7 @@ class _AddhoursState extends State<Addhours> {
 
 
      DatabaseReference ref = FirebaseDatabase.instance.reference();
-     ref.child('Service Provider').orderByChild("email").equalTo(e).
+     ref.child('Service Provider').orderByChild("uid").equalTo(spID).
      once().then(
              (DataSnapshot snap) async {
        _keys = snap.value.keys;

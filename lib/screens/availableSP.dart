@@ -15,12 +15,9 @@ class availableSP extends StatefulWidget {
 
 //--------------------------------------------------------------------
 
-int countSP;
 List<myData> allData = [];
 List<myData> SPData = [];
-List<myData> dummySearchList = List<myData>();
-
-//--------------------------------------------------------------------
+List<myData> dummyList = List<myData>();
 
 class myData {
   String email,name, phoneNumber, service,subService,qualifications;
@@ -32,10 +29,8 @@ class myData {
 
 //--------------------------------------------------------------------
 
-
 List<Cust_myData> Custs = [];
 Cust_myData ct ;
-//--------------------------------------------------------------------
 
 class Cust_myData {
   var uid,latitude,longitude;
@@ -43,19 +38,12 @@ class Cust_myData {
   Cust_myData(this.uid,this.longitude,this.latitude);
 }
 
-
 //--------------------------------------------------------------------
 
-
 class _availableSPState extends State<availableSP> {
+
   String c;
   dynamic uid;
-
-  static const List<String> longItems = const [
-    'التقييم الأعلى أولًا',
-    'السعر الأقل أولًا',
-    'المسافة الأقرب أولًا',
-  ];
   String longSpinnerValue;
 
   _availableSPState(dynamic u, String cat){
@@ -66,8 +54,14 @@ class _availableSPState extends State<availableSP> {
 
   }
 
-  Future getData() async {
+  static const List<String> longItems = const [
+    'التقييم الأعلى أولًا',
+    'السعر الأقل أولًا',
+    'المسافة الأقرب أولًا',
+  ];
 
+  Future getData() async {
+    //print("===================================getData===================================");
      await FirebaseDatabase.instance.reference().child('Service Provider').once().then((DataSnapshot snap) async {
       var keys = snap.value.keys;
       var data = snap.value;
@@ -86,7 +80,6 @@ class _availableSPState extends State<availableSP> {
           data[key]['qualifications'],
           data[key]['longitude'],
           data[key]['latitude'],
-
         );
          allData.add(d);
       }
@@ -116,8 +109,8 @@ class _availableSPState extends State<availableSP> {
        ct=null;
        for (var i = 0; i < Custs.length; i++) {
          if(Custs[i].uid == uid){
-           print("----------------");
-           print(Custs[i].uid);
+           //print("----------------");
+           //print(Custs[i].uid);
            ct = Custs[i];
          }
        }
@@ -126,12 +119,9 @@ class _availableSPState extends State<availableSP> {
     for(var i=0; i< SPData.length; i++ ){
       double ddd = await Geolocator().distanceBetween(ct.latitude, ct.longitude, SPData[i].latitude, SPData[i].longitude)/1000;
       SPData[i].loc=ddd.toStringAsFixed(2);
-      print(SPData[i].loc);
-
+      //print(SPData[i].loc);
     }
-
-
-
+     sortByDistance();
      return SPData;
   }
 
@@ -170,6 +160,8 @@ class _availableSPState extends State<availableSP> {
                     print(text);
                     if(text=='السعر الأقل أولًا')
                       sortByPrice();
+                    if(text=='المسافة الأقرب أولًا')
+                      sortByDistance();
                   });
                 },
 
@@ -201,7 +193,6 @@ class _availableSPState extends State<availableSP> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         elevation: 4.0,
 
-
         child: new Padding( padding: new EdgeInsets.all(10.0),
           child: new Column(
             children: <Widget>[
@@ -221,7 +212,8 @@ class _availableSPState extends State<availableSP> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
 
-                      if(d.service=='تصوير' || d.service=='إصلاح أجهزة ذكية' || d.service=='عناية واسترخاء'|| d.service== 'شعر'||d.service== 'مكياج'|| d.service=='صبابات'|| d.service=='تنسيق حفلات'|| d.service=='تجهيز طعام')
+                      if(d.service=='تصوير' || d.service=='إصلاح أجهزة ذكية' || d.service=='عناية واسترخاء'|| d.service== 'شعر'||
+                          d.service== 'مكياج'|| d.service=='صبابات'|| d.service=='تنسيق حفلات'|| d.service=='تجهيز طعام')
                         Column(
                           children: <Widget>[
                             Padding(
@@ -240,9 +232,6 @@ class _availableSPState extends State<availableSP> {
                               Text(d.price.toString()), ]
                         ),
 
-
-
-
                       Column(
                           children: <Widget>[
                             Padding(
@@ -250,7 +239,7 @@ class _availableSPState extends State<availableSP> {
                               child: Text("المسافة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                             ),
 
-                            Text(d.loc)]
+                            Text(d.loc+' كم')]
                       ),
                       Column(
                           children: <Widget>[
@@ -270,7 +259,6 @@ class _availableSPState extends State<availableSP> {
     );
   }
 
-
   /*Future getLoc(double latitude,double longitude) async {
     print(ct.latitude);
     print(ct.longitude);
@@ -286,27 +274,48 @@ class _availableSPState extends State<availableSP> {
       return dis;
   }*/
 
-
-  void sortByPrice(){
-    print("zeft entered");
-    dummySearchList.clear();
-    dummySearchList.addAll(SPData);
-    dummySearchList.sort((a, b) => a.price.compareTo(b.price));
-    for(var i=0; i<dummySearchList.length; i++){
-      print(dummySearchList[i].price);
-    }
+  void sortByDistance(){
+    //print("zeft sortByDistance entered");
+    dummyList.clear();
+    dummyList.addAll(SPData);
+    dummyList.sort((a, b) => a.loc.compareTo(b.loc));
+//    for(var i=0; i<dummyList.length; i++){
+//      print(dummyList[i].loc);
+//    }
 
     setState(() {
       SPData.clear();
-      SPData.addAll(dummySearchList);
+      SPData.addAll(dummyList);
 
-      for(var i=0; i<SPData.length; i++) {
-      print(SPData[i].name);
-      print(SPData[i].phoneNumber);
-      print(SPData[i].service);
-      print(SPData[i].price);
-      print('============');
-      }
+//      for(var i=0; i<SPData.length; i++) {
+//        print(SPData[i].name);
+//        print(SPData[i].price);
+//        print(SPData[i].loc);
+//        print('============');
+//      }
+    });
+  }
+
+  void sortByPrice(){
+    //print("zeft sortByPrice entered");
+    dummyList.clear();
+    dummyList.addAll(SPData);
+    dummyList.sort((a, b) => a.price.compareTo(b.price));
+//    for(var i=0; i<dummyList.length; i++){
+//      print(dummyList[i].price);
+//    }
+
+    setState(() {
+      SPData.clear();
+      SPData.addAll(dummyList);
+
+//      for(var i=0; i<SPData.length; i++) {
+//      print(SPData[i].name);
+//      print(SPData[i].phoneNumber);
+//      print(SPData[i].service);
+//      print(SPData[i].price);
+//      print('============');
+//      }
     });
   }
 
@@ -314,9 +323,8 @@ class _availableSPState extends State<availableSP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-          title: new Center(child: new Text(c, textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
-          // title: new Center(child: new Text("موفري الخدمة المتاحين", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
-          //automaticallyImplyLeading: false,     //عشان يروح سهم الرجوع
+          title: new Center(child: new Text(c, textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
           backgroundColor: Colors.grey[200],
           actions: <Widget>[
             Padding(

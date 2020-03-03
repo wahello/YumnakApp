@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:yumnak/screens/HomePage.dart';
+import 'package:yumnak/screens/request_service.dart';
 
 
 class SP_details extends StatefulWidget {
@@ -13,14 +14,8 @@ class SP_details extends StatefulWidget {
   _SP_detailsState createState() => _SP_detailsState(uid,SPuid);
 }
 
-
-
 List<myData> all = [];
 myData sp ;
-
-
-
-//--------------------------------------------------------------------
 
 class myData {
   String name;
@@ -37,7 +32,6 @@ class myData {
 
 List<myData_Cust> allCust = [];
 myData_Cust cust ;
-//--------------------------------------------------------------------
 
 class myData_Cust {
   var uid,latitude,longitude;
@@ -45,13 +39,9 @@ class myData_Cust {
   myData_Cust(this.uid,this.longitude,this.latitude);
 }
 
-
 //--------------------------------------------------------------------
 double distanceInMeters;
 String s;
-
-
-
 
 
 class _SP_detailsState extends State<SP_details> {
@@ -61,7 +51,7 @@ class _SP_detailsState extends State<SP_details> {
 
   _SP_detailsState(dynamic u,dynamic SPu){
     uid=u; SPuid=SPu;
-    print('SP_details: $uid');print('SP_details: $SPuid');
+    print('SP_details: $uid');print('SP_details SPUID: $SPuid');
   }
 
 
@@ -70,7 +60,7 @@ class _SP_detailsState extends State<SP_details> {
     await FirebaseDatabase.instance.reference().child('Service Provider').once().then((DataSnapshot snap) async {
       var keys = snap.value.keys;
       var data = snap.value;
-      print(data);
+      //print(data);
 
       all.clear();
       myData d;
@@ -91,7 +81,7 @@ class _SP_detailsState extends State<SP_details> {
       sp=null;
       for (var i = 0; i < all.length; i++) {
         if(all[i].uid == SPuid){
-          print(all[i].name);
+          //print(all[i].name);
           sp=all[i];
         }
       }
@@ -99,8 +89,6 @@ class _SP_detailsState extends State<SP_details> {
     await FirebaseDatabase.instance.reference().child('Customer').once().then((DataSnapshot snap) async {
       var keys = snap.value.keys;
       var data = snap.value;
-
-
 
       allCust.clear();
       myData_Cust d;
@@ -116,7 +104,7 @@ class _SP_detailsState extends State<SP_details> {
       cust=null;
       for (var i = 0; i < allCust.length; i++) {
         if(allCust[i].uid == uid){
-          print(allCust[i].uid);
+          //print(allCust[i].uid);
           cust=allCust[i];
         }
       }
@@ -124,15 +112,11 @@ class _SP_detailsState extends State<SP_details> {
 
     distanceInMeters = await Geolocator().distanceBetween(cust.latitude, cust.longitude, sp.latitude, sp.longitude)/1000;
      s=distanceInMeters.toStringAsFixed(2);
-    print("Zeft: Claculate Distance: $distanceInMeters km");
+    //print("Zeft: Claculate Distance: $distanceInMeters km");
 
 
     return sp;
   }
-
-
-
-
 
   Future<void> showAttach(){
     return showDialog<void>(
@@ -267,7 +251,7 @@ class _SP_detailsState extends State<SP_details> {
                             ),
                           ),
                           Text(sp.qualifications,
-                            textAlign: TextAlign.start,
+                            textAlign: TextAlign.right,
                             overflow: TextOverflow.visible,
                             textDirection: TextDirection.rtl,
                           )
@@ -413,6 +397,7 @@ class _SP_detailsState extends State<SP_details> {
                 ),
 
               ),
+
               SizedBox(height: 20),
               Container(
                   height: 40.0,
@@ -420,7 +405,7 @@ class _SP_detailsState extends State<SP_details> {
                     borderRadius: BorderRadius.circular(20.0),
                     shadowColor: Colors.lightBlueAccent,
                     color: Colors.green[300],elevation: 3.0,
-                    child: GestureDetector(onTap: () {},
+                    child: GestureDetector(onTap: () {Navigator.push(context, new MaterialPageRoute(builder: (context) => request_service(uid, SPuid)));},
                       child: Center(
                         child: Text( 'طلب',
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
