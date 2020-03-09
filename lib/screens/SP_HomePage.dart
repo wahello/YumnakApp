@@ -186,7 +186,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                         leading: Icon(Icons.access_time),
                         title: new Text("أوقات عملي المتاحة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                         Navigator.push(context, new MaterialPageRoute(
+                         Navigator.push(context, MaterialPageRoute(
                               builder: (context) =>  Addhours(spID)  ));
                         },
                       ),
