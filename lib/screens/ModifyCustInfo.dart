@@ -1,5 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/HomePage.dart';
+import 'package:yumnak/services/auth.dart';
 
 class ModifyCustInfo extends StatefulWidget {
   dynamic uid;
@@ -9,15 +12,70 @@ class ModifyCustInfo extends StatefulWidget {
   _ModifyCustInfoState createState() => _ModifyCustInfoState(uid);
 }
 
+
+
+class myData {
+  String name;
+  String phoneNumber;
+  String email;
+  myData(this.name,this.phoneNumber,this.email);
+}
+
+
+
 class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
   static dynamic uid;
   _ModifyCustInfoState(dynamic u){uid=u; print('ModifyCustInfo: $uid');}
 
+  final AuthService  _auth = AuthService();
+  final  _formKey = GlobalKey<FormState>();
   String name;
-  String phone;
+  String phoneNumber;
+  String email;
+
+  String newName;
+  String newPhoneNumber;
 
   var _controller = TextEditingController();
+
+
+
+  List<myData> allData = [];
+  var keys;
+
+  Future getCust() async{
+    myData d;
+
+    await FirebaseDatabase.instance.reference()
+    .child('Customer').orderByChild("uid").equalTo(uid).once().then((DataSnapshot snap) async {
+      keys = snap.value.keys;
+      var data = snap.value;
+
+      allData.clear();
+
+      for (var key in keys) {
+        d = new myData(
+            data[key]['name'],
+            data[key]['phoneNumber'],
+            data[key]['email'],
+
+        );
+        await allData.add(d);
+      }
+    });
+    if (allData[0] != null ){
+    name=allData[0].name;
+    phoneNumber=allData[0].phoneNumber;
+    email=allData[0].email;
+    }
+
+
+  return allData;}
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,120 +95,167 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
           ),],
 
       ),
-      body: CustomScrollView(
-        slivers: <Widget>[
+      body: FutureBuilder(
+        future: getCust(),
+        builder: (BuildContext context,AsyncSnapshot snapshot){
+          if(!snapshot.hasData)
+            return Container(child: Center(child: Text("Loading.."),));
+          else
+            return Container(
+              child: Form(
+                key: _formKey,
+                child: CustomScrollView(
+                  slivers: <Widget>[
 
-          SliverList(
+                    SliverList(
 
-            delegate: SliverChildListDelegate([
-             /* Container(
-                padding: EdgeInsets.fromLTRB(90.0, 0.0, 0.0, 0.0),
-                child: Text('إعدادات الحساب',
-                  style:
-                  TextStyle(color: Colors.lightBlueAccent, fontSize: 30.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                ),
-              ),
-*/
-              Container(
-                  padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                  child: Column(
-                    children: <Widget>[
-                      Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:TextFormField(
-                            onChanged: (val){setState(() => name=val);},
-                            decoration: InputDecoration(
-                                labelText:  'الاسم',
-                                labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                          )
-                      ),
-                      Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:TextFormField(
-                            onChanged: (val){setState(() => phone=val);},
-                            decoration: InputDecoration(
-                                labelText:  'رقم الجوال',
-                                labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                          )
-                      ),
-                   /*   Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:TextField(
-                            decoration: InputDecoration(
-                                labelText:  'البريد الإلكتروني',
-                                labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                          )
-                      ),*/
-                      SizedBox(height:20.0),
+                      delegate: SliverChildListDelegate([
+                        Container(
+                            padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
+                            child: Column(
+                              children: <Widget>[
+                                Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child:TextFormField(
+                                      onChanged: (val){setState(() => newName=val);},
+                                      decoration: InputDecoration(
+                                          hintText: name,
+                                          labelText:  'الاسم',
+                                          labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
+                                          focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.lightBlueAccent))),
+                                    )
+                                ),
+                                Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child:TextFormField(
+                                        onChanged: (val){setState(() => newPhoneNumber=val);},
+                                        decoration: InputDecoration(
+                                            hintText: phoneNumber,
+                                            labelText:  'رقم الجوال',
+                                            labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
+                                            focusedBorder: UnderlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.lightBlueAccent)))
 
+                                    )
+                                ),
 
-                      FlatButton(
-                        color: Colors.green[300],
-                        textColor: Colors.white,
-                        disabledColor: Colors.grey,
-                        disabledTextColor: Colors.black,
-                        padding: EdgeInsets.all(5.0),
-                        splashColor: Colors.blueAccent,
-                        onPressed: () {
-                          //  _auth.sendPasswordResetEmail(email);
-                        },
-                        child: Text(
-                          " تغير كلمة المرور",
-                          style: TextStyle(fontSize: 20.0),
+                                SizedBox(height:20.0),
+
+                                ButtonTheme(
+                                    minWidth: 30.0,
+                                    height: 10.0,
+                                    child: RaisedButton(
+                                        onPressed: () {  _auth.sendPasswordResetEmail(email); },
+                                        color: Colors.green[300],
+                                        child: Row(
+                                            children: <Widget>[
+                                              Text(" تغيير كلمة المرور              ",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.grey[600],
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 24.0,fontFamily: 'Montserrat',)),
+                                            ]
+                                        )
+                                    )
+                                ),
+
+                                ButtonTheme(
+                                    minWidth: 30.0,
+                                    height: 10.0,
+                                    child: RaisedButton(
+                                        onPressed: () {},
+                                        color: Colors.green[300],
+                                        child: Row(
+                                            children: <Widget>[
+                                              Icon(Icons.add_location, color: Colors.grey[600], ),
+                                              Text(" تعديل الموقع              ",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.grey[600],
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 24.0,fontFamily: 'Montserrat',)),
+                                            ]
+                                        )
+                                    )
+                                ),
+
+                              ],
+                            )
                         ),
-                      ),
 
 
-                    ],
-                  )
-              ),
+                        SizedBox(height:40.0),
+                        Container(
+                            height: 40.0,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(20.0),
+                              shadowColor: Colors.lightBlueAccent,
+                              color: Colors.green[300],
+                              elevation: 7.0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (_formKey.currentState.validate())
+                                    update();
+                                },
+                                child: Center(
+                                  child: Text( 'تحديث المعلومات',
+                                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20.0, fontFamily: 'Montserrat'), ),
+                                ),
+                              ),
+                            )
+                        ),
+
+                        SizedBox(height:20.0),
 
 
-              Container(
-                  padding: EdgeInsets.fromLTRB(300.0, 20.0, 0.0, .0),
-                  child: Text('موقعك',
-                    style:
-                    TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                  )),
-              Container(
-                  padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
-                  child: Image(
-                    image:  AssetImage("assets/map.png"),
-                    width: 40.0,
-                    height: 200.0,
-                  )
-              ),
-              Container(
-                  height: 40.0,
-                  child: Material(
-                    borderRadius: BorderRadius.circular(20.0),
-                    shadowColor: Colors.lightBlueAccent,
-                    color: Colors.green[300],
-                    elevation: 7.0,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Center(
-                        child: Text( 'تحديث المعلومات',
-                          style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20.0, fontFamily: 'Montserrat'), ),
-                      ),
+                      ]),
                     ),
-                  )
-              ),
 
-              SizedBox(height:20.0),
+                  ],
+                ),
+
+              )
+
+              ,
+            );
+        },),
 
 
-            ]),
-          ),
 
-        ],
-      ),
     );
   }
+
+
+  update() async{
+    var _keys;
+    var key;
+
+    if (newName == null )
+      newName=name;
+    if(newPhoneNumber == null)
+      newPhoneNumber=phoneNumber;
+
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Customer').orderByChild("uid").equalTo(uid).
+    once().then(
+            (DataSnapshot snap) async {
+          _keys = snap.value.keys;
+          key = _keys.toString();
+          key=key.substring(1,21);
+          ref.child('Customer').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,});
+        } );
+
+    Fluttertoast.showToast(
+        msg: ("تم تحديث البيانات بنجاح"),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIos: 20,
+        backgroundColor: Colors.red[100],
+        textColor: Colors.red[800]
+    );
+  }
+
+
 }

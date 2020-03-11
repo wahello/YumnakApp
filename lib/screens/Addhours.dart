@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "dart:core";
 
+import 'package:fluttertoast/fluttertoast.dart';
+
 class Addhours extends StatefulWidget {
   @override
   String spID;
@@ -219,19 +221,29 @@ class _AddhoursState extends State<Addhours> {
                           if( startTime  <  endTime && startTime > now){
                             _lights = value;
                             checkState();
+                          } else{
+                            Fluttertoast.showToast(
+                                msg: ("الرجاء أخيار وقت صحيح"),
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIos: 20,
+                                backgroundColor: Colors.red[100],
+                                textColor: Colors.red[800]
+                            );
                           }
 
                           //int wait = endTime-startTime;
                           int wait = 20;
 
 
+
                           Future.delayed(Duration(seconds: wait), () async{
-                            // dispose();
-                            setState(() {
-                              checkState();
-                              _lights = false;
-                              // activated = true;
-                            });
+                              setState(() {
+                                checkState();
+                                _lights = false;
+                              });
+
+
 
                           });
 
@@ -253,3 +265,5 @@ class _AddhoursState extends State<Addhours> {
   }
 
 }
+
+
