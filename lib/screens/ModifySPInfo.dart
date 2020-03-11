@@ -20,7 +20,9 @@ List<myData> allData = [];
 class myData {
   String  name,phoneNumber,qualifications,email;
   var price;
-  myData(this.email,this.name,this.phoneNumber,this.price,this.qualifications);
+  var latitude,longitude;
+  LatLng getLocation;
+  myData(this.email,this.name,this.phoneNumber,this.price,this.qualifications, this.latitude, this.longitude);
 
 }
 
@@ -48,17 +50,14 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
   Map<String, dynamic> pickedLoc;
   bool picked;
-  LatLng loc;
-  LatLng l=new LatLng(24.745532, 46.790632);
-
-
+  var lat,lng;
+  String locCom;
 
   List<myData> SPData = [];
   var keys;
 
   Future getSP() async{
     myData d;
-    print("HI");
 
     await FirebaseDatabase.instance.reference().child('Service Provider').orderByChild("uid").equalTo(spID).once().then((DataSnapshot snap) async {
       keys = snap.value.keys;
@@ -66,7 +65,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       print(keys);
       print(data);
 
-      print("HI2");
 
       SPData.clear();
       for (var key in keys) {
@@ -77,11 +75,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
            data[key]['phoneNumber'],
            data[key]['price'],
            data[key]['qualifications'],
+          data[key]['latitude'],
+          data[key]['longitude'],
         );
         print(d);
         await SPData.add(d);
       }
-      print("HI3");
 
     });
     if (SPData[0] != null ){
@@ -90,64 +89,14 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       qualifications=SPData[0].qualifications;
       price=SPData[0].price;
       email=SPData[0].email;
+      //SPData[0].getLocation=new LatLng(allData[0].latitude, allData[0].longitude);
     }
 
-    return SPData;}
-
-
-
-
-  static int i=1;
-  /*String Zft(){
-
-    DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref.child('Service Provider').orderByChild("uid").equalTo(spID).
-    once().then((DataSnapshot snap) async{
-      var keys = snap.value.keys;
-      var data = snap.value;
-
-      allData.clear();
-      myData d;
-      for (var key1 in keys) {
-        d = new myData(
-          data[key1]['name'],
-          data[key1]['phoneNumber'],
-          data[key1]['qualifications'],
-          data[key1]['price'],
-          data[key1]['email'],
-
-        );
-        await allData.add(d);
-      }
-
-      for (var i = 0; i < allData.length; i++) {
-        dbName=allData[i].name.toString();
-       // print(dbName);
-      }
-    });
+    return SPData;
   }
-  */
+
   @override
   Widget build(BuildContext context) {
-    //String hint=Zft();
-   // print(hint);
-
-   /* updateInfo() async{
-      var _keys;
-      var key;
-
-      DatabaseReference ref = FirebaseDatabase.instance.reference();
-      ref.child('Service Provider').orderByChild("uid").equalTo(spID).
-      once().then(
-              (DataSnapshot snap) async {
-                _keys = snap.value.keys;
-                key = _keys.toString();
-                key=key.substring(1,21);
-                ref.child('Service Provider').child(key).update({ "name": name,"phoneNumber": newPhoneNumber,});
-          } );
-    }*/
-
-
       return Scaffold(
 
         appBar: new AppBar(
@@ -364,11 +313,11 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     }
 
   _pickLocation() async {
+    SPData[0].getLocation=new LatLng(SPData[0].latitude, SPData[0].longitude);
 
-    loc=l;
     pickedLoc = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => ModifyLocation(loc),
+        builder: (ctx) => ModifyLocation(SPData[0].getLocation, "zeft"),
         fullscreenDialog: true,
       ),
     );
@@ -379,21 +328,20 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       return;
     }
     else{
-
-      var lat=pickedLoc['latitude'];
-      var lng=pickedLoc['longitude'];
-      String com=pickedLoc['comments'];
+      lat=pickedLoc['latitude'];
+      lng=pickedLoc['longitude'];
+      locCom=pickedLoc['comments'];
       picked=pickedLoc['prickedLocation'];
 
       print("Zeft: PickLocation latitude: $lat");
       print("Zeft: PickLocation longitude: $lng");
-      print("Zeft: PickLocation comments: $com");
+      print("Zeft: PickLocation comments: $locCom");
       print("Zeft: PickLocation comments: $picked");
 
 
-      loc=new LatLng(lat, lng);
-      l=loc;
-      print("Zeft: PickLocation LatLng: $l");
+      allData[0].getLocation=new LatLng(lat, lng);
+      LatLng zzz=allData[0].getLocation;
+      print("Zeft: PickLocation LatLng: $zzz");
     }
   }
 
@@ -417,7 +365,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
           _keys = snap.value.keys;
           key = _keys.toString();
           key=key.substring(1,21);
-          ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice});
+          ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom});
         } );
 
     Fluttertoast.showToast(
@@ -430,8 +378,4 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     );
 
   }
-
-
-
-
 }

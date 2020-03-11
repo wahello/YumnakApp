@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/services/auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yumnak/services/ModifyLocation.dart';
 
 class ModifyCustInfo extends StatefulWidget {
   dynamic uid;
@@ -12,16 +14,16 @@ class ModifyCustInfo extends StatefulWidget {
   _ModifyCustInfoState createState() => _ModifyCustInfoState(uid);
 }
 
-
-
 class myData {
   String name;
   String phoneNumber;
   String email;
-  myData(this.name,this.phoneNumber,this.email);
+  var latitude,longitude;
+  String locComment;
+  LatLng getLocation;
+
+  myData(this.name,this.phoneNumber,this.email,this.latitude, this.longitude, this.locComment);
 }
-
-
 
 class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
@@ -30,6 +32,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
   final AuthService  _auth = AuthService();
   final  _formKey = GlobalKey<FormState>();
+
   String name;
   String phoneNumber;
   String email;
@@ -37,9 +40,10 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
   String newName;
   String newPhoneNumber;
 
-  var _controller = TextEditingController();
-
-
+  Map<String, dynamic> pickedLoc;
+  bool picked;
+  var lat,lng;
+  String locCom;
 
   List<myData> allData = [];
   var keys;
@@ -56,10 +60,12 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
       for (var key in keys) {
         d = new myData(
-            data[key]['name'],
-            data[key]['phoneNumber'],
-            data[key]['email'],
-
+          data[key]['name'],
+          data[key]['phoneNumber'],
+          data[key]['email'],
+          data[key]['latitude'],
+          data[key]['longitude'],
+          data[key]['locComment'],
         );
         await allData.add(d);
       }
@@ -68,14 +74,10 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
     name=allData[0].name;
     phoneNumber=allData[0].phoneNumber;
     email=allData[0].email;
+    allData[0].getLocation=new LatLng(allData[0].latitude, allData[0].longitude);
     }
-
-
-  return allData;}
-
-
-
-
+    return allData;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,26 +168,52 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                     )
                                 ),
 
-                                ButtonTheme(
-                                    minWidth: 30.0,
-                                    height: 10.0,
-                                    child: RaisedButton(
-                                        onPressed: () {},
-                                        color: Colors.green[300],
-                                        child: Row(
-                                            children: <Widget>[
-                                              Icon(Icons.add_location, color: Colors.grey[600], ),
-                                              Text(" تعديل الموقع              ",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Colors.grey[600],
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 24.0,fontFamily: 'Montserrat',)),
-                                            ]
-                                        )
-                                    )
-                                ),
+                                SizedBox(height:40.0),
 
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: Row(
+                                    children: <Widget>[
+                                      SizedBox(width:20.0),
+                                      Text('الموقع',
+                                        style:TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Montserrat"
+                                        ),
+                                      ),
+
+                                      SizedBox(width:20.0),
+
+                                      ButtonTheme(
+                                          minWidth: 30.0,
+                                          height: 10.0,
+                                          child: RaisedButton(
+                                              onPressed: _pickLocation,
+                                              color: Colors.grey[200],
+                                              child: Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.add_location,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                    Text("  تعديل الموقع     ",
+                                                        textDirection: TextDirection.rtl,
+                                                        textAlign: TextAlign.justify,
+                                                        style: TextStyle(
+                                                          color: Colors.grey[600],
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 24.0,
+                                                          fontFamily: 'Montserrat',)),
+                                                  ]
+                                              )
+                                          )
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             )
                         ),
@@ -220,16 +248,43 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
                   ],
                 ),
-
-              )
-
-              ,
+              ),
             );
-        },),
-
-
-
+        },
+      ),
     );
+  }
+
+  _pickLocation() async {
+
+    pickedLoc = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => ModifyLocation(allData[0].getLocation, allData[0].locComment),
+        fullscreenDialog: true,
+      ),
+    );
+
+    print("Zeft: $pickedLoc");
+
+    if (pickedLoc == null) {
+      return;
+    }
+    else{
+      lat=pickedLoc['latitude'];
+      lng=pickedLoc['longitude'];
+      locCom=pickedLoc['comments'];
+      picked=pickedLoc['prickedLocation'];
+
+      print("Zeft: PickLocation latitude: $lat");
+      print("Zeft: PickLocation longitude: $lng");
+      print("Zeft: PickLocation comments: $locCom");
+      print("Zeft: PickLocation comments: $picked");
+
+      allData[0].getLocation=new LatLng(lat, lng);
+      allData[0].locComment=locCom;
+      LatLng zzz=allData[0].getLocation;
+      print("Zeft: PickLocation LatLng: $zzz");
+    }
   }
 
 
@@ -249,7 +304,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
           _keys = snap.value.keys;
           key = _keys.toString();
           key=key.substring(1,21);
-          ref.child('Customer').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,});
+          ref.child('Customer').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"latitude": lat, "longitude": lng, "locComment": locCom});
         } );
 
     Fluttertoast.showToast(

@@ -6,10 +6,11 @@ import 'dart:async';
 
 class ModifyLocation extends StatefulWidget {
   LatLng selectedLoc;
-  ModifyLocation(this.selectedLoc);
+  String com;
+  ModifyLocation(this.selectedLoc, this.com);
 
   @override
-  _ModifyLocationState createState() => _ModifyLocationState(selectedLoc);
+  _ModifyLocationState createState() => _ModifyLocationState(selectedLoc, com);
 }
 
 class _ModifyLocationState extends State<ModifyLocation> {
@@ -25,8 +26,9 @@ class _ModifyLocationState extends State<ModifyLocation> {
 
   Set<Marker> _markers = Set();
 
-  _ModifyLocationState(LatLng selectedLoc){
+  _ModifyLocationState(LatLng selectedLoc, String com){
     selectedLocation=selectedLoc;
+    comments=com;
   }
 
   @override
@@ -45,8 +47,8 @@ class _ModifyLocationState extends State<ModifyLocation> {
         context: context,
         builder: (ctx) {
           return AlertDialog(
-            title: Text('GPS 사용 불가'),
-            content: Text('GPS 사용 불가로 앱을 사용할 수 없습니다'),
+            title: Text('Location disable'),
+            content: Text('Please allow this application to use your location'),
             actions: <Widget>[
               FlatButton(
                 child: Text('OK'),
@@ -74,7 +76,6 @@ class _ModifyLocationState extends State<ModifyLocation> {
       _markers.add(Marker(
         markerId: MarkerId('myInitialPostion'),
         position: LatLng(positionCurrent.latitude, positionCurrent.longitude),
-        infoWindow: InfoWindow(title: '내 위치'),
       ));
     });
   }
@@ -98,38 +99,17 @@ class _ModifyLocationState extends State<ModifyLocation> {
   {
 
     if(prickedLocation){
-
       _fbKey.currentState.save();
-      final inputValues = _fbKey.currentState.value;
-
-//      Navigator.push(context, new MaterialPageRoute(
-//          builder: (context) => cus_create()
-//      ));
-
-//      location_info l= new location_info(selectedLocation, true, inputValues);
-
-
       Navigator.of(context).pop({
         'latitude': selectedLocation.latitude,
         'longitude': selectedLocation.longitude,
         'comments': comments,
         'prickedLocation': prickedLocation
       });
-
       double lat=selectedLocation.latitude;
       double lng=selectedLocation.longitude;
-
-      print("Zeft: Key input value: $inputValues");
       print("Zeft: Submit Method: $lat, $lng");
     }
-
-
-
-
-
-
-//    double distanceInMeters = await Geolocator().distanceBetween(lat, lng, 24.7128822, 46.821367)/1000;
-//    print("Zeft: Claculate Distance: $distanceInMeters km");
   }
 
 
@@ -137,7 +117,9 @@ class _ModifyLocationState extends State<ModifyLocation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Current Location + Pick'),
+        title: new Center(child: new Text("الموقع", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
+        backgroundColor: Colors.grey[200],
+        iconTheme: IconThemeData(color: Colors.black38),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
@@ -159,7 +141,7 @@ class _ModifyLocationState extends State<ModifyLocation> {
                       onChanged: (val){setState(() => comments=val);},
                       attribute: 'comment',
                       decoration: InputDecoration(
-                        labelText: 'Comment',
+                        labelText: comments,
                         //filled: true,
                         border: OutlineInputBorder(),
                       ),
@@ -191,7 +173,7 @@ class _ModifyLocationState extends State<ModifyLocation> {
                     Marker(
                       markerId: MarkerId('selectedLocation'),
                       position: selectedLocation,
-                      infoWindow: InfoWindow(title: 'Selected zeft location',
+                      infoWindow: InfoWindow(title: 'الموقع المُختار',
                       ),
                     ),
                   },
