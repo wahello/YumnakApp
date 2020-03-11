@@ -6,14 +6,14 @@ import 'package:yumnak/screens/SP_details.dart';
 
 class availableSP extends StatefulWidget {
   String _cat;
-  dynamic uid;
-  availableSP(this.uid, this._cat);
+  dynamic _uid;
+  availableSP(this._uid, this._cat);
 
   @override
-  _availableSPState createState() => _availableSPState(uid, _cat);
+  _availableSPState createState() => _availableSPState(_uid, _cat);
 }
 
-//--------------------------------------------------------------------
+//----------------------------Available SP----------------------------------------
 
 List<myData> allData = [];
 List<myData> SPData = [];
@@ -27,7 +27,7 @@ class myData {
   myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid,this.price,this.qualifications,this.longitude,this.latitude);
 }
 
-//--------------------------------------------------------------------
+//---------------------------Customer Object-----------------------------------------
 
 List<Cust_myData> Custs = [];
 Cust_myData ct ;
@@ -43,6 +43,7 @@ class Cust_myData {
 class _availableSPState extends State<availableSP> {
 
   String c;
+  String sortBy='distance';
   dynamic uid;
   String longSpinnerValue;
 
@@ -51,7 +52,6 @@ class _availableSPState extends State<availableSP> {
     print('availableSP: $uid');
     c=cat;
     print(c);
-
   }
 
   static const List<String> longItems = const [
@@ -121,7 +121,12 @@ class _availableSPState extends State<availableSP> {
       SPData[i].loc=ddd.toStringAsFixed(2);
       //print(SPData[i].loc);
     }
+
+    if(sortBy=='distance')
      sortByDistance();
+     if(sortBy=='price')
+       sortByPrice();
+
      return SPData;
   }
 
@@ -159,9 +164,11 @@ class _availableSPState extends State<availableSP> {
                     longSpinnerValue = text;
                     print(text);
                     if(text=='السعر الأقل أولًا')
-                      sortByPrice();
+                      sortBy='price';
+                      //sortByPrice();
                     if(text=='المسافة الأقرب أولًا')
-                      sortByDistance();
+                      sortBy='distance';
+                      //sortByDistance();
                   });
                 },
 
@@ -211,7 +218,6 @@ class _availableSPState extends State<availableSP> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-
                       if(d.service=='تصوير' || d.service=='إصلاح أجهزة ذكية' || d.service=='عناية واسترخاء'|| d.service== 'شعر'||
                           d.service== 'مكياج'|| d.service=='صبابات'|| d.service=='تنسيق حفلات'|| d.service=='تجهيز طعام')
                         Column(
@@ -229,7 +235,8 @@ class _availableSPState extends State<availableSP> {
                                 padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                                 child: Text("السعر بالساعة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                               ),
-                              Text(d.price.toString()), ]
+                              Text(d.price.toString()),
+                            ]
                         ),
 
                       Column(
@@ -238,8 +245,8 @@ class _availableSPState extends State<availableSP> {
                               padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                               child: Text("المسافة",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                             ),
-
-                            Text(d.loc+' كم')]
+                            Text(d.loc+' كم')
+                          ]
                       ),
                       Column(
                           children: <Widget>[
@@ -247,7 +254,13 @@ class _availableSPState extends State<availableSP> {
                               padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                               child: Text("التقييم",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                             ),
-                            Text("★ 5")]
+                            Row(
+                              children: <Widget>[
+                                Icon(Icons.star),
+                                Text('5'),
+                              ],
+                            ),
+                          ]
                       ),
                     ]
                 ),
@@ -259,63 +272,25 @@ class _availableSPState extends State<availableSP> {
     );
   }
 
-  /*Future getLoc(double latitude,double longitude) async {
-    print(ct.latitude);
-    print(ct.longitude);
-    print(latitude);
-    print(longitude);
-
-
-    double ddd = await Geolocator().distanceBetween(ct.latitude, ct.longitude, latitude, longitude)/1000;
-    print(ddd);
-    dis=null;
-    dis=ddd.toStringAsFixed(2);
-    print("Zeft: Claculate Distance: $dis km");
-      return dis;
-  }*/
-
   void sortByDistance(){
-    //print("zeft sortByDistance entered");
     dummyList.clear();
     dummyList.addAll(SPData);
     dummyList.sort((a, b) => a.loc.compareTo(b.loc));
-//    for(var i=0; i<dummyList.length; i++){
-//      print(dummyList[i].loc);
-//    }
 
     setState(() {
       SPData.clear();
       SPData.addAll(dummyList);
-
-//      for(var i=0; i<SPData.length; i++) {
-//        print(SPData[i].name);
-//        print(SPData[i].price);
-//        print(SPData[i].loc);
-//        print('============');
-//      }
     });
   }
 
   void sortByPrice(){
-    //print("zeft sortByPrice entered");
     dummyList.clear();
     dummyList.addAll(SPData);
     dummyList.sort((a, b) => a.price.compareTo(b.price));
-//    for(var i=0; i<dummyList.length; i++){
-//      print(dummyList[i].price);
-//    }
 
     setState(() {
       SPData.clear();
       SPData.addAll(dummyList);
-
-//      for(var i=0; i<SPData.length; i++) {
-//      print(SPData[i].name);
-//      print(SPData[i].phoneNumber);
-//      print(SPData[i].service);
-//      print(SPData[i].price);
-//      print('============');
-//      }
     });
   }
 
