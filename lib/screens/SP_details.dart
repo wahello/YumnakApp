@@ -2,8 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:yumnak/screens/HomePage.dart';
-import 'package:yumnak/screens/request_service.dart';
-
+import 'package:yumnak/screens/requestService.dart';
 
 class SP_details extends StatefulWidget {
   dynamic uid;
@@ -13,6 +12,8 @@ class SP_details extends StatefulWidget {
   @override
   _SP_detailsState createState() => _SP_detailsState(uid,SPuid);
 }
+
+//----------------------------SP----------------------------------------
 
 List<myData> all = [];
 myData sp ;
@@ -27,16 +28,16 @@ class myData {
   myData(this.name,this.uid,this.price,this.qualifications,this.longitude,this.latitude,this.service);
 }
 
-//--------------------------------------------------------------------
-
+//-----------------------------CUS---------------------------------------
 
 List<myData_Cust> allCust = [];
 myData_Cust cust ;
 
 class myData_Cust {
   var uid,latitude,longitude;
+  String name;
 
-  myData_Cust(this.uid,this.longitude,this.latitude);
+  myData_Cust(this.uid, this.name, this.longitude, this.latitude);
 }
 
 //--------------------------------------------------------------------
@@ -54,8 +55,7 @@ class _SP_detailsState extends State<SP_details> {
     print('SP_details: $uid');print('SP_details SPUID: $SPuid');
   }
 
-
-  Future Data() async {
+  Future data() async {
 
     await FirebaseDatabase.instance.reference().child('Service Provider').once().then((DataSnapshot snap) async {
       var keys = snap.value.keys;
@@ -73,7 +73,6 @@ class _SP_detailsState extends State<SP_details> {
           data[key]['longitude'],
           data[key]['latitude'],
           data[key]['service'],
-
         );
         all.add(d);
       }
@@ -81,8 +80,8 @@ class _SP_detailsState extends State<SP_details> {
       sp=null;
       for (var i = 0; i < all.length; i++) {
         if(all[i].uid == SPuid){
-          //print(all[i].name);
           sp=all[i];
+          break;
         }
       }
     });
@@ -95,6 +94,7 @@ class _SP_detailsState extends State<SP_details> {
       for (var key in keys) {
         d = new myData_Cust(
           data[key]['uid'],
+          data[key]['name'],
           data[key]['longitude'],
           data[key]['latitude'],
         );
@@ -104,17 +104,14 @@ class _SP_detailsState extends State<SP_details> {
       cust=null;
       for (var i = 0; i < allCust.length; i++) {
         if(allCust[i].uid == uid){
-          //print(allCust[i].uid);
           cust=allCust[i];
+          break;
         }
       }
     });
 
     distanceInMeters = await Geolocator().distanceBetween(cust.latitude, cust.longitude, sp.latitude, sp.longitude)/1000;
      s=distanceInMeters.toStringAsFixed(2);
-    //print("Zeft: Claculate Distance: $distanceInMeters km");
-
-
     return sp;
   }
 
@@ -135,9 +132,8 @@ class _SP_detailsState extends State<SP_details> {
           ],
         );
       },
-    ); }
-
-
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,26 +144,19 @@ class _SP_detailsState extends State<SP_details> {
         actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
       ),
 
-
-
       body: Container(
         child: FutureBuilder(
-          future: Data(),
+          future: data(),
           builder: (BuildContext context,AsyncSnapshot snapshot){
               if(!snapshot.hasData)
               return Container(child: Center(child: Text("Loading.."),));
             else
               return Container(child: spDetails());
-
-
-          },),
+          },
+        ),
       )
-
-
-
     );
   }
-
 
   spDetails(){
     return ListView(
@@ -209,7 +198,6 @@ class _SP_detailsState extends State<SP_details> {
                           ),
                           Text(sp.price.toString())
                           ]),
-
 
                         Column(children: <Widget>[
                           Padding(
@@ -257,7 +245,8 @@ class _SP_detailsState extends State<SP_details> {
                           )
                         ],
                       ),
-                    )),
+                    )
+                ),
               ),
 
               Directionality(
@@ -297,8 +286,6 @@ class _SP_detailsState extends State<SP_details> {
                             "التقييم",
                             style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),
                           ),
-
-
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
@@ -315,7 +302,6 @@ class _SP_detailsState extends State<SP_details> {
                                         child: Text("★",style: TextStyle( fontSize: 16,)),
                                       ), ]
                                 ),
-
                               ]),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -333,7 +319,6 @@ class _SP_detailsState extends State<SP_details> {
                                         child: Text("★",style: TextStyle( fontSize: 16,)),
                                       ), ]
                                 ),
-
                               ]),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -351,7 +336,6 @@ class _SP_detailsState extends State<SP_details> {
                                         child: Text("★",style: TextStyle( fontSize: 16,),),
                                       ), ]
                                 ),
-
                               ]),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -369,10 +353,7 @@ class _SP_detailsState extends State<SP_details> {
                                         child: Text("★",style: TextStyle( fontSize: 16,)),
                                       ), ]
                                 ),
-
                               ]),
-
-
                         ],
                       )
                   ),
@@ -395,7 +376,6 @@ class _SP_detailsState extends State<SP_details> {
                     ],
                   ),
                 ),
-
               ),
 
               SizedBox(height: 20),
@@ -405,7 +385,11 @@ class _SP_detailsState extends State<SP_details> {
                     borderRadius: BorderRadius.circular(20.0),
                     shadowColor: Colors.lightBlueAccent,
                     color: Colors.green[300],elevation: 3.0,
-                    child: GestureDetector(onTap: () {/*Navigator.push(context, new MaterialPageRoute(builder: (context) => request_service(uid, SPuid)));*/},
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, new MaterialPageRoute(builder: (context) =>
+                            requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
+                        },
                       child: Center(
                         child: Text( 'طلب',
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
@@ -415,11 +399,9 @@ class _SP_detailsState extends State<SP_details> {
                     ),
                   )),
               SizedBox(height: 20),
-
             ],
           ),
         ),
-
       ],
     );
   }
