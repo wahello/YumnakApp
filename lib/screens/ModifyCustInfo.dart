@@ -129,6 +129,11 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child:TextFormField(
+                                        validator: (String v){
+                                          if (newPhoneNumber!=null && v.length!=10)
+                                            return'أدخل رقم الجوال الصحيح';
+                                          return null;
+                                        },
                                         onChanged: (val){setState(() => newPhoneNumber=val);},
                                         decoration: InputDecoration(
                                             hintText: phoneNumber,
