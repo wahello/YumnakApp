@@ -57,6 +57,8 @@ class _requestServiceState extends State<requestService> {
   String serviceDescription;
   String status='قيد الانتظار';
 
+  final _formKey = GlobalKey<FormState>();
+
   var dt;
   var numOfHours;
   String dateAndTime;
@@ -144,6 +146,7 @@ class _requestServiceState extends State<requestService> {
       ),
       body:Container(
           child: Form(
+            key: _formKey, //for validation
             child: CustomScrollView(
               slivers: <Widget>[
                 SliverList(
@@ -155,39 +158,51 @@ class _requestServiceState extends State<requestService> {
                         children: <Widget>[
                           SizedBox(width:20.0),
 
-                          Container(
-                            // padding: EdgeInsets.fromLTRB(95.0, 20.0, 0.0, .0),
-                              child: Text('أحتاج الخدمة خلال: ',
-                                style:
-                                TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                              )),
+                         Expanded(
+                           child: Container(
+                             // padding: EdgeInsets.fromLTRB(95.0, 20.0, 0.0, .0),
+                               child: Text('أحتاج الخدمة خلال: ',
+                                 style:
+                                 TextStyle(color: Colors.grey[600], fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
+                               ))
+                         ),
 
                           SizedBox(width:20.0),
-                          Container(
-                            child: DropdownButton<String>(
-                              //isExpanded: true,
-                              items: hours_list.map<DropdownMenuItem<String>>((String text) {
-                                return DropdownMenuItem<String>(
-                                  value: text,
-                                  child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize:14, color: Colors.grey[600],),),
-                                );
-                              }).toList(),
+                          Expanded(
+                            child: Container(
+                              child: DropdownButtonFormField<String>(
+                                validator: (value) => value == null ? 'يجب اختيار وقت الخدمة' : null,
+                                hint: new Text('أختر وقت الخدمة'),
+                                //isExpanded: true,
 
-                              value: hoursValue,
 
-                              onChanged: (String newValueSelected) {
-                                setState(() {
-                                  if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty)
-                                    error = 'يجب أختيار الخدمة';
+                                onChanged: (String newValueSelected) {
+                                  setState(() {
+                                    if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty){
+                                      error = 'يجب أختيار الخدمة';}
+                                    else{
+                                      hoursValue = newValueSelected;
+                                    longSpinnerValue=newValueSelected;}
+                                  });
+                                },
+                                // value: hoursValue,
+                                value: longSpinnerValue,
 
-                                  hoursValue = newValueSelected;
-                                  longSpinnerValue=newValueSelected;
-                                });
-                              },
+                                items: hours_list.map<DropdownMenuItem<String>>((String text) {
+                                  return DropdownMenuItem<String>(
+                                    value: text,
+                                    child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize:14, color: Colors.grey[600],),),
+                                  );
+                                }).toList(),
+
+
+                              ),
                             ),
                           ),
+                          SizedBox(width:20.0),
                         ],
+
                       ),
                   ),
 
@@ -241,6 +256,7 @@ class _requestServiceState extends State<requestService> {
                       height: 40,
                       child: FloatingActionButton.extended(
                         onPressed: () {
+                          if(_formKey.currentState.validate())
                           if(picked){
                             for(var i=0; i<24; i++)
                               if(longSpinnerValue==hours_list[i])
