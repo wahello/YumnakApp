@@ -3,17 +3,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
+import 'package:yumnak/screens/CustOrderDetails.dart';
 
-class RequestLocation extends StatefulWidget {
+class ViewLocation extends StatefulWidget {
+  dynamic uid, spID;
   LatLng selectedLoc;
-  String com;
-  RequestLocation(this.selectedLoc, this.com);
+  String com, dt;
+  ViewLocation(this.uid, this.spID, this.selectedLoc, this.com, this.dt);
 
   @override
-  _RequestLocationState createState() => _RequestLocationState(selectedLoc, com);
+  _ViewLocationState createState() => _ViewLocationState(uid, spID, selectedLoc, com, dt);
 }
 
-class _RequestLocationState extends State<RequestLocation> {
+class _ViewLocationState extends State<ViewLocation> {
 
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   Completer<GoogleMapController> _controller = Completer();
@@ -21,14 +23,22 @@ class _RequestLocationState extends State<RequestLocation> {
   LatLng selectedLocation;
   bool loading = false;
 
-  bool prickedLocation=false;
-  String comments;
-
   Set<Marker> _markers = Set();
 
-  _RequestLocationState(LatLng selectedLoc, String com){
+  bool prickedLocation=false;
+  String comments;
+  String dt;
+
+  static dynamic uid;
+  static dynamic spID;
+
+  _ViewLocationState(dynamic u, dynamic sid, LatLng selectedLoc, String com, String d){
+    uid=u; spID=sid;
     selectedLocation=selectedLoc;
     comments=com;
+    dt=d;
+
+    print(selectedLoc);
   }
 
   @override
@@ -95,23 +105,6 @@ class _RequestLocationState extends State<RequestLocation> {
     print("Zeft: Select Location Method: $lat, $lng");
   }
 
-  void _submit () async
-  {
-      _fbKey.currentState.save();
-
-      Navigator.of(context).pop({
-        'latitude': selectedLocation.latitude,
-        'longitude': selectedLocation.longitude,
-        'comments': comments,
-        'prickedLocation': prickedLocation
-      });
-
-      double lat=selectedLocation.latitude;
-      double lng=selectedLocation.longitude;
-      print("Zeft: Submit Method: $lat, $lng");
-
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +116,7 @@ class _RequestLocationState extends State<RequestLocation> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
-            onPressed: _submit,
+            onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, spID, dt))),
           )
         ],
       ),
@@ -140,8 +133,9 @@ class _RequestLocationState extends State<RequestLocation> {
                     child: FormBuilderTextField(
                       onChanged: (val){setState(() => comments=val);},
                       attribute: 'comment',
+                      readOnly: true,
                       decoration: InputDecoration(
-                        labelText: 'Comment',
+                        labelText: comments,
                         //filled: true,
                         border: OutlineInputBorder(),
                       ),
@@ -158,7 +152,6 @@ class _RequestLocationState extends State<RequestLocation> {
                   border: Border.all(color: Colors.grey),
                 ),
                 child: GoogleMap(
-                  onTap: _selectLocation,
                   mapType: MapType.normal,
                   initialCameraPosition: CameraPosition(
                     target: LatLng(24.7269912, 46.7097429) ,
@@ -173,7 +166,7 @@ class _RequestLocationState extends State<RequestLocation> {
                     Marker(
                       markerId: MarkerId('selectedLocation'),
                       position: selectedLocation,
-                      infoWindow: InfoWindow(title: 'الموقع المُختار',
+                      infoWindow: InfoWindow(title: 'موقع الخدمة',
                       ),
                     ),
                   },

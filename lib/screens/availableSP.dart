@@ -24,7 +24,7 @@ class myData {
   var uid, price,latitude,longitude;
   var loc='';
 
-  myData(this.email,this.name, this.phoneNumber,this.service, this.subService,this.uid,this.price,this.qualifications,this.longitude,this.latitude);
+  myData(this.email,this.name, this.phoneNumber, this.service, this.uid,this.price,this.qualifications, this.latitude,this.longitude);
 }
 
 //---------------------------Customer Object-----------------------------------------
@@ -35,7 +35,7 @@ Cust_myData ct ;
 class Cust_myData {
   var uid,latitude,longitude;
 
-  Cust_myData(this.uid,this.longitude,this.latitude);
+  Cust_myData(this.uid, this.latitude, this.longitude);
 }
 
 //--------------------------------------------------------------------
@@ -51,7 +51,8 @@ class _availableSPState extends State<availableSP> {
     uid=u;
     print('availableSP: $uid');
     c=cat;
-    print(c);
+    print("Test: $c");
+    SPData.clear();
   }
 
   static const List<String> longItems = const [
@@ -74,12 +75,11 @@ class _availableSPState extends State<availableSP> {
           data[key]['name'],
           data[key]['phoneNumber'],
           data[key]['service'],
-          data[key]['subService'],
           data[key]['uid'],
           data[key]['price'],
           data[key]['qualifications'],
-          data[key]['longitude'],
           data[key]['latitude'],
+          data[key]['longitude'],
         );
          allData.add(d);
       }
@@ -87,6 +87,8 @@ class _availableSPState extends State<availableSP> {
       for (var i = 0; i < allData.length; i++) {
         if(allData[i].service == c){
           SPData.add(allData[i]);
+          print(c);
+          print(allData[i].name);
         }
       }
     });
@@ -100,8 +102,8 @@ class _availableSPState extends State<availableSP> {
        for (var key in keys) {
          d = new Cust_myData(
            data[key]['uid'],
-           data[key]['longitude'],
            data[key]['latitude'],
+           data[key]['longitude'],
          );
          Custs.add(d);
        }
@@ -109,8 +111,6 @@ class _availableSPState extends State<availableSP> {
        ct=null;
        for (var i = 0; i < Custs.length; i++) {
          if(Custs[i].uid == uid){
-           //print("----------------");
-           //print(Custs[i].uid);
            ct = Custs[i];
          }
        }
@@ -296,6 +296,7 @@ class _availableSPState extends State<availableSP> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: new AppBar(
           title: new Center(child: new Text(c, textAlign: TextAlign.center,

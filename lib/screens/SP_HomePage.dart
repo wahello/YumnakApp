@@ -1,37 +1,51 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:yumnak/models/Order.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/rendering.dart' as material;
+
 import 'package:yumnak/screens/Addhours.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifySPInfo.dart';
+import 'package:yumnak/screens/spOrderDetails.dart';
 import 'package:yumnak/services/auth.dart';
 
 class SP_HomePage extends StatefulWidget {
-  @override
   String spID;
   SP_HomePage(String spu){spID =spu;}
 
+  @override
   _SP_HomePageState createState() => _SP_HomePageState(spID);
 }
 
 
-List<myData> allData = [];
-List<myData> SPOrdersData = [];
+//--------------------------ORDERS------------------------------------------
 
-class myData {
-  String status,dateAndTime, serviceDes,locComment;
-  var cusUid, spUid,latitude,longitude, hours;
+List<orderData> allData = [];
+List<orderData> dummyList = List<orderData>();
+List<orderData> SPOrdersData = [];
 
-  myData(this.status,this.dateAndTime, this.hours,this.serviceDes, this.cusUid, this.spUid,this.longitude,this.latitude, this.locComment);
+class orderData {
+  String status,dateAndTime, spService, cusName, spName, serviceDescription,locComment;
+  var cusUid, spUid, orderID, latitude,longitude, numOfHours;
+
+  orderData(this.cusUid, this.spUid, this.orderID, this.status, this.dateAndTime, /*this.spService,*/ this.cusName, /*this.spName,*/ this.numOfHours, /*this.serviceDescription, this.longitude,this.latitude, this.locComment*/);
 }
 
-class _SP_HomePageState extends State<SP_HomePage> {
-  String spID;
-  _SP_HomePageState(String uid){spID=uid; print('SP_homepage: '+spID);}
 
-  final AuthService  _auth = AuthService();
+class _SP_HomePageState extends State<SP_HomePage> {
+
+  String spID;
+  _SP_HomePageState(String uid){spID=uid; print('SP_homepage: $spID');}
+
   final _formKey = GlobalKey<FormState>();
+  final AuthService  _auth = AuthService();
+
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
+  bool isTimePassed;
+  Duration difference;
+  String stDiff;
+  var endDate;
 
   Future getData() async {
     await FirebaseDatabase.instance.reference().child('Order').once().then((DataSnapshot snap) async {
@@ -39,18 +53,16 @@ class _SP_HomePageState extends State<SP_HomePage> {
       var data = snap.value;
 
       allData.clear();
-      myData d;
+      orderData d;
       for (var key in keys) {
-        d = new myData(
-          data[key]['status'],
-          data[key]['requestDate'],
-          data[key]['serviceHours'],
-          data[key]['description'],
+        d = new orderData(
           data[key]['uid_cus'],
           data[key]['uid_sp'],
-          data[key]['loc_latitude'],
-          data[key]['loc_longitude'],
-          data[key]['loc_locComment'],
+          data[key]['orderID'],
+          data[key]['status'],
+          data[key]['requestDate'],
+          data[key]['name_cus'],
+          data[key]['serviceHours'],
         );
         allData.add(d);
       }
@@ -58,32 +70,46 @@ class _SP_HomePageState extends State<SP_HomePage> {
       for (var i = 0; i < allData.length; i++) {
         if(allData[i].spUid == spID){
           SPOrdersData.add(allData[i]);
+          print(allData[0].cusName);
         }
       }
     });
+
+    sortByNewest();
     return SPOrdersData;
+  }
+
+  update(var id) async {
+    var _keys;
+    var key;
+
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Order').orderByChild("orderID").equalTo(id).once().then((DataSnapshot snap) async {
+      _keys = snap.value.keys;
+      key = _keys.toString();
+      key=key.substring(1,21);
+      ref.child('Order').child(key).update({
+        'uid_cus': ordersDataDetails.cusUid,
+        'uid_sp': ordersDataDetails.spUid,
+        'orderID':ordersDataDetails.orderID,
+        'requestDate': ordersDataDetails.dateAndTime,
+        'status': ordersDataDetails.status,
+        'service': ordersDataDetails.spService,
+        'name_cus':ordersDataDetails.cusName,
+        'name_sp':ordersDataDetails.spName,
+        'serviceHours': ordersDataDetails.numOfHours,
+        'description': ordersDataDetails.serviceDescription,
+        'loc_latitude':ordersDataDetails.latitude,
+        'loc_longitude' : ordersDataDetails.longitude,
+        'loc_locComment': ordersDataDetails.locComment,
+      });
+    });
   }
 
   Widget _buildList(BuildContext context) {
     return Column(
       children: <Widget>[
         SizedBox(height:20.0),
-        Container(
-            height: 40.0,
-            child: Material(
-              borderRadius: BorderRadius.circular(20.0),
-              shadowColor: Colors.lightBlueAccent,
-              color: Colors.green[300],
-              elevation: 7.0,
-              child: GestureDetector(
-                onTap: () {},
-                child: Center(
-                  child: Text( 'تحديث المعلومات',
-                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20.0, fontFamily: 'Montserrat'), ),
-                ),
-              ),
-            )
-        ),
         Expanded(
           child: ListView.builder(
               itemCount: SPOrdersData.length,
@@ -96,11 +122,26 @@ class _SP_HomePageState extends State<SP_HomePage> {
     );
   }
 
-  Widget _buildListItem(myData d) {
+  Widget _buildListItem(orderData d) {
+    Color col;
+    isTimePassed=false;
     String stat=d.status;
 
+    timeCalculation(d, stat);
+
+    if(stat=="قيد الانتظار")
+      col=Colors.black;
+    else if(stat=="مقبول")
+      col=Colors.green[800];
+    else if(stat=="ملغي")
+      col=Colors.red;
+    else if (stat=="مرفوض")
+      col=Colors.red[900];
+    else if(stat=="مكتمل")
+      col=Colors.blue;
+
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: material.TextDirection.rtl,
       child: Card(
         margin: new EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 5.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -114,18 +155,30 @@ class _SP_HomePageState extends State<SP_HomePage> {
                   alignment: Alignment.topRight,
                   child: Column(
                     children: <Widget>[
-                      new Container(
-                          child: Text(" الاسم: ", textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
+                      Row(
+                        children: <Widget>[
+                          Text("الاسم: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                          Text(d.cusName),
+                        ],
                       ),
-                      new Container(
-                          child: Text(d.dateAndTime , textAlign: TextAlign.right, style:TextStyle(fontSize: 15),)
+                      Row(
+                        children: <Widget>[
+                          Text(d.dateAndTime , textAlign: TextAlign.right, style:TextStyle(fontSize: 14),)
+                        ],
                       ),
-                      new Container(
-                          child: Text("حالة الطلب: $stat" , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
+                      Row(
+                        children: <Widget>[
+                          Text("حالة الطلب: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                          Text(d.status, style: TextStyle(color: col, fontSize: 19, fontWeight: FontWeight.bold),),
+                        ],
                       ),
-                      new Container(
-                          child: Text("الوقت المتبقي: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))
-                      ),
+                      if(stat=='قيد الانتظار' && !isTimePassed)
+                        Row(
+                          children: <Widget>[
+                            Text("الوقت المتبقي: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                            Text('$stDiff ساعه ')
+                          ],
+                        ),
                     ],
                   )
               ),
@@ -143,13 +196,48 @@ class _SP_HomePageState extends State<SP_HomePage> {
                     ),
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => spOrderDetails(d.cusUid, spID, d.dateAndTime)));},
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  timeCalculation(orderData d, String stat){
+    if(stat=='قيد الانتظار'){
+      var numhour= d.numOfHours;
+      print(numhour);
+
+      String dt= d.dateAndTime;
+      print(dt);
+
+      DateTime dtformat = dateFormat.parse(dt);
+      print(dtformat);
+
+      endDate= dtformat.add(new Duration(hours: numhour));
+      print(endDate);
+
+      if(endDate.isAfter(DateTime.now())){
+        difference = endDate.difference(DateTime.now());
+        stDiff=difference.toString().substring(0,7);
+      }
+      else {
+        isTimePassed = true;
+        d.status='ملغي';
+        update(d.orderID);
+      }
+      print('----------------------------');
+    }
+  }
+
+  void sortByNewest(){
+    dummyList.clear();
+    dummyList.addAll(SPOrdersData);
+    dummyList.sort((b, a) => a.dateAndTime.compareTo(b.dateAndTime));
+    SPOrdersData.clear();
+    SPOrdersData.addAll(dummyList);
   }
 
   @override
@@ -159,13 +247,14 @@ class _SP_HomePageState extends State<SP_HomePage> {
         title: new Center(child: new Text("            طلباتي", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
         automaticallyImplyLeading: false,     //عشان يروح سهم الرجوع
         backgroundColor: Colors.grey[200],
+        iconTheme: IconThemeData(color: Colors.black38),
       ),
 
       endDrawer: new Drawer(   //makes the menu on the right
           child: Form(
               key: _formKey,  //for validation
               child: Directionality(
-                  textDirection: TextDirection.rtl,
+                  textDirection: material.TextDirection.rtl,
                   child: ListView(
                     children: <Widget>[
                       new UserAccountsDrawerHeader(accountName: new Text(""), accountEmail: new Text(""),
@@ -232,16 +321,13 @@ class _SP_HomePageState extends State<SP_HomePage> {
                                   textColor: Colors.red[800]
                               );
                             }
-
                           }
                         },
                       ),
-
                       new Divider(),
                     ],
                   ))
           )
-
       ),
 
       body: Container(

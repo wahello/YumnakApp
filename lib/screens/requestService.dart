@@ -1,20 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/services/RequestLocation.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/rendering.dart' as material;
 
-class request_service extends StatefulWidget {
+class requestService extends StatefulWidget {
   dynamic uid;
-  request_service(dynamic u){uid=u;}
+  dynamic spID;
+  static var lat=24.727599, lng=46.708254;
+  String spName, spService, cusName;
+  requestService(dynamic u,dynamic SPu,String spN, String spSer, String cusN, var lt, var lg){
+    uid=u; spID=SPu; spName=spN; spService=spSer; cusName=cusN; lat=lt; lng=lg;
+  }
 
   @override
-  _request_serviceState createState() => _request_serviceState(uid);
+  _requestServiceState createState() => _requestServiceState(uid, spID, spName, spService, cusName, lat,lng);
 }
 
-class _request_serviceState extends State<request_service> {
+List<orderData> allData = [];
+
+class orderData {
+  var cusUid, spUid;
+
+  orderData(this.cusUid, this.spUid);
+}
+
+class _requestServiceState extends State<requestService> {
 
   static dynamic uid;
-  _request_serviceState(dynamic u){uid=u; print('request_service: $uid');}
+  static dynamic sp_uid;
+  String spName, spService, cusName;
+  static var lat=24.727599, lng=46.708254;
+  LatLng l;
+
+  _requestServiceState(dynamic u,dynamic SPu,String spN, String spSer, String cusN, var lt, var lg){
+    uid=u; sp_uid=SPu; spName=spN; spService=spSer; cusName=cusN; lat=lt; lng=lg;
+    l=new LatLng(lat, lng);
+    print('SP_details: $uid'); print('SP_details SPUID: $sp_uid');
+  }
 
   static const List<String> hours_list = const [
     'ساعة واحدة', 'ساعتين', 'ثلاث ساعات',
@@ -28,19 +54,87 @@ class _request_serviceState extends State<request_service> {
   ];
   String hoursValue = hours_list[0];
   String longSpinnerValue;
-  String serviceDes;
+  String serviceDescription;
+  String status='قيد الانتظار';
+
+  var dt;
+  var numOfHours;
+  String dateAndTime;
 
   Map<String, dynamic> pickedLoc;
   LatLng loc;
-  LatLng l=new LatLng(24.745532, 46.790632);
-
-  var lat;
-  var lng;
   String comment;
   bool picked=false;
 
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
+
+  String error;
+  int countOrders=0;
+  var orderID;
+
+  final DatabaseReference database = FirebaseDatabase.instance.reference().child("Order");
+
+  sendData() {
+    database.push().set({
+      'uid_cus': uid,
+      'uid_sp': sp_uid,
+      'orderID': orderID,
+      'requestDate': dateAndTime,
+      'status': status,
+      'service': spService,
+      'name_cus':cusName,
+      'name_sp':spName,
+      'serviceHours': numOfHours,
+      'description': serviceDescription,
+      'loc_latitude':lat,
+      'loc_longitude' : lng,
+      'loc_locComment': comment,
+    });
+  }
+
+  getData() async {
+    await FirebaseDatabase.instance.reference().child('Order').once().then((DataSnapshot snap) async {
+      var keys = snap.value.keys;
+      countOrders=0;
+
+      for (var key in keys)
+        countOrders++;
+    });
+
+    print('#'+(countOrders++).toString());
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return
+          Directionality(
+            textDirection: material.TextDirection.rtl,
+            child: new AlertDialog(
+              title: new Text("تم إنشاء الطلب بنجاح",style:TextStyle( )),
+              content: new Text("حالة الطلب قيد الانتظار لمعرفة تحديثات الطلب الرجاء الذهاب إلى صفحة -طلباتي-"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                new FlatButton(
+                  child: new Text("موافق"),
+                  onPressed: () {
+                    Navigator.push(context, new MaterialPageRoute(
+                        builder: (context) => HomePage(uid)
+                    ));
+                  },
+                ),
+              ],
+            ),
+         );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    getData();
+
     return Scaffold(
       appBar: new AppBar(
         title: new Center(child: new Text("طلب جديد", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
@@ -48,7 +142,6 @@ class _request_serviceState extends State<request_service> {
         iconTheme: IconThemeData(color: Colors.black38),
         actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
       ),
-
       body:Container(
           child: Form(
             child: CustomScrollView(
@@ -57,7 +150,7 @@ class _request_serviceState extends State<request_service> {
                   delegate: SliverChildListDelegate([
                     SizedBox(height: 40.0),
                     Directionality(
-                      textDirection: TextDirection.rtl,
+                      textDirection: material.TextDirection.rtl,
                       child: Row(
                         children: <Widget>[
                           SizedBox(width:20.0),
@@ -85,23 +178,27 @@ class _request_serviceState extends State<request_service> {
 
                               onChanged: (String newValueSelected) {
                                 setState(() {
+                                  if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty)
+                                    error = 'يجب أختيار الخدمة';
+
                                   hoursValue = newValueSelected;
-                                  longSpinnerValue=newValueSelected;});
+                                  longSpinnerValue=newValueSelected;
+                                });
                               },
                             ),
                           ),
                         ],
                       ),
-                    ),
+                  ),
 
                     SizedBox(height: 30.0),
                     Container(
                       padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:TextFormField(
+                          textDirection: material.TextDirection.rtl,
+                          child: TextFormField(
                             validator: (val) => val.isEmpty ? "الرجاء كتابة وصف للطلب" : null,
-                            onChanged: (val){ setState(() => serviceDes =val);},
+                            onChanged: (val){ setState(() => serviceDescription =val);},
                             //expands:true,
                             maxLines: 6,
                             minLines: 4,
@@ -145,12 +242,17 @@ class _request_serviceState extends State<request_service> {
                       child: FloatingActionButton.extended(
                         onPressed: () {
                           if(picked){
-                            print(longSpinnerValue);
-                            print(serviceDes);
-                            print(lat);
-                            print(lng);
-                            print(comment);
-                            print(picked);
+                            for(var i=0; i<24; i++)
+                              if(longSpinnerValue==hours_list[i])
+                                numOfHours=i+1;
+
+                            dt= new DateTime.now();
+                            dateAndTime=dateFormat.format(dt);
+
+                            orderID='#'+(countOrders++).toString();
+
+                            sendData();
+                            _showDialog();
                           }
 
                           else {
@@ -162,11 +264,10 @@ class _request_serviceState extends State<request_service> {
                                 backgroundColor: Colors.red[100],
                                 textColor: Colors.red[800]
                             );
-                            print("ZEFT Picked: $picked");
                           }
                         },
                         label: Text('إرسال الطلب',
-                            textDirection: TextDirection.rtl,
+                            //textDirection: TextDirection.rtl,
                             textAlign: TextAlign.justify,
                             style: TextStyle(
                               color: Colors.grey[600],
@@ -190,29 +291,19 @@ class _request_serviceState extends State<request_service> {
     loc=l;
     pickedLoc = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => ModifyLocation(loc),
+        builder: (ctx) => RequestLocation(loc, comment),
         fullscreenDialog: true,
       ),
     );
 
-    print("Zeft: $pickedLoc");
-
-    if (pickedLoc == null) {
+    if (pickedLoc == null)
       return;
-    }
-    else{
 
+    else{
       lat=pickedLoc['latitude'];
       lng=pickedLoc['longitude'];
       comment=pickedLoc['comments'];
-      picked=pickedLoc['prickedLocation'];
-
-      print("Zeft: PickLocation latitude: $lat");
-      print("Zeft: PickLocation longitude: $lng");
-      print("Zeft: PickLocation comments: $comment");
-      print("Zeft: PickLocation comments: $picked");
-
-
+      picked=true;
       loc=new LatLng(lat, lng);
       l=loc;
     }
