@@ -111,7 +111,7 @@ class _SP_detailsState extends State<SP_details> {
     });
 
     distanceInMeters = await Geolocator().distanceBetween(cust.latitude, cust.longitude, sp.latitude, sp.longitude)/1000;
-     s=distanceInMeters.toStringAsFixed(2);
+    s=distanceInMeters.toStringAsFixed(2);
     return sp;
   }
 
@@ -138,23 +138,23 @@ class _SP_detailsState extends State<SP_details> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black38),
-        backgroundColor: Colors.grey[200],
-        actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
-      ),
-
-      body: Container(
-        child: FutureBuilder(
-          future: data(),
-          builder: (BuildContext context,AsyncSnapshot snapshot){
-              if(!snapshot.hasData)
-              return Container(child: Center(child: Text("Loading.."),));
-            else
-              return Container(child: spDetails());
-          },
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.black38),
+          backgroundColor: Colors.grey[200],
+          actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
         ),
-      )
+
+        body: Container(
+          child: FutureBuilder(
+            future: data(),
+            builder: (BuildContext context,AsyncSnapshot snapshot){
+              if(!snapshot.hasData)
+                return Container(child: Center(child: Text("Loading.."),));
+              else
+                return Container(child: spDetails());
+            },
+          ),
+        )
     );
   }
 
@@ -180,23 +180,23 @@ class _SP_detailsState extends State<SP_details> {
                       children: <Widget>[
 
                         if(sp.service=='تصوير' || sp.service=='إصلاح أجهزة ذكية' || sp.service=='عناية واسترخاء'|| sp.service== 'شعر'||sp.service== 'مكياج'|| sp.service=='صبابات'|| sp.service=='تنسيق حفلات'|| sp.service=='تجهيز طعام')
-                        Column(children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                            child:
-                            Text("السعر كحد أدنى",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          ),
-                          Text(sp.price.toString())
-                        ])
+                          Column(children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child:
+                              Text("السعر كحد أدنى",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                            Text(sp.price.toString())
+                          ])
 
                         else
                           Column(children: <Widget>[
-                          Padding(
-                          padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                          child:
-                          Text("السعر بالساعة",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          ),
-                          Text(sp.price.toString())
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child:
+                              Text("السعر بالساعة",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                            Text(sp.price.toString())
                           ]),
 
                         Column(children: <Widget>[
@@ -212,7 +212,7 @@ class _SP_detailsState extends State<SP_details> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                             child: Text("التقييم",style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                                fontSize: 18, fontWeight: FontWeight.bold)),
                           ),
                           Text("★ 5")
                         ]),
@@ -389,7 +389,7 @@ class _SP_detailsState extends State<SP_details> {
                       onTap: () {
                         Navigator.push(context, new MaterialPageRoute(builder: (context) =>
                             requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
-                        },
+                      },
                       child: Center(
                         child: Text( 'طلب',
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
