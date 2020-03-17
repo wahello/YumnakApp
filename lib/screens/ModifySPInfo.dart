@@ -40,6 +40,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   String spID;
   _ModifySPInfoState(String uid){spID=uid;}
 
+  String file;
   String name;
   String phoneNumber;
   String qualifications;
@@ -416,8 +417,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       newQualifications=qualifications;
       if(newPrice == null)
         newPrice=price;
-      if(fileName==null)
-        newFileName=fileName;
+//      if(fileName==null)
+//        newFileName=fileName;
 
         DatabaseReference ref = await FirebaseDatabase.instance.reference();
     ref.child('Service Provider').orderByChild("uid").equalTo(spID).
@@ -426,7 +427,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
           _keys = snap.value.keys;
           key = _keys.toString();
           key=key.substring(1,21);
-          ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": newFileName});
+          ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
         } );
 
     Fluttertoast.showToast(
@@ -455,15 +456,14 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     setState(() {
       isLoading = true;
     });
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('images/${Path.basename(_image.path)}}');
+    StorageReference storageReference = FirebaseStorage.instance.ref().child('images/${Path.basename(_image.path)}}');
     StorageUploadTask uploadTask = storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('File Uploaded');
     storageReference.getDownloadURL().then((fileURL) {
       setState(() {
         _uploadedFileURL = fileURL;
+        //newFileName=fileURL;
         fileName=fileURL;
         isLoading = false;
         print(fileName);
