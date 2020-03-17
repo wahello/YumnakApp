@@ -1,8 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:yumnak/screens/HomePage.dart';
-import 'package:yumnak/screens/requestService.dart';
+//import 'package:yumnak/screens/requestService.dart';
 
 class SP_details extends StatefulWidget {
   dynamic uid;
@@ -23,9 +24,10 @@ class myData {
   String qualifications,service;
   var uid, price;
   var latitude,longitude;
+  var fileName;
 
 
-  myData(this.name,this.uid,this.price,this.qualifications,this.longitude,this.latitude,this.service);
+  myData(this.name,this.uid,this.price,this.qualifications,this.longitude,this.latitude,this.service,this.fileName);
 }
 
 //-----------------------------CUS---------------------------------------
@@ -73,6 +75,8 @@ class _SP_detailsState extends State<SP_details> {
           data[key]['longitude'],
           data[key]['latitude'],
           data[key]['service'],
+          data[key]['fileName'],
+
         );
         all.add(d);
       }
@@ -111,7 +115,7 @@ class _SP_detailsState extends State<SP_details> {
     });
 
     distanceInMeters = await Geolocator().distanceBetween(cust.latitude, cust.longitude, sp.latitude, sp.longitude)/1000;
-    s=distanceInMeters.toStringAsFixed(2);
+     s=distanceInMeters.toStringAsFixed(2);
     return sp;
   }
 
@@ -138,23 +142,23 @@ class _SP_detailsState extends State<SP_details> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black38),
-          backgroundColor: Colors.grey[200],
-          actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
-        ),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black38),
+        backgroundColor: Colors.grey[200],
+        actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
+      ),
 
-        body: Container(
-          child: FutureBuilder(
-            future: data(),
-            builder: (BuildContext context,AsyncSnapshot snapshot){
+      body: Container(
+        child: FutureBuilder(
+          future: data(),
+          builder: (BuildContext context,AsyncSnapshot snapshot){
               if(!snapshot.hasData)
-                return Container(child: Center(child: Text("Loading.."),));
-              else
-                return Container(child: spDetails());
-            },
-          ),
-        )
+              return Container(child: Center(child: Text("Loading.."),));
+            else
+              return Container(child: spDetails());
+          },
+        ),
+      )
     );
   }
 
@@ -180,23 +184,23 @@ class _SP_detailsState extends State<SP_details> {
                       children: <Widget>[
 
                         if(sp.service=='تصوير' || sp.service=='إصلاح أجهزة ذكية' || sp.service=='عناية واسترخاء'|| sp.service== 'شعر'||sp.service== 'مكياج'|| sp.service=='صبابات'|| sp.service=='تنسيق حفلات'|| sp.service=='تجهيز طعام')
-                          Column(children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                              child:
-                              Text("السعر كحد أدنى",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            ),
-                            Text(sp.price.toString())
-                          ])
+                        Column(children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                            child:
+                            Text("السعر كحد أدنى",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                          Text(sp.price.toString())
+                        ])
 
                         else
                           Column(children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                              child:
-                              Text("السعر بالساعة",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            ),
-                            Text(sp.price.toString())
+                          Padding(
+                          padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                          child:
+                          Text("السعر بالساعة",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                          Text(sp.price.toString())
                           ]),
 
                         Column(children: <Widget>[
@@ -212,7 +216,7 @@ class _SP_detailsState extends State<SP_details> {
                           Padding(
                             padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                             child: Text("التقييم",style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
                           ),
                           Text("★ 5")
                         ]),
@@ -253,24 +257,30 @@ class _SP_detailsState extends State<SP_details> {
                 textDirection: TextDirection.rtl,
                 child: Container(
                     width: 200,
-                    child: RaisedButton(
-                        onPressed: () {
-                          showAttach();
-                        },
+                    //child: RaisedButton(
+                        //onPressed:(){ print('https://firebasestorage.googleapis.com/v0/b/yumnak-3df66.appspot.com/o/images%2FIMG_20200315_201117.jpg%7D?alt=media&token=effeba4b-2962-41fb-bcbd-cb480388f4cb',);
+                       // Image.network('https://wallpapercave.com/wp/wp4769141.jpg');
+                         // },
                         color: Colors.grey[200],
                         child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.attach_file,
-                                color: Colors.grey[600],
-                              ),
-                              Text("عرض المرفقات",
-                                  style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold,fontSize: 24.0,fontFamily: 'Montserrat',)),
-                            ]
-                        )
-                    )
-                ),
-              ),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                        Align(
+                        alignment: Alignment.center,
+
+                            child: ClipPath(
+                              child: new SizedBox(
+                                width: 180.0,
+                                height: 180.0,
+                                child:Image.network(sp.fileName , fit: BoxFit.fill,)
+
+                          ),
+                           ),
+                           ),
+                       ] ),
+                      ),
+                      ),
+
 
               Container(
                 child:  Card(
@@ -386,10 +396,10 @@ class _SP_detailsState extends State<SP_details> {
                     shadowColor: Colors.lightBlueAccent,
                     color: Colors.green[300],elevation: 3.0,
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-                            requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
-                      },
+                     // onTap: () {
+                     //  Navigator.push(context, new MaterialPageRoute(builder: (context) =>
+                       //     requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
+                       // },
                       child: Center(
                         child: Text( 'طلب',
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
@@ -405,7 +415,15 @@ class _SP_detailsState extends State<SP_details> {
       ],
     );
   }
+  /*display() async{
+  final StorageReference ref = FirebaseStorage.instance.ref().child('images/' + SPuid.fileName + ".jpg");
+  String downloadURL = await ref.getDownloadURL();
+
+  downloadURL = Uri.decodeFull(downloadURL);
+  print("FB Storage URL: $downloadURL");
 
 
+  return new NetworkImage(downloadURL);
+}*/
 
 }

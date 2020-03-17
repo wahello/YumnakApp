@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:yumnak/services/auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,6 +10,8 @@ import 'dart:math';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yumnak/services/CurrentLocation.dart';
 import 'Main.dart';
+import 'package:path/path.dart' as Path;
+
 
 class SignUp_SP extends StatefulWidget {
   @override
@@ -63,6 +66,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
   String operationText = '';
   bool isUploaded = true;
   String result = '';
+  File _image;
+  String _uploadedFileURL;
+  bool isLoading = false;
+
 
   Map<String, dynamic> pickedLoc;
   var lat;
@@ -460,7 +467,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 minWidth: 30.0,
                                 height: 10.0,
                                 child: RaisedButton(
-                                    onPressed: filePicker,
+                                    onPressed: chooseFile,
                                     color: Colors.grey[200],
                                     child: Row(
                                         children: <Widget>[
@@ -655,49 +662,34 @@ class _SignUp_SPState extends State<SignUp_SP> {
     }
   } //end method
 
-  Future<void> _uploadFile(File file, String filename) async {
-    StorageReference storageReference;
-    storageReference = FirebaseStorage.instance.ref().child("images/$filename");
 
-    final StorageUploadTask uploadTask = storageReference.putFile(file);
-    final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
-    final String url = (await downloadUrl.ref.getDownloadURL());
-    // print("URL is $url");
+
+  Future chooseFile() async {
+    await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
+      setState(() {
+        _image = image;
+      });
+    });
+    uploadFile();
   }
 
-  Future filePicker() async {
-    Random random = new Random();
-    //int randomNumber = random.nextInt(100000000000) + 10;
-    int randomNumber = random.nextInt(10000000);
-    String randm=randomNumber.toString();
-    try {
-      file = await FilePicker.getFile(type: FileType.IMAGE);
+  Future uploadFile() async {
+    setState(() {
+      isLoading = true;
+    });
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('images/${Path.basename(_image.path)}}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((fileURL) {
       setState(() {
-        //fileName = p.basename(file.path);
-        fileName=randm;
+        _uploadedFileURL = fileURL;
+        fileName=fileURL;
+        isLoading = false;
       });
-      //print(fileName);
-      _uploadFile(file,randm);
-
-    } on Exception catch (e) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Sorry...'),
-              content: Text('Unsupported exception: $e'),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          }
-      );
-    }
+    });
   }
 
   void _showDialog() {
