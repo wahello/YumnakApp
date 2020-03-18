@@ -34,12 +34,25 @@ class myData {
 
 class _ModifySPInfoState extends State<ModifySPInfo> {
 
+  var dbReference;
+  var _firebaseRef =FirebaseDatabase.instance.reference();
+
+
   final  _formKey = GlobalKey<FormState>();
   final AuthService  _auth = AuthService();
 
   String spID;
   _ModifySPInfoState(String uid){spID=uid;}
 
+
+  TextEditingController _nameCtrl = TextEditingController();
+  TextEditingController _phoneCtrl = TextEditingController();
+  TextEditingController _qualCtrl = TextEditingController();
+  TextEditingController _priceCtrl = TextEditingController();
+
+
+
+  String available;
   String file;
   String name;
   String phoneNumber;
@@ -66,7 +79,24 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   List<myData> SPData = [];
   var keys;
 
-  Future getSP() async{
+  @override
+  initState(){
+    super.initState();
+    dbReference=_firebaseRef.child('Service Provider').orderByChild('uid').equalTo(spID);
+    _nameCtrl.addListener(_setNewName);
+    _phoneCtrl.addListener(_setNewPhone);
+    _qualCtrl.addListener(_setNewQual);
+    _priceCtrl.addListener(_setNewPrice);
+
+  }
+
+  _setNewName() {newName=_nameCtrl.text;print("Hi");print(newName);}
+  _setNewPhone(){newPhoneNumber=_phoneCtrl.text;print(newPhoneNumber);}
+  _setNewQual(){newQualifications=_qualCtrl.text;print(newQualifications);}
+  _setNewPrice(){newPrice=_priceCtrl.text;print(newPrice);}
+
+
+/*  Future getSP() async{
     myData d;
 
     await FirebaseDatabase.instance.reference().child('Service Provider').orderByChild("uid").equalTo(spID).once().then((DataSnapshot snap) async {
@@ -105,7 +135,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     }
 
     return SPData;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -118,12 +148,24 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
           title: new Center(child: new Text("إعدادات الحساب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
           backgroundColor: Colors.grey[200],
         ),
-        body: FutureBuilder(
-            future: getSP(),
-            builder: (BuildContext context,AsyncSnapshot snapshot) {
-              if (!snapshot.hasData)
-                return Container(child: Center(child: Text("Loading.."),));
-              else return Container(
+        body: Container(
+          child: StreamBuilder(
+            stream: dbReference.onValue,
+            builder: (context, snapshot){
+              if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+              Map data = snapshot.data.snapshot.value;
+              List item = [];
+              data.forEach(
+                  (index, data) => item.add({"key": index, ...data}));
+              fileName=item[0]['fileName'];
+              name=item[0]['name'];
+              phoneNumber=item[0]['phoneNumber'];
+              price=item[0]['price'];
+              qualifications=item[0]['qualifications'];
+
+
+
+              return Container(
                 child: Form(
                   key: _formKey,  //for validation
                   child: CustomScrollView(
@@ -138,7 +180,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child:TextFormField(
-                                        onChanged: (val){setState(() => newName=val);},
+                                          controller: _nameCtrl,
+                                       // onChanged: (val){ setState(() => newName=val);},
                                         decoration: InputDecoration(
                                             hintText: name,
                                             labelText:  'الاسم',
@@ -147,15 +190,18 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                                 borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                       )
                                   ),
+
+
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child:TextFormField(
                                         validator: (String v){
-                                          if (newPhoneNumber!=null && v.length!=10)
+                                          if (v!="" && v.length!=10)
                                             return'أدخل رقم الجوال الصحيح';
                                           return null;
                                         },
-                                        onChanged: (val){setState(() => newPhoneNumber=val);},
+                                          controller: _phoneCtrl,
+                                       // onChanged: (val){setState(() => newPhoneNumber=val);},
                                         decoration: InputDecoration(
                                             labelText:  'رقم الجوال',
                                             hintText: phoneNumber,
@@ -188,7 +234,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child:TextFormField(
-                                        onChanged: (val){setState(() => newQualifications=val);},
+                                          controller: _qualCtrl,
+                                        //onChanged: (val){setState(() => newQualifications=val);},
                                         decoration: InputDecoration(
                                             hintText: qualifications,
                                             labelText:  'المؤهلات',
@@ -203,8 +250,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child: Column(
-                                        children: <Widget>[TextFormField(
-                                          onChanged: (val){setState(() => newPrice= double.parse(val));},
+                                        children: <Widget>[
+                                          TextFormField(
+                                          controller: _priceCtrl,
+                                         // onChanged: (val){setState(() => newPrice= double.parse(val));},
                                           decoration: InputDecoration(
                                               icon: Icon(Icons.attach_money),
                                               labelText:  'السعر',
@@ -266,14 +315,21 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                 Align(
                                   alignment: Alignment.center,
 
-                                  child: ClipPath(
+                                  child: FadeInImage(
+                                    height: 180,
+                                    width: 180,
+                                    fit: BoxFit.cover,
+                                    placeholder: AssetImage("assets/loading.gif"),
+                                    image: NetworkImage(fileName),
+                                  )
+                                  /*ClipPath(
                                     child: new SizedBox(
                                         width: 180.0,
                                         height: 180.0,
                                         child:Image.network(fileName , fit: BoxFit.fill,)
 
                                     ),
-                                  ),
+                                  ),*/
                                 ),
                               ],
                             ),
@@ -344,8 +400,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                 elevation: 7.0,
                                 child: GestureDetector(
                                   onTap: () {
-                                  if (_formKey.currentState.validate())
-                                     updateSP();
+                                    if (_formKey.currentState.validate())
+                                      updateSP();
 
 
 
@@ -367,7 +423,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                   ),
                 ),
               );
-            } )
+
+            },),
+        )
+
       );
     }
 
@@ -405,39 +464,64 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   }
 
   updateSP() async{
-    uploadFile();
-    var _keys;
-    var key;
 
-    if (newName == null )
-      newName=name;
-    if(newPhoneNumber == null)
-      newPhoneNumber=phoneNumber;
-    if(newQualifications == null)
-      newQualifications=qualifications;
-      if(newPrice == null)
+    //if (newName == "" && newPhoneNumber=="" && newPrice=="" && newQualifications=="" && _image==null)
+    if (newName == null &&_image==null && newQualifications==null && newPhoneNumber=="" && newPrice=="" )
+      Fluttertoast.showToast(
+          msg: ("لا يوجد "),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 20,
+          backgroundColor: Colors.red[100],
+          textColor: Colors.red[800]
+      );
+
+    else{
+      if(_image != null)
+        updateSP();
+
+      var _keys;
+      var key;
+
+      if (newName == "" || newName==null)
+        newName=name;
+      if(newPhoneNumber == "" || newPhoneNumber == null)
+        newPhoneNumber=phoneNumber;
+      if(newQualifications == "" || newQualifications==null)
+        newQualifications=qualifications;
+      if(newPrice == "" || newPrice == null)
         newPrice=price;
-//      if(fileName==null)
-//        newFileName=fileName;
+      if(fileName==null || fileName=="")
+        newFileName=fileName;
 
-        DatabaseReference ref = await FirebaseDatabase.instance.reference();
-    ref.child('Service Provider').orderByChild("uid").equalTo(spID).
-    once().then(
-            (DataSnapshot snap) async {
-          _keys = snap.value.keys;
-          key = _keys.toString();
-          key=key.substring(1,21);
-          ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
-        } );
+      DatabaseReference ref = await FirebaseDatabase.instance.reference();
+      ref.child('Service Provider').orderByChild("uid").equalTo(spID).
+      once().then(
+              (DataSnapshot snap) async {
+            _keys = snap.value.keys;
+            key = _keys.toString();
+            key=key.substring(1,21);
+            ref.child('Service Provider').child(key).update({"name":newName});
+            ref.child('Service Provider').child(key).update({"phoneNumber":newPhoneNumber});
+            ref.child('Service Provider').child(key).update({"qualifications":newQualifications});
+            ref.child('Service Provider').child(key).update({"price":newPrice});
+            if(_image != null )
+            ref.child('Service Provider').child(key).update({"fileName":newFileName});
 
-    Fluttertoast.showToast(
-        msg: ("تم تحديث البيانات بنجاح"),
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIos: 20,
-        backgroundColor: Colors.red[100],
-        textColor: Colors.red[800]
-    );
+                //ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
+          } );
+
+      Fluttertoast.showToast(
+          msg: ("تم تحديث البيانات بنجاح"),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 20,
+          backgroundColor: Colors.red[100],
+          textColor: Colors.red[800]
+      );
+
+    }
+
 
   }
 
@@ -447,6 +531,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
       setState(() {
         _image = image;
+        print(_image);
       });
     });
    // uploadFile();
@@ -463,10 +548,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     storageReference.getDownloadURL().then((fileURL) {
       setState(() {
         _uploadedFileURL = fileURL;
-        //newFileName=fileURL;
-        fileName=fileURL;
+        newFileName=fileURL;
+        //fileName=fileURL;
         isLoading = false;
-        print(fileName);
+        print(newFileName);
       });
     });
   }
