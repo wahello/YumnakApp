@@ -417,8 +417,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       newQualifications=qualifications;
       if(newPrice == null)
         newPrice=price;
-//      if(fileName==null)
-//        newFileName=fileName;
+      if(fileName==null)
+        newFileName=fileName;
 
         DatabaseReference ref = await FirebaseDatabase.instance.reference();
     ref.child('Service Provider').orderByChild("uid").equalTo(spID).
@@ -465,6 +465,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
         _uploadedFileURL = fileURL;
         //newFileName=fileURL;
         fileName=fileURL;
+        newFileName=_uploadedFileURL;
         isLoading = false;
         print(fileName);
       });

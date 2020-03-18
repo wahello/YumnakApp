@@ -252,7 +252,7 @@ class _SP_detailsState extends State<SP_details> {
                     )
                 ),
               ),
-
+              if(sp.fileName!="")
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Container(
