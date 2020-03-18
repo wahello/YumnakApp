@@ -6,6 +6,7 @@ import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/services/RequestLocation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/rendering.dart' as material;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class requestService extends StatefulWidget {
   dynamic uid;
@@ -102,35 +103,28 @@ class _requestServiceState extends State<requestService> {
       for (var key in keys)
         countOrders++;
     });
-
-    print('#'+(countOrders++).toString());
   }
 
   void _showDialog() {
-    showDialog(
+    Alert(
       context: context,
-      builder: (BuildContext context) {
-        return
-          Directionality(
-            textDirection: material.TextDirection.rtl,
-            child: new AlertDialog(
-              title: new Text("تم إنشاء الطلب بنجاح",style:TextStyle( )),
-              content: new Text("حالة الطلب قيد الانتظار لمعرفة تحديثات الطلب الرجاء الذهاب إلى صفحة -طلباتي-"),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                new FlatButton(
-                  child: new Text("موافق"),
-                  onPressed: () {
-                    Navigator.push(context, new MaterialPageRoute(
-                        builder: (context) => HomePage(uid)
-                    ));
-                  },
-                ),
-              ],
-            ),
-         );
-      },
-    );
+      type: AlertType.success,
+      title: "تم إنشاء الطلب بنجاح",
+      desc: "حالة الطلب قيد الانتظار لمعرفة تحديثات الطلب الرجاء الذهاب إلى صفحة طلباتي",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "موافق",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: (){
+            Navigator.push(context, new MaterialPageRoute(
+              builder: (context) => HomePage(uid)));
+          },
+          width: 120,
+        )
+      ],
+    ).show();
   }
 
   @override
