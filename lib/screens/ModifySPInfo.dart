@@ -268,25 +268,45 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
                                   SizedBox(height:20.0),
 
+                                  if (fileName != "")
+                                    ButtonTheme(
+                                        minWidth: 20.0,
+                                        height: 10.0,
+                                        child: RaisedButton(
+                                            color: Colors.grey[200],
+                                            onPressed: () {
+                                              chooseFile();
+                                            },
+                                            child: Row(children: <Widget>[
+                                              Text("   تعديل المرفقات              ",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
+                                              Icon(Icons.attach_file),
 
-                                  ButtonTheme(
-                                      minWidth: 20.0,
-                                      height: 10.0,
-                                      child: RaisedButton(
-                                          color: Colors.grey[200],
-                                          onPressed: () {
-                                            chooseFile();
-                                          },
-                                          child: Row(children: <Widget>[
-                                            Text("   تعديل المرفقات              ",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
-                                            Icon(Icons.attach_file),
+                                            ]
+                                            )
+                                        )
+                                    ),
+                                  if(fileName == "")
+                                    ButtonTheme(
+                                        minWidth: 20.0,
+                                        height: 10.0,
+                                        child: RaisedButton(
+                                            color: Colors.grey[200],
+                                            onPressed: () {
+                                              chooseFile();
+                                            },
+                                            child: Row(children: <Widget>[
+                                              Text("   إضافة المرفقات              ",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
+                                              Icon(Icons.attach_file),
 
-                                          ]
-                                          )
-                                      )
-                                  ),
+                                            ]
+                                            )
+                                        )
+                                    ),
+
 
 
                                   SizedBox(height:20.0),
@@ -294,7 +314,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                               )
                           ),
 
-
+                          if (fileName != "")
                           Directionality(
                             textDirection: TextDirection.rtl,
 
@@ -312,7 +332,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
                                 SizedBox(width:20.0),
 
-                                Align(
+                               /* Align(
                                   alignment: Alignment.center,
 
                                   child: FadeInImage(
@@ -322,15 +342,15 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                     placeholder: AssetImage("assets/loading.gif"),
                                     image: NetworkImage(fileName),
                                   )
-                                  /*ClipPath(
+                                  *//*ClipPath(
                                     child: new SizedBox(
                                         width: 180.0,
                                         height: 180.0,
                                         child:Image.network(fileName , fit: BoxFit.fill,)
 
                                     ),
-                                  ),*/
-                                ),
+                                  ),*//*
+                                ),*/
                               ],
                             ),
                           ),
@@ -464,8 +484,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   }
 
   updateSP() async{
-
-    //if (newName == "" && newPhoneNumber=="" && newPrice=="" && newQualifications=="" && _image==null)
+    print("hi");
     if (newName == null &&_image==null && newQualifications==null && newPhoneNumber=="" && newPrice=="" )
       Fluttertoast.showToast(
           msg: ("لا يوجد "),
@@ -477,8 +496,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       );
 
     else{
+      print("before update");
+
       if(_image != null)
-        updateSP();
+          uploadFile();
+      // await uploadFile();
+      //print("after update");
 
       var _keys;
       var key;
@@ -491,11 +514,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
         newQualifications=qualifications;
       if(newPrice == "" || newPrice == null)
         newPrice=price;
-      if(fileName==null || fileName=="")
+      if(fileName==null )
         newFileName=fileName;
+      print("before db update");
 
       DatabaseReference ref = await FirebaseDatabase.instance.reference();
-      ref.child('Service Provider').orderByChild("uid").equalTo(spID).
+      await ref.child('Service Provider').orderByChild("uid").equalTo(spID).
       once().then(
               (DataSnapshot snap) async {
             _keys = snap.value.keys;
@@ -505,11 +529,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
             ref.child('Service Provider').child(key).update({"phoneNumber":newPhoneNumber});
             ref.child('Service Provider').child(key).update({"qualifications":newQualifications});
             ref.child('Service Provider').child(key).update({"price":newPrice});
-            if(_image != null )
+            if(_image != null || newFileName!="")
             ref.child('Service Provider').child(key).update({"fileName":newFileName});
 
                 //ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
           } );
+      print("after db update");
 
       Fluttertoast.showToast(
           msg: ("تم تحديث البيانات بنجاح"),
@@ -537,19 +562,18 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
    // uploadFile();
   }
 
-  Future uploadFile() async {
+   Future uploadFile() async{
     setState(() {
       isLoading = true;
     });
-    StorageReference storageReference = FirebaseStorage.instance.ref().child('images/${Path.basename(_image.path)}}');
-    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    StorageReference storageReference = await FirebaseStorage.instance.ref().child('images/${Path.basename(_image.path)}}');
+    StorageUploadTask uploadTask = await storageReference.putFile(_image);
     await uploadTask.onComplete;
     print('File Uploaded');
     storageReference.getDownloadURL().then((fileURL) {
       setState(() {
         _uploadedFileURL = fileURL;
         newFileName=fileURL;
-        //fileName=fileURL;
         isLoading = false;
         print(newFileName);
       });
