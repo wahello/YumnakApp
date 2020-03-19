@@ -25,6 +25,11 @@ class _SignUp_CustState extends State<SignUp_Cust> {
       'email': email,
       'uid': uid,
       'phoneNumber': phoneNumber,
+      'latitude':lat,
+      'longitude' : lng,
+      'locComment': comment,
+      'ratingAvg':ratingAvg,
+      'ratingCounter': ratingCounter,
     });
   }
 
@@ -40,9 +45,12 @@ class _SignUp_CustState extends State<SignUp_Cust> {
   Map<String, dynamic> pickedLoc;
   var lat;
   var lng;
-  String comment;
+  String comment=" ";
   bool picked=false;
   LatLng loc;
+
+  double ratingAvg=0.0;
+  int ratingCounter=0;
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +294,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
   _pickLocation() async {
     pickedLoc = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => CurrentLocation(),
+        builder: (ctx) => CurrentLocation("Cus"),
         fullscreenDialog: true,
       ),
     );
@@ -307,6 +315,9 @@ class _SignUp_CustState extends State<SignUp_Cust> {
       print("Zeft: PickLocation longitude: $lng");
       print("Zeft: PickLocation comments: $comment");
       print("Zeft: PickLocation comments: $picked");
+
+      if(comment==null)
+        comment=" ";
 
       loc=new LatLng(lat, lng);
       print("Zeft: PickLocation LatLng: $loc");

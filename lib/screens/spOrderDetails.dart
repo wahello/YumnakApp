@@ -373,7 +373,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
             style: TextStyle(color: Colors.lightBlueAccent, fontSize: 30.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),)),
           backgroundColor: Colors.grey[200],
           iconTheme: IconThemeData(color: Colors.black38),
-          actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
+          actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
         ),
 
         body: Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:geolocator/geolocator.dart';
@@ -99,16 +100,37 @@ class _ModifyLocationState extends State<ModifyLocation> {
   {
 
     if(prickedLocation){
-      _fbKey.currentState.save();
-      Navigator.of(context).pop({
-        'latitude': selectedLocation.latitude,
-        'longitude': selectedLocation.longitude,
-        'comments': comments,
-        'prickedLocation': prickedLocation
-      });
+      if(comments!="SP") {
+        _fbKey.currentState.save();
+
+        Navigator.of(context).pop({
+          'latitude': selectedLocation.latitude,
+          'longitude': selectedLocation.longitude,
+          'comments': comments,
+          'prickedLocation': prickedLocation
+        });
+      }
+
+      if(comments=="SP") {
+        Navigator.of(context).pop({
+          'latitude': selectedLocation.latitude,
+          'longitude': selectedLocation.longitude,
+          'prickedLocation': prickedLocation
+        });
+      }
       double lat=selectedLocation.latitude;
       double lng=selectedLocation.longitude;
       print("Zeft: Submit Method: $lat, $lng");
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: ("لم تقم بالتعديل على الموقع"),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 20,
+          backgroundColor: Colors.blue[100],
+          textColor: Colors.blue[800]
+      );
     }
   }
 
@@ -121,36 +143,40 @@ class _ModifyLocationState extends State<ModifyLocation> {
         backgroundColor: Colors.grey[200],
         iconTheme: IconThemeData(color: Colors.black38),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: _submit,
-          )
+          IconButton(icon: Icon(Icons.check), onPressed: _submit,)
         ],
       ),
+
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            FormBuilder(
-              key: _fbKey,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: FormBuilderTextField(
-                      onChanged: (val){setState(() => comments=val);},
-                      attribute: 'comment',
-                      decoration: InputDecoration(
-                        labelText: comments,
-                        //filled: true,
-                        border: OutlineInputBorder(),
+            if(comments!="SP")
+              FormBuilder(
+                key: _fbKey,
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 20.0),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: FormBuilderTextField(
+                        onChanged: (val){setState(() => comments=val);},
+                        attribute: 'comment',
+                        decoration: InputDecoration(
+                          labelText: comments,
+                          //filled: true,
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            if(comments=="SP")
+              SizedBox(height: 40),
+
             SizedBox(height: 20),
+
             Container(
                 height: 500,
                 width: double.infinity,

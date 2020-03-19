@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart' as material;
 import 'package:yumnak/screens/Addhours.dart';
 import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifySPInfo.dart';
+import 'package:yumnak/screens/SP_InformationData.dart';
 import 'package:yumnak/screens/spOrderDetails.dart';
 import 'package:yumnak/services/auth.dart';
 
@@ -262,11 +263,11 @@ class _SP_HomePageState extends State<SP_HomePage> {
                       ),
 
                       new ListTile(
-                        leading: Icon(Icons.home),
-                        title: new Text("الصفحة الرئيسية",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
+                        leading: Icon(Icons.account_circle),
+                        title: new Text("بياناتي الشخصية",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                         onTap: (){
-                        /*  Navigator.push(context, new MaterialPageRoute(
-                            builder: (context) => HomePage()    ));*/
+                          Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) => sp_InformationData(spID)    ));
                           },
                       ),
                       new Divider(),

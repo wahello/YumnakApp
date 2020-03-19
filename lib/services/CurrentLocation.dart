@@ -4,10 +4,12 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
-
 class CurrentLocation extends StatefulWidget {
+  String com;
+  CurrentLocation(this.com);
+
   @override
-  _CurrentLocationState createState() => _CurrentLocationState();
+  _CurrentLocationState createState() => _CurrentLocationState(com);
 }
 
 class _CurrentLocationState extends State<CurrentLocation> {
@@ -20,8 +22,9 @@ class _CurrentLocationState extends State<CurrentLocation> {
   bool prickedLocation=false;
   String comments;
 
-
   Set<Marker> _markers = Set();
+
+  _CurrentLocationState(String com){ comments =com; }
 
   @override
   void initState() {
@@ -90,33 +93,39 @@ class _CurrentLocationState extends State<CurrentLocation> {
   {
 
     if(prickedLocation){
+      if(comments!="SP") {
+        _fbKey.currentState.save();
 
-      _fbKey.currentState.save();
-      final inputValues = _fbKey.currentState.value;
+        Navigator.of(context).pop({
+          'latitude': selectedLocation.latitude,
+          'longitude': selectedLocation.longitude,
+          'comments': comments,
+          'prickedLocation': prickedLocation
+        });
+      }
 
-      Navigator.of(context).pop({
-        'latitude': selectedLocation.latitude,
-        'longitude': selectedLocation.longitude,
-        'comments': comments,
-        'prickedLocation': prickedLocation
-      });
+      if(comments=="SP") {
 
+        Navigator.of(context).pop({
+          'latitude': selectedLocation.latitude,
+          'longitude': selectedLocation.longitude,
+          'prickedLocation': prickedLocation
+        });
+      }
       double lat=selectedLocation.latitude;
       double lng=selectedLocation.longitude;
 
-      print("Zeft: Key input value: $inputValues");
       print("Zeft: Submit Method: $lat, $lng");
     }
-
-//    double distanceInMeters = await Geolocator().distanceBetween(lat, lng, 24.7128822, 46.821367)/1000;
-//    print("Zeft: Claculate Distance: $distanceInMeters km");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('اختر موقعك'),
+        title: new Center(child: new Text("الموقع", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
+        backgroundColor: Colors.grey[200],
+        iconTheme: IconThemeData(color: Colors.black38),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
@@ -127,6 +136,7 @@ class _CurrentLocationState extends State<CurrentLocation> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            if(comments!="SP")
             FormBuilder(
               key: _fbKey,
               child: Column(
@@ -147,6 +157,9 @@ class _CurrentLocationState extends State<CurrentLocation> {
                 ],
               ),
             ),
+            if(comments=="SP")
+              SizedBox(height: 40,),
+
             SizedBox(height: 20),
             Container(
                 height: 500,

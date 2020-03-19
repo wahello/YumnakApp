@@ -39,44 +39,39 @@ class _SignUp_SPState extends State<SignUp_SP> {
       'latitude':lat,
       'longitude' : lng,
       'locComment': comment,
+      'ratingAvg':ratingAvg,
+      'ratingTime':ratingTime,
+      'ratingWork':ratingWork,
+      'ratingCooperation':ratingCooperation,
+      'raringPrice':raringPrice,
+      'ratingCounter': ratingCounter,
     });
   }
 
-  String name;
-  String email = "";
-  String phoneNumber = "";
-  String service;
-  String qualifications;
-  String available="false";
-  var uid;
-  var gender = null;
+  String name, email = "", phoneNumber = "", service, qualifications;
+  bool available=false;
+  var uid, gender = "أنثى";
   double price;
 
-  String password = "";
-  String Vpassword = "";
+  String password = "",  Vpassword = "";
+
   String error = "";
   bool pass = false;
   int group = 1;
-  String subService;
-  String subService1;
+  String subService, subService1;
 
-  String fileType = '';
-  File file;
-  String fileName = '';
-  String operationText = '';
-  bool isUploaded = true;
-  String result = '';
-  File _image;
-  String _uploadedFileURL;
-  bool isLoading = false;
-
+  String fileType = '', fileName = '', operationText = '', result = '', _uploadedFileURL;
+  File file, _image;
+  bool isUploaded = true, isLoading = false;
 
   Map<String, dynamic> pickedLoc;
-  var lat;
-  var lng;
+  var lat, lng;
   String comment='';
   bool picked=false;
   LatLng loc;
+
+  double ratingAvg=0.0, ratingTime=0.0, ratingWork=0.0, ratingCooperation=0.0, raringPrice=0.0;
+  int ratingCounter=0;
 
   static const List<String> longItems = const [
     'مجالسة',
@@ -157,7 +152,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       groupValue: group,
                                       activeColor: Colors.lightBlueAccent,
                                       onChanged: (T) {
-                                        gender = "أنثي";
+                                        gender = "أنثى";
                                         setState(() {
                                           group = T;
                                         });
@@ -724,7 +719,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
   _pickLocation() async {
     pickedLoc = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => CurrentLocation(),
+        builder: (ctx) => CurrentLocation("SP"),
         fullscreenDialog: true,
       ),
     );
@@ -738,7 +733,6 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
       lat=pickedLoc['latitude'];
       lng=pickedLoc['longitude'];
-      comment=pickedLoc['comments'];
       picked=pickedLoc['prickedLocation'];
 
       print("Zeft: PickLocation latitude: $lat");

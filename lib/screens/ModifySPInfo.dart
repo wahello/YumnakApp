@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,27 +8,13 @@ import 'package:yumnak/services/ModifyLocation.dart';
 import 'package:yumnak/services/auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Path;
-class ModifySPInfo extends StatefulWidget {
-  @override
 
+class ModifySPInfo extends StatefulWidget {
   String spID;
   ModifySPInfo(String uid){this.spID=uid;}
+
+  @override
   _ModifySPInfoState createState() => _ModifySPInfoState(spID);
-}
-
-List<myData> allData = [];
-
-//--------------------------------------------------------------------
-
-class myData {
-
-  String  name,phoneNumber,qualifications,email;
-  var price;
-  var latitude,longitude;
-  LatLng getLocation;
-  var fileName;
-  myData(this.email,this.name,this.phoneNumber,this.price,this.qualifications, this.latitude, this.longitude,this.fileName);
-
 }
 
 class _ModifySPInfoState extends State<ModifySPInfo> {
@@ -50,21 +35,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   TextEditingController _qualCtrl = TextEditingController();
   TextEditingController _priceCtrl = TextEditingController();
 
+  String available, file, name, phoneNumber, qualifications, email;
+  var price, fileName, latitude,longitude;
 
+  String newName, newPhoneNumber, newQualifications;
+  var newPrice, newFileName, newLatitude,newLongitude;
 
-  String available;
-  String file;
-  String name;
-  String phoneNumber;
-  String qualifications;
-  var price;
-  String email;
-  var fileName;
-  String newName;
-  String newPhoneNumber;
-  String newQualifications;
-  var newPrice;
-  var newFileName;
   File _image;
   String _uploadedFileURL;
   bool isLoading = false;
@@ -72,12 +48,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   String  dbName;
 
   Map<String, dynamic> pickedLoc;
+  LatLng location;
   bool picked;
-  var lat,lng;
-  String locCom;
-
-  List<myData> SPData = [];
-  var keys;
 
   @override
   initState(){
@@ -87,7 +59,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     _phoneCtrl.addListener(_setNewPhone);
     _qualCtrl.addListener(_setNewQual);
     _priceCtrl.addListener(_setNewPrice);
-
   }
 
   _setNewName() {newName=_nameCtrl.text;print("Hi");print(newName);}
@@ -95,56 +66,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   _setNewQual(){newQualifications=_qualCtrl.text;print(newQualifications);}
   _setNewPrice(){newPrice=_priceCtrl.text;print(newPrice);}
 
-
-/*  Future getSP() async{
-    myData d;
-
-    await FirebaseDatabase.instance.reference().child('Service Provider').orderByChild("uid").equalTo(spID).once().then((DataSnapshot snap) async {
-      keys = snap.value.keys;
-      var data = snap.value;
-      print(keys);
-      print(data);
-
-
-      SPData.clear();
-      for (var key in keys) {
-        print("In");
-        d = new myData(
-           data[key]['email'],
-           data[key]['name'],
-           data[key]['phoneNumber'],
-           data[key]['price'],
-           data[key]['qualifications'],
-          data[key]['latitude'],
-          data[key]['longitude'],
-          data[key]['fileName'],
-        );
-        print(d);
-        await SPData.add(d);
-      }
-
-    });
-    if (SPData[0] != null ){
-      name=SPData[0].name;
-      phoneNumber=SPData[0].phoneNumber;
-      qualifications=SPData[0].qualifications;
-      price=SPData[0].price;
-      email=SPData[0].email;
-      fileName=SPData[0].fileName;
-      //SPData[0].getLocation=new LatLng(allData[0].latitude, allData[0].longitude);
-    }
-
-    return SPData;
-  }*/
-
   @override
   Widget build(BuildContext context) {
       return Scaffold(
 
         appBar: new AppBar(
-          iconTheme: IconThemeData(
-            color: Colors.black38, //change your color here
-          ),
+          iconTheme: IconThemeData(color: Colors.black38,),
           title: new Center(child: new Text("إعدادات الحساب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
           backgroundColor: Colors.grey[200],
         ),
@@ -155,15 +82,14 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
               if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
               Map data = snapshot.data.snapshot.value;
               List item = [];
-              data.forEach(
-                  (index, data) => item.add({"key": index, ...data}));
+              data.forEach((index, data) => item.add({"key": index, ...data}));
               fileName=item[0]['fileName'];
               name=item[0]['name'];
               phoneNumber=item[0]['phoneNumber'];
               price=item[0]['price'];
               qualifications=item[0]['qualifications'];
-
-
+              latitude=item[0]['latitude'];
+              longitude=item[0]['longitude'];
 
               return Container(
                 child: Form(
@@ -191,7 +117,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                       )
                                   ),
 
-
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child:TextFormField(
@@ -211,10 +136,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                       )
                                   ),
 
-
-                                  SizedBox(height:20.0),
+                                  SizedBox(height:25.0),
 
                                   ButtonTheme(
+                                    padding: EdgeInsets.fromLTRB(55.0, 0.0, 55.0, 0.0) ,
                                       minWidth: 30.0,
                                       height: 10.0,
                                       child: RaisedButton(
@@ -222,26 +147,29 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                           color: Colors.green[300],
                                           child: Row(
                                               children: <Widget>[
-                                                Text(" تغيير كلمة المرور              ",
+                                                Text(" تغيير كلمة المرور",
                                                     textAlign: TextAlign.center,
-                                                    style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold,
-                                                      fontSize: 24.0,fontFamily: 'Montserrat',)),
+                                                    style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold, fontSize: 24.0,fontFamily: 'Montserrat',)
+                                                ),
                                               ]
                                           )
                                       )
                                   ),
 
+
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child:TextFormField(
-                                          controller: _qualCtrl,
+                                        controller: _qualCtrl,
+                                        maxLines: 6,
+                                        minLines: 2,
                                         //onChanged: (val){setState(() => newQualifications=val);},
                                         decoration: InputDecoration(
                                             hintText: qualifications,
                                             labelText:  'المؤهلات',
                                             labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
-                                            focusedBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(color: Colors.lightBlueAccent))),
+                                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent))
+                                        ),
                                       )
                                   ),
 
@@ -253,84 +181,75 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                         children: <Widget>[
                                           TextFormField(
                                           controller: _priceCtrl,
-                                         // onChanged: (val){setState(() => newPrice= double.parse(val));},
+                                          // onChanged: (val){setState(() => newPrice= double.parse(val));},
                                           decoration: InputDecoration(
                                               icon: Icon(Icons.attach_money),
                                               labelText:  'السعر',
                                               hintText: price.toString(),
                                               labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
-                                              focusedBorder: UnderlineInputBorder(
-                                                  borderSide: BorderSide(color: Colors.lightBlueAccent))),
+                                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent))),
                                         )
+                                       ],
+                                      )
+                                  ),
+
+                                  SizedBox(height:25.0),
+
+                                  Directionality(
+                                      textDirection: TextDirection.rtl,
+                                      child: Row(
+                                        children: <Widget>[
+
+                                          Text('المرفقات',
+                                            style:TextStyle( color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
+                                          ),
+
+                                          SizedBox(width:20.0),
+
+                                          if (fileName != "")
+                                            ButtonTheme(
+                                                minWidth: 30.0,
+                                                height: 10.0,
+                                                child: RaisedButton(
+                                                    color: Colors.grey[200],
+                                                    onPressed: () { chooseFile(); },
+                                                    child: Row(
+                                                        children: <Widget>[
+                                                          Icon(Icons.attach_file),
+                                                          Text("  تعديل ",
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )
+                                                          ),
+                                                        ]
+                                                    )
+                                                )
+                                            ),
+                                          if(fileName == "")
+                                            ButtonTheme(
+                                                minWidth: 30.0,
+                                                height: 10.0,
+                                                child: RaisedButton(
+                                                    color: Colors.grey[200],
+                                                    onPressed: () { chooseFile(); },
+                                                    child: Row(
+                                                        children: <Widget>[
+                                                          Icon(Icons.attach_file),
+                                                          Text("  إضافة ",
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )
+                                                          ),
+                                                        ]
+                                                    )
+                                                )
+                                            ),
+
+                                          SizedBox(height:20.0),
                                         ],
                                       )
                                   ),
 
-                                  SizedBox(height:20.0),
 
-                                  if (fileName != "")
-                                    ButtonTheme(
-                                        minWidth: 20.0,
-                                        height: 10.0,
-                                        child: RaisedButton(
-                                            color: Colors.grey[200],
-                                            onPressed: () {
-                                              chooseFile();
-                                            },
-                                            child: Row(children: <Widget>[
-                                              Text("   تعديل المرفقات              ",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
-                                              Icon(Icons.attach_file),
-
-                                            ]
-                                            )
-                                        )
-                                    ),
-                                  if(fileName == "")
-                                    ButtonTheme(
-                                        minWidth: 20.0,
-                                        height: 10.0,
-                                        child: RaisedButton(
-                                            color: Colors.grey[200],
-                                            onPressed: () {
-                                              chooseFile();
-                                            },
-                                            child: Row(children: <Widget>[
-                                              Text("   إضافة المرفقات              ",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )),
-                                              Icon(Icons.attach_file),
-
-                                            ]
-                                            )
-                                        )
-                                    ),
-
-
-
-                                  SizedBox(height:20.0),
-                                ],
-                              )
-                          ),
-
-                          if (fileName != "")
-                          Directionality(
-                            textDirection: TextDirection.rtl,
-
-                            child: Row(
-                              children: <Widget>[
-                                SizedBox(width:20.0),
-                                Text('المرفقات',
-                                  style:TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Montserrat"
-                                  ),
-                                ),
-
-                                SizedBox(width:20.0),
+                          //if (fileName != "")
 
                                /* Align(
                                   alignment: Alignment.center,
@@ -342,41 +261,31 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                     placeholder: AssetImage("assets/loading.gif"),
                                     image: NetworkImage(fileName),
                                   )
-                                  *//*ClipPath(
+                                  *//**//*ClipPath(
                                     child: new SizedBox(
                                         width: 180.0,
                                         height: 180.0,
                                         child:Image.network(fileName , fit: BoxFit.fill,)
 
                                     ),
-                                  ),*//*
+                                  ),*//**//*
                                 ),*/
                               ],
                             ),
                           ),
 
-
-
-
-
-
-
-
-
+                          SizedBox(height:15.0),
 
                           Directionality(
                             textDirection: TextDirection.rtl,
 
                             child: Row(
                               children: <Widget>[
-                                SizedBox(width:20.0),
-                                Text('موقعك',
-                                  style:TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Montserrat"
-                                  ),
+
+                                SizedBox(width:30.0),
+
+                                Text('موقعك  ',
+                                  style:TextStyle(color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
                                 ),
 
                                 SizedBox(width:20.0),
@@ -393,14 +302,11 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                                 Icons.add_location,
                                                 color: Colors.grey[600],
                                               ),
-                                              Text("  تعديل الموقع     ",
+                                              Text("  تعديل ",
                                                   textDirection: TextDirection.rtl,
                                                   textAlign: TextAlign.justify,
-                                                  style: TextStyle(
-                                                    color: Colors.grey[600],
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 24.0,
-                                                    fontFamily: 'Montserrat',)),
+                                                  style: TextStyle( color: Colors.grey[600], fontWeight: FontWeight.bold, fontSize: 24.0, fontFamily: 'Montserrat',)
+                                              ),
                                             ]
                                         )
                                     )
@@ -451,43 +357,32 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     }
 
   _pickLocation() async {
-    SPData[0].getLocation=new LatLng(SPData[0].latitude, SPData[0].longitude);
+    location= new LatLng(latitude, longitude);
 
     pickedLoc = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => ModifyLocation(SPData[0].getLocation, "zeft"),
+        builder: (ctx) => ModifyLocation(location, "SP"),
         fullscreenDialog: true,
       ),
     );
 
-    print("Zeft: $pickedLoc");
-
     if (pickedLoc == null) {
       return;
     }
-    else{
-      lat=pickedLoc['latitude'];
-      lng=pickedLoc['longitude'];
-      locCom=pickedLoc['comments'];
+
+    else {
+      newLatitude=pickedLoc['latitude'];
+      newLongitude=pickedLoc['longitude'];
       picked=pickedLoc['prickedLocation'];
-
-      print("Zeft: PickLocation latitude: $lat");
-      print("Zeft: PickLocation longitude: $lng");
-      print("Zeft: PickLocation comments: $locCom");
-      print("Zeft: PickLocation comments: $picked");
-
-
-      allData[0].getLocation=new LatLng(lat, lng);
-      LatLng zzz=allData[0].getLocation;
-      print("Zeft: PickLocation LatLng: $zzz");
+      location=new LatLng(newLatitude, newLongitude);
     }
   }
 
   updateSP() async{
-    print("hi");
+    print("Update Method");
     if (newName == null &&_image==null && newQualifications==null && newPhoneNumber=="" && newPrice=="" )
       Fluttertoast.showToast(
-          msg: ("لا يوجد "),
+          msg: ("لم تقم بتعديل"),
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIos: 20,
@@ -496,7 +391,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       );
 
     else{
-      print("before update");
+      print('before variables update');
 
       if(_image != null)
           uploadFile();
@@ -516,24 +411,35 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
         newPrice=price;
       if(fileName==null )
         newFileName=fileName;
+      if(location==null){
+        newLatitude= latitude;
+        newLongitude= longitude;
+      }
+
       print("before db update");
 
       DatabaseReference ref = await FirebaseDatabase.instance.reference();
       await ref.child('Service Provider').orderByChild("uid").equalTo(spID).
-      once().then(
-              (DataSnapshot snap) async {
+      once().then((DataSnapshot snap) async {
             _keys = snap.value.keys;
             key = _keys.toString();
+
             key=key.substring(1,21);
+
             ref.child('Service Provider').child(key).update({"name":newName});
             ref.child('Service Provider').child(key).update({"phoneNumber":newPhoneNumber});
             ref.child('Service Provider').child(key).update({"qualifications":newQualifications});
             ref.child('Service Provider').child(key).update({"price":newPrice});
-            if(_image != null || newFileName!="")
-            ref.child('Service Provider').child(key).update({"fileName":newFileName});
 
-                //ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
-          } );
+            if(_image != null || newFileName!="")
+            ref.child('Service Provider').child(key).update({"fileName":""});
+
+            ref.child('Service Provider').child(key).update({"latitude":newLatitude});
+            ref.child('Service Provider').child(key).update({"longitude":newLongitude});
+
+            //ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
+
+      });
       print("after db update");
 
       Fluttertoast.showToast(
@@ -541,16 +447,11 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIos: 20,
-          backgroundColor: Colors.red[100],
-          textColor: Colors.red[800]
+          backgroundColor: Colors.green[100],
+          textColor: Colors.green[800]
       );
-
     }
-
-
   }
-
-
 
   Future chooseFile() async {
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
