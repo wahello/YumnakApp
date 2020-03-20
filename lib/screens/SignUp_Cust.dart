@@ -49,7 +49,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
   bool picked=false;
   LatLng loc;
 
-  double ratingAvg=0.0;
+  double ratingAvg=0.01;
   int ratingCounter=0;
 
   @override

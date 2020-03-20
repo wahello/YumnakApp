@@ -45,11 +45,15 @@ class _SignUp_SPState extends State<SignUp_SP> {
       'ratingCooperation':ratingCooperation,
       'raringPrice':raringPrice,
       'ratingCounter': ratingCounter,
+      'endTime' : _endTime,
+      'startTime' : _startTime,
     });
   }
 
   String name, email = "", phoneNumber = "", service, qualifications;
   bool available=false;
+  String _startTime = "";
+  String _endTime = "";
   var uid, gender = "أنثى";
   double price;
 
@@ -70,7 +74,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
   bool picked=false;
   LatLng loc;
 
-  double ratingAvg=0.0, ratingTime=0.0, ratingWork=0.0, ratingCooperation=0.0, raringPrice=0.0;
+  double ratingAvg=0.01, ratingTime=0.01, ratingWork=0.01, ratingCooperation=0.01, raringPrice=0.01;
   int ratingCounter=0;
 
   static const List<String> longItems = const [
