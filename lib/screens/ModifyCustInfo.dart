@@ -14,16 +14,6 @@ class ModifyCustInfo extends StatefulWidget {
   _ModifyCustInfoState createState() => _ModifyCustInfoState(uid);
 }
 
-class myData {
-  String name;
-  String phoneNumber;
-  String email;
-  var latitude,longitude;
-  String locComment;
-  LatLng getLocation;
-
-  myData(this.name,this.phoneNumber,this.email,this.latitude, this.longitude, this.locComment);
-}
 
 class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
@@ -35,49 +25,40 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
 
   String name;
   String phoneNumber;
+  var lat,lng;
+  String locCom;
   String email;
+
 
   String newName;
   String newPhoneNumber;
+  var newLat,newLng;
+  String newLocCom;
+
+
+  TextEditingController _nameCtrl = TextEditingController();
+  TextEditingController _phoneCtrl = TextEditingController();
+
 
   Map<String, dynamic> pickedLoc;
+  LatLng location;
   bool picked;
-  var lat,lng;
-  String locCom;
 
-  List<myData> allData = [];
-  var keys;
+  var dbReference;
+  var _firebaseRef =FirebaseDatabase.instance.reference();
 
-  Future getCust() async{
-    myData d;
+  @override
+  initState(){
+    super.initState();
+    dbReference=_firebaseRef.child('Customer').orderByChild("uid").equalTo(uid);
+    _nameCtrl.addListener(_setNewName);
+    _phoneCtrl.addListener(_setNewPhone);
 
-    await FirebaseDatabase.instance.reference()
-    .child('Customer').orderByChild("uid").equalTo(uid).once().then((DataSnapshot snap) async {
-      keys = snap.value.keys;
-      var data = snap.value;
-
-      allData.clear();
-
-      for (var key in keys) {
-        d = new myData(
-          data[key]['name'],
-          data[key]['phoneNumber'],
-          data[key]['email'],
-          data[key]['latitude'],
-          data[key]['longitude'],
-          data[key]['locComment'],
-        );
-        await allData.add(d);
-      }
-    });
-    if (allData[0] != null ){
-    name=allData[0].name;
-    phoneNumber=allData[0].phoneNumber;
-    email=allData[0].email;
-    allData[0].getLocation=new LatLng(allData[0].latitude, allData[0].longitude);
-    }
-    return allData;
   }
+
+  _setNewName() {newName=_nameCtrl.text;print("Hi");print(newName);}
+  _setNewPhone(){newPhoneNumber=_phoneCtrl.text;print(newPhoneNumber);}
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +78,21 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
           ),],
 
       ),
-      body: FutureBuilder(
-        future: getCust(),
-        builder: (BuildContext context,AsyncSnapshot snapshot){
-          if(!snapshot.hasData)
-            return Container(child: Center(child: Text("Loading.."),));
-          else
+      body: Container(
+        child: StreamBuilder(
+          stream: dbReference.onValue,
+          builder: (context , snapshot){
+            if(snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+            Map data = snapshot.data.snapshot.value;
+            List item = [];
+            data.forEach( (index,data) => item.add({"key": index, ...data}));
+            name=item[0]['name'];
+            phoneNumber=item[0]['phoneNumber'];
+            lat=item[0]['latitude'];
+            lng=item[0]['longitude'];
+            locCom=item[0]['locComment'];
+            email=item[0]['email'];
+
             return Container(
               child: Form(
                 key: _formKey,
@@ -119,7 +109,8 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child:TextFormField(
-                                      onChanged: (val){setState(() => newName=val);},
+                                      controller: _nameCtrl,
+                                      //onChanged: (val){setState(() => newName=val);},
                                       decoration: InputDecoration(
                                           hintText: name,
                                           labelText:  'الاسم',
@@ -132,11 +123,12 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                     textDirection: TextDirection.rtl,
                                     child:TextFormField(
                                         validator: (String v){
-                                          if (newPhoneNumber!=null && v.length!=10)
+                                          if ( v!=""  && v.length!=10 )
                                             return'أدخل رقم الجوال الصحيح';
                                           return null;
                                         },
-                                        onChanged: (val){setState(() => newPhoneNumber=val);},
+                                       // onChanged: (val){setState(() => newPhoneNumber=val);},
+                                        controller: _phoneCtrl,
                                         decoration: InputDecoration(
                                             hintText: phoneNumber,
                                             labelText:  'رقم الجوال',
@@ -176,7 +168,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                   child: Row(
                                     children: <Widget>[
                                       SizedBox(width:20.0),
-                                      Text('الموقع',
+                                      Text('موقعك',
                                         style:TextStyle(
                                             color: Colors.grey[600],
                                             fontSize: 20.0,
@@ -199,7 +191,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                                                       Icons.add_location,
                                                       color: Colors.grey[600],
                                                     ),
-                                                    Text("  تعديل الموقع     ",
+                                                    Text("  تعديل  ",
                                                         textDirection: TextDirection.rtl,
                                                         textAlign: TextAlign.justify,
                                                         style: TextStyle(
@@ -250,16 +242,19 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
                 ),
               ),
             );
-        },
-      ),
+          },
+        ),
+      )
     );
   }
 
   _pickLocation() async {
+    location= new LatLng(lat, lng);
+
 
     pickedLoc = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => ModifyLocation(allData[0].getLocation, allData[0].locComment),
+        builder: (ctx) => ModifyLocation(location, locCom),
         fullscreenDialog: true,
       ),
     );
@@ -270,20 +265,11 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
       return;
     }
     else{
-      lat=pickedLoc['latitude'];
-      lng=pickedLoc['longitude'];
-      locCom=pickedLoc['comments'];
+      newLat=pickedLoc['latitude'];
+      newLng=pickedLoc['longitude'];
+      newLocCom=pickedLoc['comments'];
       picked=pickedLoc['prickedLocation'];
-
-      print("Zeft: PickLocation latitude: $lat");
-      print("Zeft: PickLocation longitude: $lng");
-      print("Zeft: PickLocation comments: $locCom");
-      print("Zeft: PickLocation comments: $picked");
-
-      allData[0].getLocation=new LatLng(lat, lng);
-      allData[0].locComment=locCom;
-      LatLng zzz=allData[0].getLocation;
-      print("Zeft: PickLocation LatLng: $zzz");
+      location=new LatLng(newLat, newLng);
     }
   }
 
@@ -292,30 +278,58 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
     var _keys;
     var key;
 
-    if (newName == null )
-      newName=name;
-    if(newPhoneNumber == null)
-      newPhoneNumber=phoneNumber;
+    if (newName == null && newPhoneNumber == null && newLng == null && newLat == null &&newLocCom == null)
+      Fluttertoast.showToast(
+          msg: ("لم تقم بتعديل"),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 20,
+          backgroundColor: Colors.red[100],
+          textColor: Colors.red[800]
+      );
 
-    DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref.child('Customer').orderByChild("uid").equalTo(uid).
-    once().then(
-            (DataSnapshot snap) async {
-          _keys = snap.value.keys;
-          key = _keys.toString();
-          key=key.substring(1,21);
-          ref.child('Customer').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"latitude": lat, "longitude": lng, "locComment": locCom});
-        } );
+   else{
+      if (newName == null )
+        newName=name;
+      if(newPhoneNumber == null)
+        newPhoneNumber=phoneNumber;
+      if(newLat==null)
+        newLat= lat;
+      if(newLng==null)
+        newLng= lng;
+      if(newLocCom==null)
+        newLocCom=locCom;
 
-    Fluttertoast.showToast(
-        msg: ("تم تحديث البيانات بنجاح"),
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIos: 20,
-        backgroundColor: Colors.red[100],
-        textColor: Colors.red[800]
-    );
+      print("before db update");
+
+
+      DatabaseReference ref = FirebaseDatabase.instance.reference();
+      ref.child('Customer').orderByChild("uid").equalTo(uid).
+      once().then(
+              (DataSnapshot snap) async {
+            _keys = snap.value.keys;
+            key = _keys.toString();
+            key=key.substring(1,21);
+
+            ref.child('Customer').child(key).update({ "name": newName});
+            ref.child('Customer').child(key).update({ "phoneNumber": newPhoneNumber});
+            ref.child('Customer').child(key).update({ "latitude": newLat});
+            ref.child('Customer').child(key).update({ "longitude": newLng});
+            ref.child('Customer').child(key).update({ "locComment": newLocCom});
+          } );
+
+      print("after db update");
+
+
+      Fluttertoast.showToast(
+          msg: ("تم تحديث البيانات بنجاح"),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIos: 20,
+          backgroundColor: Colors.red[100],
+          textColor: Colors.red[800]
+      );
+    }
   }
-
 
 }
