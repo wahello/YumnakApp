@@ -18,7 +18,7 @@ class ModifySPInfo extends StatefulWidget {
 }
 
 class _ModifySPInfoState extends State<ModifySPInfo> {
-
+  DatabaseReference ref = FirebaseDatabase.instance.reference();
   var dbReference;
   var _firebaseRef =FirebaseDatabase.instance.reference();
 
@@ -34,6 +34,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   TextEditingController _phoneCtrl = TextEditingController();
   TextEditingController _qualCtrl = TextEditingController();
   TextEditingController _priceCtrl = TextEditingController();
+  //TextEditingController _fileName = TextEditingController();
 
   String available, file, name, phoneNumber, qualifications, email;
   var price, fileName, latitude,longitude;
@@ -59,12 +60,14 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     _phoneCtrl.addListener(_setNewPhone);
     _qualCtrl.addListener(_setNewQual);
     _priceCtrl.addListener(_setNewPrice);
+   // _fileName..addListener(_setNewFileName);
   }
 
   _setNewName() {newName=_nameCtrl.text;print("Hi");print(newName);}
   _setNewPhone(){newPhoneNumber=_phoneCtrl.text;print(newPhoneNumber);}
   _setNewQual(){newQualifications=_qualCtrl.text;print(newQualifications);}
   _setNewPrice(){newPrice=_priceCtrl.text;print(newPrice);}
+  //_setNewFileName(){newFileName=_fileName.text;print(newFileName);}
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +93,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
               qualifications=item[0]['qualifications'];
               latitude=item[0]['latitude'];
               longitude=item[0]['longitude'];
+              fileName=item[0]['fielName'];
 
               return Container(
                 child: Form(
@@ -208,11 +212,13 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
                                           if (fileName != "")
                                             ButtonTheme(
+                                                //controller:newFileName,
                                                 minWidth: 30.0,
                                                 height: 10.0,
                                                 child: RaisedButton(
                                                     color: Colors.grey[200],
                                                     onPressed: () { chooseFile(); },
+
                                                     child: Row(
                                                         children: <Widget>[
                                                           Icon(Icons.attach_file),
@@ -325,9 +331,11 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                 color: Colors.green[300],
                                 elevation: 7.0,
                                 child: GestureDetector(
-                                  onTap: () {
-                                    if (_formKey.currentState.validate())
-                                      updateSP();
+                                  onTap: () async {
+                                    if (_formKey.currentState.validate()){
+                                      if(_image != null){
+                                       await uploadFile();}
+                                      updateSP();}
 
 
 
@@ -393,8 +401,9 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     else{
       print('before variables update');
 
-      if(_image != null)
-          uploadFile();
+     /* if(_image != null)
+        uploadFile();*/
+
       // await uploadFile();
       //print("after update");
 
@@ -409,8 +418,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
         newQualifications=qualifications;
       if(newPrice == "" || newPrice == null)
         newPrice=price;
-      if(fileName==null )
-        newFileName=fileName;
+      if(fileName==null || fileName=="" )
+        newFileName="";
       if(location==null){
         newLatitude= latitude;
         newLongitude= longitude;
@@ -418,7 +427,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
       print("before db update");
 
-      DatabaseReference ref = await FirebaseDatabase.instance.reference();
+     // DatabaseReference ref = await FirebaseDatabase.instance.reference();
       await ref.child('Service Provider').orderByChild("uid").equalTo(spID).
       once().then((DataSnapshot snap) async {
             _keys = snap.value.keys;
@@ -431,8 +440,8 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
             ref.child('Service Provider').child(key).update({"qualifications":newQualifications});
             ref.child('Service Provider').child(key).update({"price":newPrice});
 
-            if(_image != null || newFileName!="")
-            ref.child('Service Provider').child(key).update({"fileName":""});
+           // if(_image != null )
+            //ref.child('Service Provider').child(key).update({"fileName":newFileName});
 
             ref.child('Service Provider').child(key).update({"latitude":newLatitude});
             ref.child('Service Provider').child(key).update({"longitude":newLongitude});
@@ -463,22 +472,34 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
    // uploadFile();
   }
 
-   Future uploadFile() async{
-    setState(() {
-      isLoading = true;
-    });
-    StorageReference storageReference = await FirebaseStorage.instance.ref().child('images/${Path.basename(_image.path)}}');
-    StorageUploadTask uploadTask = await storageReference.putFile(_image);
-    await uploadTask.onComplete;
-    print('File Uploaded');
-    storageReference.getDownloadURL().then((fileURL) {
-      setState(() {
-        _uploadedFileURL = fileURL;
-        newFileName=fileURL;
-        isLoading = false;
-        print(newFileName);
-      });
-    });
-  }
+   Future uploadFile() async {
+     setState(() {
+       isLoading = true;
+     });
+     StorageReference storageReference = await FirebaseStorage.instance.ref()
+         .child('images/${Path.basename(_image.path)}}');
+     StorageUploadTask uploadTask = await storageReference.putFile(_image);
+     await uploadTask.onComplete;
+     print('File Uploaded');
+     storageReference.getDownloadURL().then((fileURL) {
+       setState(() async {
+         _uploadedFileURL = fileURL;
+         newFileName = fileURL;
+         isLoading = false;
+         print(newFileName);
 
-}
+
+         var _key1;
+         var key2;
+         await ref.child('Service Provider').orderByChild("uid").equalTo(spID).
+         once().then((DataSnapshot snap) async {
+           _key1 = snap.value.keys;
+           key2 = _key1.toString();
+
+           key2 = key2.substring(1, 21);
+           ref.child('Service Provider').child(key2).update(
+               {"fileName": newFileName});
+         });
+       });
+     });
+   }}
