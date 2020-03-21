@@ -278,7 +278,7 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
     var _keys;
     var key;
 
-    if (newName == null && newPhoneNumber == null && newLng == null && newLat == null &&newLocCom == null)
+    if ((newName == null || newName == "") && (newPhoneNumber == null || newPhoneNumber == "") && newLng == null && newLat == null &&newLocCom == null)
       Fluttertoast.showToast(
           msg: ("لم تقم بتعديل"),
           toastLength: Toast.LENGTH_LONG,
@@ -289,9 +289,9 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
       );
 
    else{
-      if (newName == null )
+      if (newName == null || newName == "")
         newName=name;
-      if(newPhoneNumber == null)
+      if(newPhoneNumber == null || newPhoneNumber == "")
         newPhoneNumber=phoneNumber;
       if(newLat==null)
         newLat= lat;
