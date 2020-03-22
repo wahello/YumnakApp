@@ -123,9 +123,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
                             children: <Widget>[
                               Directionality(
                                   textDirection: TextDirection.rtl,
-                                  child: TextFormField(onChanged: (val) {
-                                    setState(() => name = val);
-                                  },
+                                  child: TextFormField(
+                                    validator:(val)=> validateName(val),
+                                    //(val) => val.isEmpty ? "أدخل الاسم" : null,
+                                    onChanged: (val){setState(() => name=val);},
                                     decoration: InputDecoration(
                                         icon: Icon(Icons.person),
                                         labelText: 'الاسم',
@@ -167,18 +168,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
-                                    validator: (String v) {
-                                      if (v.isEmpty) {
-                                        return "أدخل رقم الجوال";
-                                      }
-                                      if (v.length != 10) {
-                                        return 'أدخل رقم الجوال الصحيح';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (val) {
-                                      setState(() => phoneNumber = val);
-                                    },
+                                    validator: (String v)=>validateMobile(v),
+                                    onChanged: (val){setState(() => phoneNumber=val);},
                                     decoration: InputDecoration(
                                         icon: Icon(Icons.phone),
                                         labelText: 'رقم الجوال',
@@ -391,7 +382,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
                                       validator: (val) =>
-                                      val.isEmpty ? "يجب تحديد السعر" : null,
+                                      validatePrice(val),
                                       onChanged: (val) {
                                         setState(() {
                                           double p= double.parse(val);
@@ -414,7 +405,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                 Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: TextFormField(
-                                      validator: (val) => val.isEmpty ? "يجب تحديد السعر" : null,
+                                      validator: (val) => validatePrice(val),
                                       onChanged: (val) {
                                         setState(() {
                                           double p= double.parse(val);
@@ -546,8 +537,8 @@ class _SignUp_SPState extends State<SignUp_SP> {
                             child: GestureDetector(
                               onTap: () async {
                                 print("ZEFT Picked: $picked");
-                                if(picked){
-                                  if (_formKey.currentState.validate()) {
+                                if (_formKey.currentState.validate()){
+                                  if (picked) {
                                     dynamic result = await _auth.registerWithEmailAndPassword(email, password);
 
                                     if (result == null) {
@@ -747,5 +738,37 @@ class _SignUp_SPState extends State<SignUp_SP> {
       loc=new LatLng(lat, lng);
       print("Zeft: PickLocation LatLng: $loc");
     }
+  }
+  String validateName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "أدخل الاسم";
+    } else if (!regExp.hasMatch(value)) {
+      return "يجب أن يحتوي الاسم على أحرف فقط";
+    }
+    return null;
+  }
+  String validateMobile(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "الرجاء إدخال رقم الجوال";
+    } else if(value.length != 10){
+      return "أدخل رقم الجوال الصحيح";
+    }else if (!regExp.hasMatch(value)) {
+      return "يجب ان يحتوي رقم الجوال على أرقام فقط";
+    }
+    return null;
+  }
+  String validatePrice(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "يجب تحديد السعر";
+    }else if (!regExp.hasMatch(value)) {
+      return "السعر يحتوي على ارقام فقط";
+    }
+    return null;
   }
 }

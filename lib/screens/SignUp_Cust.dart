@@ -79,7 +79,8 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.isEmpty ? "أدخل الاسم" : null,
+                                validator:(val)=> validateName(val),
+                                //(val) => val.isEmpty ? "أدخل الاسم" : null,
                                 onChanged: (val){setState(() => name=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.person),
@@ -105,17 +106,19 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (String v){
+                                validator: (String v)=>validateMobile(v),
+                                /*{
                                   if (v.isEmpty) {return  "أدخل رقم الجوال";}
                                   if (v.length!=10) {return'أدخل رقم الجوال الصحيح';}
                                   return null;
-                                },
+                                }*/
 
                                // validator:(val) => val.isEmpty ? "أدخل رقم الجوال" : null,//null means valid phone
                                 onChanged: (val){setState(() => phoneNumber=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.phone),
                                     labelText:  'رقم الجوال',
+                                    hintText: "05xxxxxxxx",
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),
                                     focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: Colors.lightBlueAccent))),
@@ -210,8 +213,8 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                         child: GestureDetector(
                           onTap: () async {
                             print("ZEFT Picked: $picked");
-                            if(picked){
-                              if (_formKey.currentState.validate()) {
+                            if (_formKey.currentState.validate()){
+                              if(picked) {
                                 dynamic result = await _auth.registerWithEmailAndPassword(email, password);
 
                                 if (result == null) {
@@ -322,5 +325,28 @@ class _SignUp_CustState extends State<SignUp_Cust> {
       loc=new LatLng(lat, lng);
       print("Zeft: PickLocation LatLng: $loc");
     }
+  }
+
+  String validateName(String value) {
+    String patttern = r'(^[a-zA-Z ]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "أدخل الاسم";
+    } else if (!regExp.hasMatch(value)) {
+      return "يجب أن يحتوي الاسم على أحرف فقط";
+    }
+    return null;
+  }
+  String validateMobile(String value) {
+    String patttern = r'(^[0-9]*$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return "الرجاء إدخال رقم الجوال";
+    } else if(value.length != 10){
+      return "أدخل رقم الجوال الصحيح";
+    }else if (!regExp.hasMatch(value)) {
+      return "يجب ان يحتوي رقم الجوال على أرقام فقط";
+    }
+    return null;
   }
 }
