@@ -169,6 +169,8 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                             ),
                           ),*/
 
+
+
                         Container(
                           child:  Card(
                             margin: new EdgeInsets.only(
@@ -303,7 +305,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                           ),
                         ),
 
-                        SizedBox(height: 20),
+                        /*SizedBox(height: 20),
                         Container(
                             height: 40.0,
                             child: Material(
@@ -322,7 +324,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                                   ),
                                 ),
                               ),
-                            )),
+                            )),*/
                         SizedBox(height: 20),
                       ],
                     ),
