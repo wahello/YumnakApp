@@ -93,7 +93,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.isEmpty ? "أدخل البريد الألكتروني" : null,  //null means valid email
+                                validator: (val) => val.isEmpty ? "الرجاء إدخال البريد الألكتروني" : null,  //null means valid email
                                 onChanged: (val){setState(() => email=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.email),
@@ -331,7 +331,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     String patttern = r'(^[a-zA-Z ]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "أدخل الاسم";
+      return "الرجاء إدخال الاسم";
     } else if (!regExp.hasMatch(value)) {
       return "يجب أن يحتوي الاسم على أحرف فقط";
     }

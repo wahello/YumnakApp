@@ -185,7 +185,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
-                                    validator: (val) => val.isEmpty ? "ادخل البريد الألكتروني" : null,
+                                    validator: (val) => val.isEmpty ? "الرجاء إدخال البريد الألكتروني" : null,
                                     onChanged: (val) {
                                       setState(() => email = val);
                                     },
@@ -743,7 +743,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     String patttern = r'(^[a-zA-Z ]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "أدخل الاسم";
+      return "الرجاء إدخال الاسم";
     } else if (!regExp.hasMatch(value)) {
       return "يجب أن يحتوي الاسم على أحرف فقط";
     }
@@ -765,7 +765,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     String patttern = r'(^[0-9]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "يجب تحديد السعر";
+      return "الرجاء تحديد السعر";
     }else if (!regExp.hasMatch(value)) {
       return "السعر يحتوي على ارقام فقط";
     }
