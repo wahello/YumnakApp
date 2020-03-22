@@ -21,6 +21,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
   String available, file, name, phoneNumber, qualifications, email, service;
   var price, fileName;
   double rAvg, rTime, rWork, rCoop, rPrice;
+  int ratingCount;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
               rWork=item[0]['ratingWork'];
               rCoop=item[0]['ratingCooperation'];
               rPrice=item[0]['raringPrice'];
+              ratingCount=item[0]['ratingCounter'];
 
               return ListView(
                 children: <Widget>[
@@ -181,9 +183,11 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                                 textDirection: TextDirection.rtl,
                                 child: Column(
                                   children: <Widget>[
-                                    Text(
-                                      "التقييم",
-                                      style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),
+                                    Row(
+                                      children: <Widget>[
+                                        Text("التقييم", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),),
+                                        Text(" ($ratingCount تقييمات )")
+                                      ],
                                     ),
                                     Row(
                                         children: <Widget>[

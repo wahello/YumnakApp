@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:yumnak/screens/HomePage.dart';
-//import 'package:yumnak/screens/requestService.dart';
+import 'package:yumnak/screens/requestService.dart';
 
 class SP_details extends StatefulWidget {
   dynamic uid;
@@ -396,10 +396,10 @@ class _SP_detailsState extends State<SP_details> {
                     shadowColor: Colors.lightBlueAccent,
                     color: Colors.green[300],elevation: 3.0,
                     child: GestureDetector(
-                     // onTap: () {
-                     //  Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-                       //     requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
-                       // },
+                      onTap: () {
+                       Navigator.push(context, new MaterialPageRoute(builder: (context) =>
+                            requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
+                        },
                       child: Center(
                         child: Text( 'طلب',
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,

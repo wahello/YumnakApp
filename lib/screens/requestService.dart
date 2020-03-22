@@ -69,8 +69,6 @@ class _requestServiceState extends State<requestService> {
   String comment;
   bool picked=false;
 
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
-
   String error;
   int countOrders=0;
   var orderID;
@@ -82,7 +80,7 @@ class _requestServiceState extends State<requestService> {
       'uid_cus': uid,
       'uid_sp': sp_uid,
       'orderID': orderID,
-      'requestDate': dateAndTime,
+      'requestDate': dt,
       'status': status,
       'service': spService,
       'name_cus':cusName,
@@ -256,8 +254,8 @@ class _requestServiceState extends State<requestService> {
                               if(longSpinnerValue==hours_list[i])
                                 numOfHours=i+1;
 
-                            dt= new DateTime.now();
-                            dateAndTime=dateFormat.format(dt);
+                            dt= new DateTime.now().toString();
+                            //dateAndTime=dateFormat.format(dt);
 
                             orderID='#'+(countOrders++).toString();
 
