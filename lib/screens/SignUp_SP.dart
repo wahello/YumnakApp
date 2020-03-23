@@ -555,6 +555,9 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                     }
                                     print("ZEFT Picked: $picked");
                                   }
+                                  if(_image!=""|| _image!=null){
+                                    uploadFile();}
+                                  else fileName="";
                                 }
                                 else{
                                   Fluttertoast.showToast(
@@ -658,9 +661,10 @@ class _SignUp_SPState extends State<SignUp_SP> {
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
       setState(() {
         _image = image;
+        print(_image);
       });
     });
-    uploadFile();
+
   }
 
   Future uploadFile() async {
