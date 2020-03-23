@@ -9,6 +9,7 @@ import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifySPInfo.dart';
 import 'package:yumnak/screens/SP_InformationData.dart';
 import 'package:yumnak/screens/spOrderDetails.dart';
+import 'package:yumnak/screens/support.dart';
 import 'package:yumnak/services/auth.dart';
 
 class SP_HomePage extends StatefulWidget {
@@ -19,6 +20,9 @@ class SP_HomePage extends StatefulWidget {
   _SP_HomePageState createState() => _SP_HomePageState(spID);
 }
 
+List<OrderData> allOrders = [];
+
+
 class OrderData {
   String status,
       dateAndTime,
@@ -26,10 +30,9 @@ class OrderData {
       cusName,
       spName,
       serviceDescription,
-      locComment,
-      phoneCus;
+      locComment;
   var cusUid, spUid, orderID, latitude, longitude, numOfHours;
-
+  var key;
   OrderData(
       this.cusUid,
       this.spUid,
@@ -37,9 +40,8 @@ class OrderData {
       this.status,
       this.dateAndTime,
       this.cusName,
-      /*this.spName,*/
       this.numOfHours,
-      this.phoneCus,
+      this.key,
       );
 }
 
@@ -53,7 +55,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
   final _formKey = GlobalKey<FormState>();
   final AuthService  _auth = AuthService();
 
-  //List<OrderData> dummyList = List<OrderData>();
+  List<OrderData> dummyList = List<OrderData>();
 
   String spID;
   _SP_HomePageState(String uid){spID=uid; print('SP_homepage: $spID');}
@@ -70,9 +72,9 @@ class _SP_HomePageState extends State<SP_HomePage> {
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
-  Widget _buildListItem(item,key) {
-    DateTime reqDate = DateTime.parse(item['requestDate']);
-    var endDate = reqDate.add(new Duration(hours: item['serviceHours']));
+  Widget _buildListItem(OrderData order) {
+    DateTime reqDate = DateTime.parse(order.dateAndTime);
+    var endDate = reqDate.add(new Duration(hours: order.numOfHours));
     Duration remaining = Duration(minutes: endDate.difference(DateTime.now()).inMinutes);
     bool isWaiting = endDate.isAfter(DateTime.now());
 
@@ -88,13 +90,14 @@ class _SP_HomePageState extends State<SP_HomePage> {
       },
     );
 
-    if(!isWaiting){
-      _firebaseRef.child('Order').child(key).update({"status": 'ملغي'});
+    if(!isWaiting && order.status == "قيد الانتظار" ){
+      var k = (order.key).toString().substring(1,21);
+      _firebaseRef.child('Order').child(k).update({"status": 'ملغي'});
     }
 
     Color col;
     isTimePassed=false;
-    String stat=item['status'];
+    String stat=order.status;
 
     if(stat=="قيد الانتظار")
       col=Colors.black;
@@ -124,7 +127,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                       Row(
                         children: <Widget>[
                           Text("الاسم: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          Text(item['name_cus']),
+                          Text(order.cusName),
                         ],
                       ),
 
@@ -137,11 +140,11 @@ class _SP_HomePageState extends State<SP_HomePage> {
                       Row(
                         children: <Widget>[
                           Text("حالة الطلب: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          Text(item['status'], style: TextStyle(color: col, fontSize: 19, fontWeight: FontWeight.bold),),
+                          Text(order.status, style: TextStyle(color: col, fontSize: 19, fontWeight: FontWeight.bold),),
                         ],
                       ),
 
-                      if(isWaiting)
+                      if(isWaiting && (order.status == "قيد الانتظار" || order.status == "مقبول"))
                         c,
                     ],
                   )
@@ -160,9 +163,13 @@ class _SP_HomePageState extends State<SP_HomePage> {
                     ),
                   ],
                 ),
-                onPressed: () { Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => spOrderDetails(orderData: item,))
-                );},
+
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => spOrderDetails(order.orderID)     ));
+                  },
+
+
               ),
             ],
           ),
@@ -171,13 +178,13 @@ class _SP_HomePageState extends State<SP_HomePage> {
     );
   }
 
-  /*void sortByNewest(){
+  void sortByNewest(){
     dummyList.clear();
-    dummyList.addAll(SPOrdersData);
+    dummyList.addAll(allOrders);
     dummyList.sort((b, a) => a.dateAndTime.compareTo(b.dateAndTime));
-    SPOrdersData.clear();
-    SPOrdersData.addAll(dummyList);
-  }*/
+    allOrders.clear();
+    allOrders.addAll(dummyList);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,8 +231,8 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           leading: Icon(Icons.help),
                           title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
-                            //Navigator.push(context, new MaterialPageRoute(
-                            //  builder: (context) =>    ));
+                             Navigator.push(context, new MaterialPageRoute(
+                             builder: (context) =>  support()  ));
                           },
                         ),
                         new Divider(),
@@ -275,15 +282,47 @@ class _SP_HomePageState extends State<SP_HomePage> {
             stream: dbReference.onValue,
             builder: (context, snapshot){
               if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-              Map data = snapshot.data.snapshot.value;
-              List item = [];
-              data.forEach((index, data) => item.add({"key": index, ...data}));
+              if (snapshot.data.snapshot.value != null){
+                Map data = snapshot.data.snapshot.value;
+                var keys = snapshot.data.snapshot.value.keys;
+
+
+               allOrders.clear();
+               OrderData o;
+                for (var key in keys) {
+                  o = new OrderData(
+                    data[key]["uid_cus"],
+                    data[key]["uid_sp"],
+                    data[key]["orderID"],
+                    data[key]["status"],
+                    data[key]["requestDate"],
+                    data[key]["name_cus"],
+                    data[key]["serviceHours"],
+                    data.keys.toList(),
+                  );
+                  allOrders.add(o);
+                }
+                sortByNewest();
+                print ((allOrders[0].key));
+
+                //return Center(child: Text("لا يوجد طلبات"),);
+
+               // data.forEach((index, data) => orders.add({"key": index, ...data}));
                 return ListView.builder(
-                    itemCount: item.length,
+                    itemCount: allOrders.length,
                     itemBuilder: (context, index) {
-                      return _buildListItem(item[index], data.keys.toList()[index]);
+                      return _buildListItem(allOrders[index]);
                     }
                 );
+
+                /*data.forEach((index, data) => orders.add({"key": index, ...data}));
+                return ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      return _buildListItem(orders[index], data.keys.toList()[index]);
+                    }
+                );*/
+              }else return Center(child: Text("لا يوجد طلبات"),);
             },
           ),
         )

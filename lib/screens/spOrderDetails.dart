@@ -9,16 +9,20 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class spOrderDetails extends StatefulWidget {
-  final orderData;
-  spOrderDetails({
-    this.orderData,
-  });
+      String orderID;
+      spOrderDetails(
+        this.orderID,
+      );
 
   @override
-  _spOrderDetailsState createState() => _spOrderDetailsState();
+  _spOrderDetailsState createState() => _spOrderDetailsState(orderID);
 }
 
 class _spOrderDetailsState extends State<spOrderDetails> {
+
+  String orderID;
+  _spOrderDetailsState(String o){orderID=o; print('order ID: $orderID');}
+
 
   static dynamic uid;
   static dynamic spID;
@@ -39,8 +43,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
   initState() {
     super.initState();
-
-    reqDBReference = _firebaseRef.child('Order').orderByChild("orderID").equalTo(widget.orderData['orderID']);
+    reqDBReference = _firebaseRef.child('Order').orderByChild("orderID").equalTo(orderID);
   }
 
   Future<void> _makePhoneCall(String url) async {
@@ -56,10 +59,19 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
   Widget _buildWidget(item, key) {
 
+    loc = new LatLng(item["loc_latitude"], item["loc_longitude"]);
+
     DateTime reqDate = DateTime.parse(item['requestDate']);
     var endDate = reqDate.add(new Duration(hours: item['serviceHours']));
     Duration remaining = Duration(minutes: endDate.difference(DateTime.now()).inMinutes);
     bool isWaiting = endDate.isAfter(DateTime.now());
+
+    var cancelDate = endDate.subtract(new Duration(hours: 1));
+     print(cancelDate);
+
+    var now = DateTime.now();
+      print(now);
+
 
     Widget c = new Countdown(
       duration: remaining,
@@ -73,7 +85,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
       },
     );
 
-    if(!isWaiting){
+    if(!isWaiting && item["status"] == "قيد الانتظار"){
       _firebaseRef.child('Order').child(key).update({"status": 'ملغي'});
     }
 
@@ -93,7 +105,8 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
 
     return Container(
-      child:Column(
+        width: MediaQuery.of(context).size.width,
+        child:Column(
         children: <Widget>[
           SizedBox(height:20.0),
           Container(
@@ -137,7 +150,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                       ],
                                     ),
 
-                                    if(isWaiting)
+                                    if(isWaiting  &&  (item["status"] == "قيد الانتظار" || item["status"] == "مقبول") )
                                       c,
 
                                     Row(
@@ -168,7 +181,10 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                           //padding: EdgeInsets.fromLTRB(62, 0, 62, 0),
                             margin: new EdgeInsets.only(left: 70.0, right: 70.0, top: 0, bottom: 0),
                             child: RaisedButton(
-                                onPressed:(){ /*Navigator.push(context, new MaterialPageRoute(builder: (context) => ViewLocation(uid, spID, loc, ordersDataDetails.locComment, dt)));*/ },
+                                onPressed:(){
+                                  Navigator.push(context, new MaterialPageRoute(
+                                      builder: (context) => ViewLocation(uid, spID, loc, item["loc_locComment"], dt)));
+                                  },
                                 color: Colors.grey,
                                 child: Row(
                                     children: <Widget>[
@@ -269,10 +285,13 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                 child: Text("اكتمال الطلب", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
                               )
                           ),
-                          Container(
+                          if(now.isBefore(cancelDate))
+                            Container(
                               padding: EdgeInsets.fromLTRB(30, 0, 50, 0),
                               child: RaisedButton(
-                                onPressed:(){},
+                                onPressed:(){
+                                    _firebaseRef.child('Order').child(key).update({"status": 'ملغي'});
+                                },
                                 color: Colors.red,
                                 child: Text("الغاء الطلب", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
                               )
@@ -300,6 +319,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
         ),
 
         body: Container(
+          width: MediaQuery.of(context).size.width,
           child: StreamBuilder(
             stream: reqDBReference.onValue,
             builder: (context, snapshot){

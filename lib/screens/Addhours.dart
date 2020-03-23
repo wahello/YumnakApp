@@ -30,6 +30,7 @@ class _AddhoursState extends State<Addhours> {
   _AddhoursState(String uid){spID=uid;}
 
 
+  DateTime startDB,endDB;
 
 
   bool _lights=false;
@@ -73,8 +74,9 @@ class _AddhoursState extends State<Addhours> {
           _keys = snap.value.keys;
           key = _keys.toString();
           key=key.substring(1,21);
-          ref.child('Service Provider').child(key).update({"startTime":_time.toString()});
-          ref.child('Service Provider').child(key).update({"endTime":_endtime.toString()});
+          print(end.toString());
+          ref.child('Service Provider').child(key).update({"startTime":(startDB.toString())});
+          ref.child('Service Provider').child(key).update({"endTime":(endDB.toString())});
               } );
 
     updateUserStatus();}
@@ -162,14 +164,10 @@ class _AddhoursState extends State<Addhours> {
 
              if (start != "" && end != ""){
                print('hello');
-               _startTimeDB = TimeOfDay(hour:int.parse(start.substring(10,12)),minute:int.parse(start.substring(13,15)));
-               print(_startTimeDB);
-               _endTimeDB = TimeOfDay(hour:int.parse(end.substring(10,12)),minute:int.parse(end.substring(13,15)));
-               print(_endTimeDB);
 
-                  startDT = new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, _startTimeDB.hour, _startTimeDB.minute);
+                  startDT = DateTime.parse(start);
                   print(startDT);
-                  endDT = new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, _endTimeDB.hour, _endTimeDB.minute);
+                  endDT = DateTime.parse(end);
                   print(endDT);
 
 
@@ -279,7 +277,6 @@ class _AddhoursState extends State<Addhours> {
 
                                     DateTime now = new DateTime.now();
                                     print(now);
-                                    DateTime start,end;
 
                                    if (!free){
                                      if((_time == null || _endtime == null)){
@@ -295,22 +292,28 @@ class _AddhoursState extends State<Addhours> {
                                        print("Hi from else");
                                        DateTime now = new DateTime.now();
                                        print(now);
-                                       DateTime start,end;
 
                                        if (_time != null){
-                                         start = new DateTime(now.year, now.month, now.day, _time.hour, _time.minute);
-                                         print(start);
+                                         startDB = new DateTime(now.year, now.month, now.day, _time.hour, _time.minute);
+                                         print(startDB);
                                          print(_time.period );
 
                                        }
 
                                        if (_endtime != null){
-                                         end = new DateTime(now.year, now.month, now.day, _endtime.hour, _endtime.minute);
-                                         print(end);
+                                         if(_endtime.hour < _time.hour && (_endtime.period ==  DayPeriod.am && _time.period ==  DayPeriod.pm)){
+                                           endDB = new DateTime(now.year, now.month, now.day, _endtime.hour, _endtime.minute);
+                                           endDB = endDB.add(new Duration(days: 1));
+                                         }
+                                         else
+                                           endDB = new DateTime(now.year, now.month, now.day, _endtime.hour, _endtime.minute);
+
+                                         print(endDB);
                                          print(_endtime.period );
                                        }
 
-                                       if (start.isAfter(now) && end.isAfter(start) ){
+                                       if (startDB.isAfter(now) && endDB.isAfter(startDB) ){
+                                         print('hi from iff');
                                          _lights = value;
                                          state = true;
                                          updateAvaHours();
@@ -361,14 +364,14 @@ class _AddhoursState extends State<Addhours> {
                                   SizedBox(width: 50,),
                                   Center(child: Text("متاح من الساعة"),),
                                   SizedBox(width: 10,),
-                                  Text(start.substring(10,12)+":"+start.substring(13,15)),
+                                 // Text(start.substring(10,12)+":"+start.substring(13,15)),
 
                                 ],),
                                 Row(children: <Widget>[
                                   SizedBox(width: 50,),
                                   Center(child: Text("إلى الساعة"),),
                                   SizedBox(width: 35,),
-                                  Text(end.substring(10,12)+":"+end.substring(13,15)),
+                                 // Text(end.substring(10,12)+":"+end.substring(13,15)),
                                 ],),
                               ],
                             ),
