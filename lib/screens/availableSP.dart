@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rating_bar/rating_bar.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/SP_details.dart';
 
@@ -63,7 +64,6 @@ class _availableSPState extends State<availableSP> {
   var dbReferenceCust;
   var _firebaseRefCust =FirebaseDatabase.instance.reference();
 
-  String Custuid;
   var Custlatitude , Custlongitude;
 
 
@@ -166,7 +166,7 @@ class _availableSPState extends State<availableSP> {
   Widget _buildListItem(myData d) {
 
     return GestureDetector(
-      onTap: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => SP_details(uid,d.uid))),
+      onTap: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => SP_details(uid,d.uid,d.loc))),
       child: Card(
         margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 5.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -226,11 +226,14 @@ class _availableSPState extends State<availableSP> {
                               padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                               child: Text("التقييم",style: TextStyle(fontSize:18,fontWeight: FontWeight.bold)),
                             ),
-                            Row(
-                              children: <Widget>[
-                                Icon(Icons.star),
-                                Text('5'),
-                              ],
+                            RatingBar.readOnly(
+                              initialRating: d.ratingAvg,
+                              isHalfAllowed: true,
+                              halfFilledIcon: Icons.star_half,
+                              filledIcon: Icons.star,
+                              emptyIcon: Icons.star_border,
+                              filledColor: Colors.amber,
+                              size: 20,
                             ),
                           ]
                       ),
@@ -275,7 +278,6 @@ class _availableSPState extends State<availableSP> {
             Map custData = snapshot.data.snapshot.value;
             List Custitem = [];
             custData.forEach((index, data) => Custitem.add({"key": index, ...data}));
-            Custuid = Custitem[0]['name'];
             Custlatitude = Custitem[0]['latitude'];
             Custlongitude = Custitem[0]['longitude'];
 

@@ -2,124 +2,59 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rating_bar/rating_bar.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/requestService.dart';
 
 class SP_details extends StatefulWidget {
   dynamic uid;
   dynamic SPuid;
-  SP_details(dynamic u,dynamic SPu){uid=u;SPuid=SPu;}
+  String loc;
+  SP_details(this.uid, this.SPuid, this.loc);
 
   @override
-  _SP_detailsState createState() => _SP_detailsState(uid,SPuid);
-}
-
-//----------------------------SP----------------------------------------
-
-List<myData> all = [];
-myData sp ;
-
-class myData {
-  String name;
-  String qualifications,service;
-  var uid, price;
-  var latitude,longitude;
-  var fileName;
-
-
-  myData(this.name,this.uid,this.price,this.qualifications,this.longitude,this.latitude,this.service,this.fileName);
-}
-
-//-----------------------------CUS---------------------------------------
-
-List<myData_Cust> allCust = [];
-myData_Cust cust ;
-
-class myData_Cust {
-  var uid,latitude,longitude;
-  String name;
-
-  myData_Cust(this.uid, this.name, this.longitude, this.latitude);
+  _SP_detailsState createState() => _SP_detailsState(uid, SPuid, loc);
 }
 
 //--------------------------------------------------------------------
-double distanceInMeters;
-String s;
-
 
 class _SP_detailsState extends State<SP_details> {
 
   static dynamic uid;
   static dynamic SPuid;
 
-  _SP_detailsState(dynamic u,dynamic SPu){
+  double distanceInMeters;
+  String s;
+
+  var dbReference;
+  var _firebaseRef =FirebaseDatabase.instance.reference();
+  var dbReferenceCust;
+  var _firebaseRefCust =FirebaseDatabase.instance.reference();
+
+
+  String available, file, name, phoneNumber, qualifications, email, service;
+  var price, fileName;
+  double rAvg, rTime, rWork, rCoop, rPrice, lat,lng;
+  int ratingCount;
+
+  String cusUid, cusName;
+  var cusLatitude , cusLongitude;
+
+  _SP_detailsState(dynamic u,dynamic SPu, String loc){
     uid=u; SPuid=SPu;
+    s=loc;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dbReference=_firebaseRef.child('Service Provider').orderByChild('uid').equalTo(SPuid);
+    dbReferenceCust=_firebaseRefCust.child('Customer').orderByChild('uid').equalTo(uid);
     print('SP_details: $uid');print('SP_details SPUID: $SPuid');
+
   }
 
-  Future data() async {
-
-    await FirebaseDatabase.instance.reference().child('Service Provider').once().then((DataSnapshot snap) async {
-      var keys = snap.value.keys;
-      var data = snap.value;
-      //print(data);
-
-      all.clear();
-      myData d;
-      for (var key in keys) {
-        d = new myData(
-          data[key]['name'],
-          data[key]['uid'],
-          data[key]['price'],
-          data[key]['qualifications'],
-          data[key]['longitude'],
-          data[key]['latitude'],
-          data[key]['service'],
-          data[key]['fileName'],
-
-        );
-        all.add(d);
-      }
-
-      sp=null;
-      for (var i = 0; i < all.length; i++) {
-        if(all[i].uid == SPuid){
-          sp=all[i];
-          break;
-        }
-      }
-    });
-    await FirebaseDatabase.instance.reference().child('Customer').once().then((DataSnapshot snap) async {
-      var keys = snap.value.keys;
-      var data = snap.value;
-
-      allCust.clear();
-      myData_Cust d;
-      for (var key in keys) {
-        d = new myData_Cust(
-          data[key]['uid'],
-          data[key]['name'],
-          data[key]['longitude'],
-          data[key]['latitude'],
-        );
-        allCust.add(d);
-      }
-
-      cust=null;
-      for (var i = 0; i < allCust.length; i++) {
-        if(allCust[i].uid == uid){
-          cust=allCust[i];
-          break;
-        }
-      }
-    });
-
-    distanceInMeters = await Geolocator().distanceBetween(cust.latitude, cust.longitude, sp.latitude, sp.longitude)/1000;
-     s=distanceInMeters.toStringAsFixed(2);
-    return sp;
-  }
-
-  Future<void> showAttach(){
+/*  Future<void> showAttach(){
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -137,7 +72,7 @@ class _SP_detailsState extends State<SP_details> {
         );
       },
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -148,21 +83,48 @@ class _SP_detailsState extends State<SP_details> {
         actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){ Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},)],
       ),
 
-      body: Container(
-        child: FutureBuilder(
-          future: data(),
-          builder: (BuildContext context,AsyncSnapshot snapshot){
-              if(!snapshot.hasData)
-              return Container(child: Center(child: Text("Loading.."),));
-            else
-              return Container(child: spDetails());
-          },
-        ),
-      )
+      body:StreamBuilder(
+          stream: dbReferenceCust.onValue,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+            Map custData = snapshot.data.snapshot.value;
+            List Custitem = [];
+            custData.forEach((index, data) => Custitem.add({"key": index, ...data}));
+            cusUid = Custitem[0]['uid'];
+            cusName= Custitem[0]['name'];
+            cusLatitude = Custitem[0]['latitude'];
+            cusLongitude = Custitem[0]['longitude'];
+
+            return StreamBuilder(
+                stream: dbReference.onValue,
+                builder: (context, snapshot){
+                  if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                  Map data = snapshot.data.snapshot.value;
+                  List item = [];
+                  data.forEach((index, data) => item.add({"key": index, ...data}));
+                  name=item[0]['name'];
+                  price=item[0]['price'];
+                  qualifications=item[0]['qualifications'];
+                  service=item[0]['service'];
+                  rAvg=item[0]['ratingAvg'];
+                  rTime=item[0]['ratingTime'];
+                  rWork=item[0]['ratingWork'];
+                  rCoop=item[0]['ratingCooperation'];
+                  rPrice=item[0]['raringPrice'];
+                  ratingCount=item[0]['ratingCounter'];
+                  fileName=item[0]['fileName'];
+                  lat=item[0]['latitude:'];
+                  lng=item[0]['longitude'];
+
+                  return spDetails();
+                }
+            );
+          }
+      ),
     );
   }
 
-  spDetails(){
+  Widget spDetails(){
     return ListView(
       children: <Widget>[
         Container(
@@ -171,36 +133,35 @@ class _SP_detailsState extends State<SP_details> {
             children: <Widget>[
               SizedBox(height: 20),
               Icon(Icons.account_circle, size: 100, color: Colors.green[400]),
-              Text(sp.name, style: TextStyle( color: Colors.black38,fontWeight: FontWeight.bold,fontSize: 30)),
+              Text(name, style: TextStyle( color: Colors.black38,fontWeight: FontWeight.bold,fontSize: 30)),
 
               Card(
                 margin: new EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 5.0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
 
-                        if(sp.service=='تصوير' || sp.service=='إصلاح أجهزة ذكية' || sp.service=='عناية واسترخاء'|| sp.service== 'شعر'||sp.service== 'مكياج'|| sp.service=='صبابات'|| sp.service=='تنسيق حفلات'|| sp.service=='تجهيز طعام')
-                        Column(children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                            child:
-                            Text("السعر كحد أدنى",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          ),
-                          Text(sp.price.toString())
-                        ])
+                        if(service=='تصوير' || service=='إصلاح أجهزة ذكية' || service=='عناية واسترخاء'|| service== 'شعر'|| service== 'مكياج'|| service=='صبابات'|| service=='تنسيق حفلات'|| service=='تجهيز طعام')
+                          Column(children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child:
+                              Text("السعر كحد أدنى",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                            Text(price.toString())
+                          ])
 
                         else
                           Column(children: <Widget>[
-                          Padding(
-                          padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
-                          child:
-                          Text("السعر بالساعة",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          ),
-                          Text(sp.price.toString())
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
+                              child:
+                              Text("السعر بالساعة",style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                            Text(price.toString())
                           ]),
 
                         Column(children: <Widget>[
@@ -212,13 +173,22 @@ class _SP_detailsState extends State<SP_details> {
                           ),
                           Text('$s كم')
                         ]),
+
                         Column(children: <Widget>[
                           Padding(
                             padding: EdgeInsets.fromLTRB(15, 0, 10, 5),
                             child: Text("التقييم",style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                                fontSize: 18, fontWeight: FontWeight.bold)),
                           ),
-                          Text("★ 5")
+                          RatingBar.readOnly(
+                            initialRating: rAvg,
+                            isHalfAllowed: true,
+                            halfFilledIcon: Icons.star_half,
+                            filledIcon: Icons.star,
+                            emptyIcon: Icons.star_border,
+                            filledColor: Colors.amber,
+                            size: 20,
+                          ),
                         ]),
                       ]),
                 ),
@@ -232,17 +202,14 @@ class _SP_detailsState extends State<SP_details> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       child: Column(
                         children: <Widget>[
                           Text(
                             "المؤهلات",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
                           ),
-                          Text(sp.qualifications,
+                          Text(qualifications,
                             textAlign: TextAlign.right,
                             overflow: TextOverflow.visible,
                             textDirection: TextDirection.rtl,
@@ -252,35 +219,30 @@ class _SP_detailsState extends State<SP_details> {
                     )
                 ),
               ),
-              if(sp.fileName!="")
-              Directionality(
-                textDirection: TextDirection.rtl,
-                child: Container(
+              if(fileName!="")
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Container(
                     width: 200,
-                    //child: RaisedButton(
-                        //onPressed:(){ print('https://firebasestorage.googleapis.com/v0/b/yumnak-3df66.appspot.com/o/images%2FIMG_20200315_201117.jpg%7D?alt=media&token=effeba4b-2962-41fb-bcbd-cb480388f4cb',);
-                       // Image.network('https://wallpapercave.com/wp/wp4769141.jpg');
-                         // },
-                        color: Colors.grey[200],
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                        Align(
-                        alignment: Alignment.center,
+                    color: Colors.grey[200],
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.center,
 
                             child: ClipPath(
                               child: new SizedBox(
-                                width: 180.0,
-                                height: 180.0,
-                                child:Image.network(sp.fileName , fit: BoxFit.fill,)
+                                  width: 180.0,
+                                  height: 180.0,
+                                  child:Image.network(fileName , fit: BoxFit.fill,)
 
+                              ),
+                            ),
                           ),
-                           ),
-                           ),
-                       ] ),
-                      ),
-                      ),
-
+                        ] ),
+                  ),
+                ),
 
               Container(
                 child:  Card(
@@ -292,16 +254,17 @@ class _SP_detailsState extends State<SP_details> {
                       textDirection: TextDirection.rtl,
                       child: Column(
                         children: <Widget>[
-                          Text(
-                            "التقييم",
-                            style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),
+                          Row(
+                            children: <Widget>[
+                              Text("التقييم", style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold ),),
+                              Text(" ($ratingCount تقييمات )")
+                            ],
                           ),
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Column(children: <Widget>[
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                    padding: EdgeInsets.fromLTRB(70, 0, 40, 5),
                                     child: Text("الالتزام بالوقت",style: TextStyle(fontSize: 16)),
                                   ),
                                 ]),
@@ -309,16 +272,23 @@ class _SP_detailsState extends State<SP_details> {
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                                        child: Text("★",style: TextStyle( fontSize: 16,)),
+                                        child: RatingBar.readOnly(
+                                          initialRating: rTime,
+                                          isHalfAllowed: true,
+                                          halfFilledIcon: Icons.star_half,
+                                          filledIcon: Icons.star,
+                                          emptyIcon: Icons.star_border,
+                                          filledColor: Colors.amber,
+                                          size: 20,
+                                        ),
                                       ), ]
                                 ),
                               ]),
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Column(children: <Widget>[
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                    padding: EdgeInsets.fromLTRB(88, 0, 40, 5),
                                     child: Text("جودة العمل",style: TextStyle(fontSize: 16)),
                                   ),
                                 ]),
@@ -326,16 +296,24 @@ class _SP_detailsState extends State<SP_details> {
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                                        child: Text("★",style: TextStyle( fontSize: 16,)),
+                                        child: RatingBar.readOnly(
+                                          initialRating: rWork,
+                                          isHalfAllowed: true,
+                                          halfFilledIcon: Icons.star_half,
+                                          filledIcon: Icons.star,
+                                          emptyIcon: Icons.star_border,
+                                          filledColor: Colors.amber,
+                                          size: 20,
+                                        ),
                                       ), ]
                                 ),
-                              ]),
+                              ]
+                          ),
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Column(children: <Widget>[
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                    padding: EdgeInsets.fromLTRB(112, 0, 40, 5),
                                     child: Text("التعامل",style: TextStyle(fontSize: 16)),
                                   ),
                                 ]),
@@ -343,16 +321,23 @@ class _SP_detailsState extends State<SP_details> {
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                                        child: Text("★",style: TextStyle( fontSize: 16,),),
+                                        child: RatingBar.readOnly(
+                                          initialRating: rCoop,
+                                          isHalfAllowed: true,
+                                          halfFilledIcon: Icons.star_half,
+                                          filledIcon: Icons.star,
+                                          emptyIcon: Icons.star_border,
+                                          filledColor: Colors.amber,
+                                          size: 20,
+                                        ),
                                       ), ]
                                 ),
                               ]),
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Column(children: <Widget>[
                                   Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                    padding: EdgeInsets.fromLTRB(122, 0, 40, 5),
                                     child: Text("السعر",style: TextStyle(fontSize: 16)),
                                   ),
                                 ]),
@@ -360,7 +345,15 @@ class _SP_detailsState extends State<SP_details> {
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                                        child: Text("★",style: TextStyle( fontSize: 16,)),
+                                        child: RatingBar.readOnly(
+                                          initialRating: rPrice,
+                                          isHalfAllowed: true,
+                                          halfFilledIcon: Icons.star_half,
+                                          filledIcon: Icons.star,
+                                          emptyIcon: Icons.star_border,
+                                          filledColor: Colors.amber,
+                                          size: 20,
+                                        ),
                                       ), ]
                                 ),
                               ]),
@@ -382,12 +375,10 @@ class _SP_detailsState extends State<SP_details> {
                         subtitle: Text("التعلييييييييييق",textDirection: TextDirection.rtl),
                         //dense: true,
                       ),
-
                     ],
                   ),
                 ),
               ),
-
               SizedBox(height: 20),
               Container(
                   height: 40.0,
@@ -397,9 +388,9 @@ class _SP_detailsState extends State<SP_details> {
                     color: Colors.green[300],elevation: 3.0,
                     child: GestureDetector(
                       onTap: () {
-                       Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-                            requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
-                        },
+                        Navigator.push(context, new MaterialPageRoute(builder: (context) =>
+                                    requestService(uid, SPuid, name, service, cusName, cusLatitude, cusLongitude)));
+                      },
                       child: Center(
                         child: Text( 'طلب',
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
@@ -415,6 +406,7 @@ class _SP_detailsState extends State<SP_details> {
       ],
     );
   }
+
   /*display() async{
   final StorageReference ref = FirebaseStorage.instance.ref().child('images/' + SPuid.fileName + ".jpg");
   String downloadURL = await ref.getDownloadURL();

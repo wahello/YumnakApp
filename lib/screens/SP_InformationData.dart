@@ -18,7 +18,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
   String spID;
   _sp_InformationDataState(String uid){spID=uid;}
 
-  String available, file, name, phoneNumber, qualifications, email, service;
+  String available, file, name, phoneNumber, qualifications, email, service, flieName;
   var price, fileName;
   double rAvg, rTime, rWork, rCoop, rPrice;
   int ratingCount;
@@ -57,6 +57,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
               rCoop=item[0]['ratingCooperation'];
               rPrice=item[0]['raringPrice'];
               ratingCount=item[0]['ratingCounter'];
+              fileName=item[0]['fileName'];
 
               return ListView(
                 children: <Widget>[
@@ -142,15 +143,11 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                               )
                           ),
                         ),
-                        /*if(fileName!="")
+                        if(fileName!="")
                           Directionality(
                             textDirection: TextDirection.rtl,
                             child: Container(
                               width: 200,
-                              //child: RaisedButton(
-                              //onPressed:(){ print('https://firebasestorage.googleapis.com/v0/b/yumnak-3df66.appspot.com/o/images%2FIMG_20200315_201117.jpg%7D?alt=media&token=effeba4b-2962-41fb-bcbd-cb480388f4cb',);
-                              // Image.network('https://wallpapercave.com/wp/wp4769141.jpg');
-                              // },
                               color: Colors.grey[200],
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -169,9 +166,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                                     ),
                                   ] ),
                             ),
-                          ),*/
-
-
+                          ),
 
                         Container(
                           child:  Card(
@@ -308,27 +303,6 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                             ),
                           ),
                         ),
-
-                        /*SizedBox(height: 20),
-                        Container(
-                            height: 40.0,
-                            child: Material(
-                              borderRadius: BorderRadius.circular(20.0),
-                              shadowColor: Colors.lightBlueAccent,
-                              color: Colors.green[300],elevation: 3.0,
-                              child: GestureDetector(
-                                // onTap: () {
-                                //  Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-                                //     requestService(uid, SPuid, sp.name, sp.service, cust.name, cust.latitude, cust.longitude)));
-                                // },
-                                child: Center(
-                                  child: Text( 'طلب',
-                                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,
-                                        fontSize: 20.0,fontFamily: 'Montserrat'),
-                                  ),
-                                ),
-                              ),
-                            )),*/
                         SizedBox(height: 20),
                       ],
                     ),
