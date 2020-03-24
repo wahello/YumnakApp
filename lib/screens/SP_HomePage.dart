@@ -2,7 +2,6 @@ import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/rendering.dart' as material;
 import 'package:yumnak/screens/Addhours.dart';
 import 'package:yumnak/screens/Main.dart';
@@ -20,8 +19,9 @@ class SP_HomePage extends StatefulWidget {
   _SP_HomePageState createState() => _SP_HomePageState(spID);
 }
 
-List<OrderData> allOrders = [];
+//--------------------------ORDERS------------------------------------------
 
+List<OrderData> allOrders = [];
 
 class OrderData {
   String status,
@@ -44,8 +44,6 @@ class OrderData {
       this.key,
       );
 }
-
-//--------------------------ORDERS------------------------------------------
 
 class _SP_HomePageState extends State<SP_HomePage> {
 
@@ -166,7 +164,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
 
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => spOrderDetails(order.orderID)     ));
+                    builder: (context) => spOrderDetails(order.cusUid, order.spUid,order.orderID)));
                   },
 
 
@@ -286,7 +284,6 @@ class _SP_HomePageState extends State<SP_HomePage> {
                 Map data = snapshot.data.snapshot.value;
                 var keys = snapshot.data.snapshot.value.keys;
 
-
                allOrders.clear();
                OrderData o;
                 for (var key in keys) {
@@ -304,24 +301,12 @@ class _SP_HomePageState extends State<SP_HomePage> {
                 }
                 sortByNewest();
                 print ((allOrders[0].key));
-
-                //return Center(child: Text("لا يوجد طلبات"),);
-
-               // data.forEach((index, data) => orders.add({"key": index, ...data}));
                 return ListView.builder(
                     itemCount: allOrders.length,
                     itemBuilder: (context, index) {
                       return _buildListItem(allOrders[index]);
                     }
                 );
-
-                /*data.forEach((index, data) => orders.add({"key": index, ...data}));
-                return ListView.builder(
-                    itemCount: orders.length,
-                    itemBuilder: (context, index) {
-                      return _buildListItem(orders[index], data.keys.toList()[index]);
-                    }
-                );*/
               }else return Center(child: Text("لا يوجد طلبات"),);
             },
           ),

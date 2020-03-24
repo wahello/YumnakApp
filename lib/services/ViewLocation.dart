@@ -6,13 +6,13 @@ import 'dart:async';
 import 'package:yumnak/screens/CustOrderDetails.dart';
 
 class ViewLocation extends StatefulWidget {
-  dynamic uid, spID;
+  dynamic uid;
   LatLng selectedLoc;
-  String com, dt;
-  ViewLocation(this.uid, this.spID, this.selectedLoc, this.com, this.dt);
+  String com, orderID;
+  ViewLocation(this.uid, this.orderID, this.selectedLoc, this.com);
 
   @override
-  _ViewLocationState createState() => _ViewLocationState(uid, spID, selectedLoc, com, dt);
+  _ViewLocationState createState() => _ViewLocationState(uid, orderID, selectedLoc, com);
 }
 
 class _ViewLocationState extends State<ViewLocation> {
@@ -27,16 +27,15 @@ class _ViewLocationState extends State<ViewLocation> {
 
   bool prickedLocation=false;
   String comments;
-  String dt;
+  String orderID;
 
   static dynamic uid;
-  static dynamic spID;
 
-  _ViewLocationState(dynamic u, dynamic sid, LatLng selectedLoc, String com, String d){
-    uid=u; spID=sid;
+  _ViewLocationState(dynamic u, String o, LatLng selectedLoc, String com){
+    uid=u;
     selectedLocation=selectedLoc;
     comments=com;
-    dt=d;
+    orderID=o;
 
     print(selectedLoc);
   }
@@ -116,7 +115,7 @@ class _ViewLocationState extends State<ViewLocation> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
-            onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, spID, dt))),
+            onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, orderID))),
           )
         ],
       ),

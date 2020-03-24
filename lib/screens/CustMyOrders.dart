@@ -1,9 +1,8 @@
+import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/rendering.dart' as material;
-import 'CustOrderDetails.dart';
-
+import 'package:yumnak/screens/CustOrderDetails.dart';
 class CustMyOrders extends StatefulWidget {
   dynamic uid;
   CustMyOrders(dynamic u){uid=u;}
@@ -14,107 +13,75 @@ class CustMyOrders extends StatefulWidget {
 
 //--------------------------ORDERS------------------------------------------
 
-List<orderData> allData = [];
-List<orderData> cusOrdersData = [];
-List<orderData> dummyList = List<orderData>();
+List<OrderData> allOrders = [];
 
-class orderData {
-  String status,dateAndTime, spService, cusName, spName, serviceDescription,locComment;
-  var cusUid, spUid, orderID, latitude,longitude, numOfHours;
-
-  orderData(this.cusUid, this.spUid, this.orderID, this.status, this.dateAndTime, this.spService, /*this.cusName, this.spName,*/ this.numOfHours, /*this.serviceDescription, this.longitude,this.latitude, this.locComment*/);
+class OrderData {
+  String status,
+      dateAndTime,
+      spService,
+      cusName,
+      spName,
+      serviceDescription,
+      locComment;
+  var cusUid, spUid, orderID, latitude, longitude, numOfHours;
+  var key;
+  OrderData(
+      this.cusUid,
+      this.spUid,
+      this.orderID,
+      this.status,
+      this.dateAndTime,
+      this.spService,
+      this.numOfHours,
+      this.key,
+      );
 }
 
 class _CustMyOrdersState extends State<CustMyOrders> {
 
+  var dbReference;
+  var _firebaseRef =FirebaseDatabase.instance.reference();
+
+  List<OrderData> dummyList = List<OrderData>();
+
   static dynamic uid;
   _CustMyOrdersState(dynamic u){uid=u; print('CustMyOrders: $uid');}
 
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
   bool isTimePassed;
-  Duration difference;
-  String stDiff;
-  var endDate;
 
-  Future getData() async {
-    await FirebaseDatabase.instance.reference().child('Order').once().then((DataSnapshot snap) async {
-      var keys = snap.value.keys;
-      var data = snap.value;
+  initState(){
+    super.initState();
+    dbReference=_firebaseRef.child('Order').orderByChild('uid_cus').equalTo(uid);
+  }
+  
+  format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
-      allData.clear();
-      orderData d;
-      for (var key in keys) {
-        d = new orderData(
-          data[key]['uid_cus'],
-          data[key]['uid_sp'],
-          data[key]['orderID'],
-          data[key]['status'],
-          data[key]['requestDate'],
-          data[key]['service'],
-          data[key]['serviceHours'],
+  Widget _buildListItem(OrderData order) {
+    DateTime reqDate = DateTime.parse(order.dateAndTime);
+    var endDate = reqDate.add(new Duration(hours: order.numOfHours));
+    Duration remaining = Duration(minutes: endDate.difference(DateTime.now()).inMinutes);
+    bool isWaiting = endDate.isAfter(DateTime.now());
+
+    Widget c = new Countdown(
+      duration: remaining,
+      builder: (BuildContext context, Duration remaining) {
+        return Row(
+          children: <Widget>[
+            Text("الوقت المتبقي: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+            Text(format(remaining)),
+          ],
         );
-        allData.add(d);
-      }
-      cusOrdersData.clear();
-      for (var i = 0; i < allData.length; i++) {
-        if(allData[i].cusUid == uid){
-          cusOrdersData.add(allData[i]);
-        }
-      }
-    });
-    sortByNewest();
-    return cusOrdersData;
-  }
-
-/*  update() async {
-    var _keys;
-    var key;
-
-    DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref.child('Order').orderByChild("orderID").equalTo(ordersDataDetails.orderID).once().then((DataSnapshot snap) async {
-      _keys = snap.value.keys;
-      key = _keys.toString();
-      key=key.substring(1,21);
-      ref.child('Order').child(key).update({
-        'uid_cus': ordersDataDetails.cusUid,
-        'uid_sp': ordersDataDetails.spUid,
-        'orderID':ordersDataDetails.orderID,
-        'requestDate': ordersDataDetails.dateAndTime,
-        'status': ordersDataDetails.status,
-        'service': ordersDataDetails.spService,
-        'name_cus':ordersDataDetails.cusName,
-        'name_sp':ordersDataDetails.spName,
-        'serviceHours': ordersDataDetails.numOfHours,
-        'description': ordersDataDetails.serviceDescription,
-        'loc_latitude':ordersDataDetails.latitude,
-        'loc_longitude' : ordersDataDetails.longitude,
-        'loc_locComment': ordersDataDetails.locComment,
-      });
-    });
-  }*/
-
-  Widget _buildList() {
-    return Column(
-      children: <Widget>[
-        SizedBox(height:20.0),
-        Expanded(
-          child: ListView.builder(
-              itemCount: cusOrdersData.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return _buildListItem(cusOrdersData[index]);
-              }
-          ),
-        ),
-      ],
+      },
     );
-  }
 
-  Widget _buildListItem(orderData d) {
+    if(!isWaiting && order.status == "قيد الانتظار" ){
+      var k = (order.key).toString().substring(1,21);
+      _firebaseRef.child('Order').child(k).update({"status": 'ملغي'});
+    }
+    
     Color col;
     isTimePassed=false;
-    String stat=d.status;
-
-    timeCalculation(d, stat);
+    String stat=order.status;
 
     if(stat=="قيد الانتظار")
       col=Colors.black;
@@ -137,35 +104,29 @@ class _CustMyOrdersState extends State<CustMyOrders> {
         child: new Padding( padding: new EdgeInsets.all(10.0),
           child: new Column(
             children: <Widget>[
-
               Align(
                   alignment: Alignment.topRight,
                   child: Column(
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Text(d.dateAndTime , textAlign: TextAlign.right, style:TextStyle(fontSize: 14),)
+                          Text(reqDate.toString().substring(0,16)  , textAlign: TextAlign.right, style:TextStyle(fontSize: 14),)
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Text("حالة الطلب: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          Text(d.status, style: TextStyle(color: col, fontSize: 19, fontWeight: FontWeight.bold),),
+                          Text(order.status, style: TextStyle(color: col, fontSize: 19, fontWeight: FontWeight.bold),),
                         ],
                       ),
                       Row(
                         children: <Widget>[
                           Text("نوع الخدمة: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          Text(d.spService),
+                          Text(order.spService),
                         ],
                       ),
-                      if(stat=='قيد الانتظار' && !isTimePassed)
-                      Row(
-                        children: <Widget>[
-                          Text("الوقت المتبقي: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          Text('$stDiff ساعه ')
-                        ],
-                      ),
+                      if(isWaiting && (order.status == "قيد الانتظار" || order.status == "مقبول"))
+                        c,
                     ],
                   )
               ),
@@ -183,7 +144,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
                     ),
                   ],
                 ),
-                onPressed: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, d.spUid, d.dateAndTime)));},
+                onPressed: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, order.orderID)));},
               ),
             ],
           ),
@@ -192,37 +153,13 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     );
   }
 
-  timeCalculation(orderData d, String stat){
-    if(stat=='قيد الانتظار'){
-      var numhour= d.numOfHours;
-      print(numhour);
-
-      String dt= d.dateAndTime;
-      print(dt);
-
-      DateTime dtformat = dateFormat.parse(dt);
-      print(dtformat);
-
-      endDate= dtformat.add(new Duration(hours: numhour));
-      print(endDate);
-
-      if(endDate.isAfter(DateTime.now())){
-        difference = endDate.difference(DateTime.now());
-        stDiff=difference.toString().substring(0,7);
-      }
-      else
-        isTimePassed=true;
-
-      print('----------------------------');
-    }
-  }
 
   void sortByNewest(){
     dummyList.clear();
-    dummyList.addAll(cusOrdersData);
+    dummyList.addAll(allOrders);
     dummyList.sort((b, a) => a.dateAndTime.compareTo(b.dateAndTime));
-    cusOrdersData.clear();
-    cusOrdersData.addAll(dummyList);
+    allOrders.clear();
+    allOrders.addAll(dummyList);
   }
 
   @override
@@ -235,15 +172,39 @@ class _CustMyOrdersState extends State<CustMyOrders> {
         actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
       ),
       body: Container(
-        child: FutureBuilder(
-          future: getData(),
-          builder: (BuildContext context,AsyncSnapshot snapshot){
-            if(!snapshot.hasData)
-              return Container(child: Center(child: Text("Loading.."),));
-            else
-              return Container(
-                child: _buildList(),
+        child: StreamBuilder(
+          stream: dbReference.onValue,
+          builder: (context, snapshot){
+            if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+            if (snapshot.data.snapshot.value != null){
+              Map data = snapshot.data.snapshot.value;
+              var keys = snapshot.data.snapshot.value.keys;
+
+
+              allOrders.clear();
+              OrderData o;
+              for (var key in keys) {
+                o = new OrderData(
+                  data[key]["uid_cus"],
+                  data[key]["uid_sp"],
+                  data[key]["orderID"],
+                  data[key]["status"],
+                  data[key]["requestDate"],
+                  data[key]["service"],
+                  data[key]["serviceHours"],
+                  data.keys.toList(),
+                );
+                allOrders.add(o);
+              }
+              sortByNewest();
+              print ((allOrders[0].key));
+              return ListView.builder(
+                  itemCount: allOrders.length,
+                  itemBuilder: (context, index) {
+                    return _buildListItem(allOrders[index]);
+                  }
               );
+            }else return Center(child: Text("لا يوجد طلبات"),);
           },
         ),
       )

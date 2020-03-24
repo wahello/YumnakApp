@@ -2,48 +2,48 @@ import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/rendering.dart' as material;
+import 'package:rating_bar/rating_bar.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:yumnak/services/ViewLocation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
 class spOrderDetails extends StatefulWidget {
-      String orderID;
-      spOrderDetails(
-        this.orderID,
-      );
+      String orderID,cusUID,spUID;
+      spOrderDetails(this.cusUID,this.spUID,this.orderID,);
 
   @override
-  _spOrderDetailsState createState() => _spOrderDetailsState(orderID);
+  _spOrderDetailsState createState() => _spOrderDetailsState(cusUID,spUID,orderID);
 }
 
 class _spOrderDetailsState extends State<spOrderDetails> {
 
-  String orderID;
-  _spOrderDetailsState(String o){orderID=o; print('order ID: $orderID');}
+  String orderID,cusUID,spUID;
+  _spOrderDetailsState(this.cusUID,this.spUID,this.orderID);
 
-
-  static dynamic uid;
-  static dynamic spID;
-  String dt;
   LatLng loc;
-
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
-  bool isTimePassed, canCancel;
-  Duration difference;
-  String stDiff;
-  var endDate;
 
   var reqDBReference;
   var _firebaseRef = FirebaseDatabase.instance.reference();
+  var dbReferenceCust;
+  var _firebaseRefCust =FirebaseDatabase.instance.reference();
+  var _cusKey;
 
   Future<void> _launched;
+  double _ratingCus=0.0, _avgCus;
+  int _ratingCounter;
 
+  TextStyle uiTextStyle=TextStyle(fontSize: 18,fontWeight: FontWeight.bold);
+  TextStyle buttonTextStyle= TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',);
+  TextStyle alertButtonsTextSyle=TextStyle(color: Colors.white, fontSize: 20);
 
+  
   initState() {
     super.initState();
+    print('order ID: $orderID');
     reqDBReference = _firebaseRef.child('Order').orderByChild("orderID").equalTo(orderID);
+    dbReferenceCust=_firebaseRefCust.child('Customer').orderByChild('uid').equalTo(cusUID);
   }
 
   Future<void> _makePhoneCall(String url) async {
@@ -53,9 +53,8 @@ class _spOrderDetailsState extends State<spOrderDetails> {
       throw 'Could not launch $url';
     }
   }
+
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
-
-
 
   Widget _buildWidget(item, key) {
 
@@ -67,18 +66,16 @@ class _spOrderDetailsState extends State<spOrderDetails> {
     bool isWaiting = endDate.isAfter(DateTime.now());
 
     var cancelDate = endDate.subtract(new Duration(hours: 1));
-     print(cancelDate);
-
     var now = DateTime.now();
-      print(now);
 
+    print("$cancelDate ::: $now");
 
     Widget c = new Countdown(
       duration: remaining,
       builder: (BuildContext context, Duration remaining) {
         return Row(
           children: <Widget>[
-            Text("الوقت المتبقي: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+            Text("الوقت المتبقي: " , textAlign: TextAlign.right, style: uiTextStyle),
             Text(format(remaining)),
           ],
         );
@@ -127,25 +124,25 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
-                                        Text("الاسم: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                        Text("الاسم: " , textAlign: TextAlign.right, style: uiTextStyle),
                                         Text(item['name_cus']),
                                       ],
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text("تصنيف الخدمة: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                        Text("تصنيف الخدمة: " , textAlign: TextAlign.right, style: uiTextStyle),
                                         Text(item['service']),
                                       ],
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text("حالة الطلب: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                        Text("حالة الطلب: " , textAlign: TextAlign.right, style: uiTextStyle),
                                         Text(item['status'], style: TextStyle(color: col, fontSize: 19, fontWeight: FontWeight.bold),),
                                       ],
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text("وقت الطلب: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                        Text("وقت الطلب: " , textAlign: TextAlign.right, style: uiTextStyle),
                                         Text(reqDate.toString().substring(0,16) , style: TextStyle(fontSize: 14))
                                       ],
                                     ),
@@ -155,7 +152,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
                                     Row(
                                       children: <Widget>[
-                                        Text("وصف الخدمة: " , textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                        Text("وصف الخدمة: " , textAlign: TextAlign.right, style: uiTextStyle),
                                       ],
                                     ),
                                     Row(
@@ -183,13 +180,13 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                             child: RaisedButton(
                                 onPressed:(){
                                   Navigator.push(context, new MaterialPageRoute(
-                                      builder: (context) => ViewLocation(uid, spID, loc, item["loc_locComment"], dt)));
+                                      builder: (context) => ViewLocation(item["uid_sp"], item["orderID"], loc, "SP",)));
                                   },
                                 color: Colors.grey,
                                 child: Row(
                                     children: <Widget>[
                                       Icon(Icons.location_on, color: Colors.white,),
-                                      Text("الموقع للخدمة المقدمة", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
+                                      Text("الموقع للخدمة المقدمة", style: buttonTextStyle),
                                     ]
                                 )
                             )
@@ -206,24 +203,63 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                               padding: EdgeInsets.fromLTRB(0, 0, 60, 0),
                               child: RaisedButton(
                                 onPressed:(){
-                                  setState(() {
-                                    _firebaseRef.child('Order').child(key).update({"status": 'مقبول'});
-                                  });
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.none,
+                                    title: "قبول الطلب",
+                                    desc: "يمكنك إلغاء الطلب إذا أردت بشرط أن لا يكون الوقت المتبقي أقل من ساعة",
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "رجوع", style: alertButtonsTextSyle,
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                        color: Colors.grey,
+                                      ),
+                                      DialogButton(
+                                        child: Text("موافق", style: alertButtonsTextSyle,),
+                                        onPressed: (){
+                                          setState(() { _firebaseRef.child('Order').child(key).update({"status": 'مقبول'}); });
+                                          Navigator.pop(context);
+                                        },
+                                        color: Colors.lightBlueAccent,
+                                      ),
+                                    ],
+                                  ).show();
                                 },
                                 color: Colors.green[800],
-                                child: Text("قبول", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
+                                child: Text("قبول", style: buttonTextStyle),
                               )
                           ),
                           Container(
                               padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
                               child: RaisedButton(
                                 onPressed:(){
-                                  setState(() {
-                                    _firebaseRef.child('Order').child(key).update({"status": 'مرفوض'});
-                                  });
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.none,
+                                    title: "رفض الطلب",
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "رجوع", style: alertButtonsTextSyle,
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                        color: Colors.grey,
+                                      ),
+                                      DialogButton(
+                                        child: Text("موافق", style: alertButtonsTextSyle,),
+                                        onPressed: (){
+                                          setState(() { _firebaseRef.child('Order').child(key).update({"status": 'مرفوض'}); });
+                                          Navigator.pop(context);
+                                        },
+                                        color: Colors.lightBlueAccent,
+                                      ),
+                                    ],
+                                  ).show();
                                 },
                                 color: Colors.red,
-                                child: Text("رفض", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
+                                child: Text("رفض", style: buttonTextStyle),
                               )
                           ),
                         ],
@@ -238,14 +274,11 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                         child: new Padding( padding: new EdgeInsets.all(10.0),
                             child: new Row(
                               children: <Widget>[
-                                Text('للتواصل: ', textAlign: TextAlign.right, style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                                Text('للتواصل: ', textAlign: TextAlign.right, style: uiTextStyle),
                                 RaisedButton(
                                     elevation: 0,
                                     onPressed:()=> setState(() {
                                       String phone=item['phone_cus'];
-                                      String name=item['name_cus'];
-                                      print("zeft: $phone");
-                                      print("zeft: $name");
                                       _launched = _makePhoneCall('tel:$phone');
                                     }),
                                     color: Colors.white,
@@ -274,18 +307,58 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
                     SizedBox(height: 40.0),
 
-                    if(stat=='مقبول')
+                    if(stat=='مقبول' && now.isBefore(cancelDate))
                       Row(
                         children: <Widget>[
                           Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
                               child: RaisedButton(
-                                onPressed:(){},
+                                onPressed:(){
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.none,
+                                    title: "اكتمال الطلب",
+                                    desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
+                                      buttons: [
+                                        DialogButton(
+                                          child: Text(
+                                            "رجوع", style: alertButtonsTextSyle,
+                                          ),
+                                          onPressed: () => Navigator.pop(context),
+                                          color: Colors.grey,
+                                        ),
+                                        DialogButton(
+                                          child: Text("موافق", style: alertButtonsTextSyle,),
+                                          onPressed: (){
+                                            setState(() {
+                                              calculateRating(key);
+                                            });
+                                            Navigator.pop(context);
+                                          },
+                                          color: Colors.lightBlueAccent,
+                                        ),
+                                      ],
+                                      content: Column(
+                                          children: <Widget>[
+                                            Container(
+                                                child:Column(
+                                                    children: <Widget>[
+                                                      RatingBar(
+                                                          onRatingChanged: (rating) => setState(() => _ratingCus = rating),
+                                                          filledIcon: Icons.star, emptyIcon: Icons.star_border, filledColor: Colors.amber, size: 25
+                                                      ),
+                                                    ]
+                                                )
+                                            )
+                                          ]
+                                      )
+                                  ).show();
+                                },
                                 color: Colors.green[800],
-                                child: Text("اكتمال الطلب", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
+                                child: Text("اكتمال الطلب", style: buttonTextStyle),
                               )
                           ),
-                          if(now.isBefore(cancelDate))
+
                             Container(
                               padding: EdgeInsets.fromLTRB(30, 0, 50, 0),
                               child: RaisedButton(
@@ -293,7 +366,64 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     _firebaseRef.child('Order').child(key).update({"status": 'ملغي'});
                                 },
                                 color: Colors.red,
-                                child: Text("الغاء الطلب", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
+                                child: Text("الغاء الطلب", style: buttonTextStyle),
+                              )
+                          ),
+                        ],
+                      ),
+
+                    if(stat=='مقبول' && !now.isBefore(cancelDate))
+                      Row(
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.fromLTRB(110, 0, 110, 0),
+                              child: RaisedButton(
+                                onPressed:(){
+                                  Alert(
+                                      context: context,
+                                      type: AlertType.none,
+                                      title: "اكتمال الطلب",
+                                      desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
+                                      buttons: [
+                                        DialogButton(
+                                          child: Text(
+                                            "رجوع", style: alertButtonsTextSyle,
+                                          ),
+                                          onPressed: () => Navigator.pop(context),
+                                          color: Colors.grey,
+                                        ),
+                                        DialogButton(
+                                          child: Text("موافق", style: alertButtonsTextSyle,),
+                                          onPressed: (){
+                                            setState(() {
+                                              calculateRating(key);
+                                            });
+                                            Navigator.pop(context);
+                                          },
+                                          color: Colors.lightBlueAccent,
+                                        ),
+                                      ],
+                                      content: Column(
+                                          children: <Widget>[
+                                            Container(
+                                                child:Column(
+                                                    children: <Widget>[
+                                                      RatingBar(
+                                                          onRatingChanged: (rating) => setState(() => _ratingCus = rating),
+                                                          filledIcon: Icons.star,
+                                                          emptyIcon: Icons.star_border,
+                                                          filledColor: Colors.amber,
+                                                          size: 25
+                                                      ),
+                                                    ]
+                                                )
+                                            )
+                                          ]
+                                      )
+                                  ).show();
+                                },
+                                color: Colors.green[800],
+                                child: Text("اكتمال الطلب", style: buttonTextStyle),
                               )
                           ),
                         ],
@@ -305,6 +435,27 @@ class _spOrderDetailsState extends State<spOrderDetails> {
         ],
       )
     );
+  }
+
+  calculateRating(key){
+    double countAvg=_avgCus;
+    print(_ratingCus);
+    if(_ratingCounter==0)
+      _avgCus=0.0;
+
+    if(_ratingCus!=0.0){
+      _ratingCounter=_ratingCounter+1;
+      countAvg=(_avgCus+_ratingCus)/_ratingCounter;
+      countAvg=countAvg.toDouble();
+      _avgCus=countAvg+0.0001;
+      print("_ratingCounter: $_ratingCounter    countAvg: $countAvg    _avgCus: $_avgCus  ");
+    }
+
+    print('$_ratingCounter: $_avgCus');
+    _firebaseRef.child('Order').child(key).update({"status": 'مكتمل'});
+
+    _firebaseRefCust.child('Customer').child(_cusKey).update({"ratingCounter": _ratingCounter});
+    _firebaseRefCust.child('Customer').child(_cusKey).update({"ratingAvg": _avgCus});
   }
 
   @override
@@ -321,17 +472,31 @@ class _spOrderDetailsState extends State<spOrderDetails> {
         body: Container(
           width: MediaQuery.of(context).size.width,
           child: StreamBuilder(
-            stream: reqDBReference.onValue,
+            stream: dbReferenceCust.onValue,
             builder: (context, snapshot){
               if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-              Map data = snapshot.data.snapshot.value;
-              List item = [];
-              data.forEach((index, data) => item.add({"key": index, ...data}));
-              return ListView.builder(
-                  itemCount: item.length,
-                  itemBuilder: (context, index) {
-                    return _buildWidget(item[index], data.keys.toList()[index]);
-                  }
+              Map custData = snapshot.data.snapshot.value;
+              List CustItem = [];
+              _cusKey= custData.keys.toList()[0];
+              custData.forEach((index, data) => CustItem.add({"key": index, ...data}));
+              _avgCus= CustItem[0]['ratingAvg'];
+              _ratingCounter = CustItem[0]['ratingCounter'];
+              print('$_avgCus ::: $_ratingCounter');
+
+              return StreamBuilder(
+                stream: reqDBReference.onValue,
+                builder: (context, snapshot){
+                  if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                  Map data = snapshot.data.snapshot.value;
+                  List item = [];
+                  data.forEach((index, data) => item.add({"key": index, ...data}));
+                  return ListView.builder(
+                      itemCount: item.length,
+                      itemBuilder: (context, index) {
+                        return _buildWidget(item[index], data.keys.toList()[index]);
+                      }
+                  );
+                },
               );
             },
           ),
