@@ -36,7 +36,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
   TextStyle uiTextStyle=TextStyle(fontSize: 18,fontWeight: FontWeight.bold);
   TextStyle buttonTextStyle= TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',);
-  TextStyle alertButtonsTextSyle=TextStyle(color: Colors.white, fontSize: 20);
+  TextStyle alertButtonsTextStyle=TextStyle(color: Colors.white, fontSize: 20);
 
   
   initState() {
@@ -211,13 +211,13 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     buttons: [
                                       DialogButton(
                                         child: Text(
-                                          "رجوع", style: alertButtonsTextSyle,
+                                          "رجوع", style: alertButtonsTextStyle,
                                         ),
                                         onPressed: () => Navigator.pop(context),
                                         color: Colors.grey,
                                       ),
                                       DialogButton(
-                                        child: Text("موافق", style: alertButtonsTextSyle,),
+                                        child: Text("موافق", style: alertButtonsTextStyle,),
                                         onPressed: (){
                                           setState(() { _firebaseRef.child('Order').child(key).update({"status": 'مقبول'}); });
                                           Navigator.pop(context);
@@ -242,13 +242,13 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     buttons: [
                                       DialogButton(
                                         child: Text(
-                                          "رجوع", style: alertButtonsTextSyle,
+                                          "رجوع", style: alertButtonsTextStyle,
                                         ),
                                         onPressed: () => Navigator.pop(context),
                                         color: Colors.grey,
                                       ),
                                       DialogButton(
-                                        child: Text("موافق", style: alertButtonsTextSyle,),
+                                        child: Text("موافق", style: alertButtonsTextStyle,),
                                         onPressed: (){
                                           setState(() { _firebaseRef.child('Order').child(key).update({"status": 'مرفوض'}); });
                                           Navigator.pop(context);
@@ -322,13 +322,13 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                       buttons: [
                                         DialogButton(
                                           child: Text(
-                                            "رجوع", style: alertButtonsTextSyle,
+                                            "رجوع", style: alertButtonsTextStyle,
                                           ),
                                           onPressed: () => Navigator.pop(context),
                                           color: Colors.grey,
                                         ),
                                         DialogButton(
-                                          child: Text("موافق", style: alertButtonsTextSyle,),
+                                          child: Text("موافق", style: alertButtonsTextStyle,),
                                           onPressed: (){
                                             setState(() {
                                               calculateRating(key);
@@ -363,7 +363,29 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                               padding: EdgeInsets.fromLTRB(30, 0, 50, 0),
                               child: RaisedButton(
                                 onPressed:(){
-                                    _firebaseRef.child('Order').child(key).update({"status": 'ملغي'});
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.none,
+                                    title: "إلغاء الطلب",
+                                    desc: 'هل أنت متأكد من إلغاء الطلب؟',
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "رجوع", style: alertButtonsTextStyle,
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                        color: Colors.grey,
+                                      ),
+                                      DialogButton(
+                                        child: Text("موافق", style: alertButtonsTextStyle,),
+                                        onPressed: (){
+                                          setState(() { _firebaseRef.child('Order').child(key).update({"status": 'ملغي'}); });
+                                          Navigator.pop(context);
+                                        },
+                                        color: Colors.lightBlueAccent,
+                                      ),
+                                    ],
+                                  ).show();
                                 },
                                 color: Colors.red,
                                 child: Text("الغاء الطلب", style: buttonTextStyle),
@@ -387,13 +409,13 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                       buttons: [
                                         DialogButton(
                                           child: Text(
-                                            "رجوع", style: alertButtonsTextSyle,
+                                            "رجوع", style: alertButtonsTextStyle,
                                           ),
                                           onPressed: () => Navigator.pop(context),
                                           color: Colors.grey,
                                         ),
                                         DialogButton(
-                                          child: Text("موافق", style: alertButtonsTextSyle,),
+                                          child: Text("موافق", style: alertButtonsTextStyle,),
                                           onPressed: (){
                                             setState(() {
                                               calculateRating(key);

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' as material;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yumnak/services/ViewLocation.dart';
 import 'HomePage.dart';
@@ -26,6 +27,8 @@ class _custOrderDetailsState extends State<custOrderDetails> {
   var reqDBReference;
   var _firebaseRef = FirebaseDatabase.instance.reference();
   Future<void> _launched;
+
+  TextStyle alertButtonsTextStyle=TextStyle(color: Colors.white, fontSize: 20);
 
   initState() {
     super.initState();
@@ -227,7 +230,29 @@ class _custOrderDetailsState extends State<custOrderDetails> {
                                   padding: EdgeInsets.fromLTRB(120, 0, 120, 0),
                                   child: RaisedButton(
                                     onPressed:(){
-                                      _firebaseRef.child('Order').child(key).update({"status": 'ملغي'});
+                                      Alert(
+                                        context: context,
+                                        type: AlertType.none,
+                                        title: "إلغاء الطلب",
+                                        desc: 'هل أنت متأكد من إلغاء الطلب؟',
+                                        buttons: [
+                                          DialogButton(
+                                            child: Text(
+                                              "رجوع", style: alertButtonsTextStyle,
+                                            ),
+                                            onPressed: () => Navigator.pop(context),
+                                            color: Colors.grey,
+                                          ),
+                                          DialogButton(
+                                            child: Text("موافق", style: alertButtonsTextStyle,),
+                                            onPressed: (){
+                                              setState(() { _firebaseRef.child('Order').child(key).update({"status": 'ملغي'}); });
+                                              Navigator.pop(context);
+                                            },
+                                            color: Colors.lightBlueAccent,
+                                          ),
+                                        ],
+                                      ).show();
                                     },
                                     color: Colors.red,
                                     child: Text("الغاء الطلب", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)),
