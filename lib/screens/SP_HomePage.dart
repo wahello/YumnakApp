@@ -8,7 +8,7 @@ import 'package:yumnak/screens/Main.dart';
 import 'package:yumnak/screens/ModifySPInfo.dart';
 import 'package:yumnak/screens/SP_InformationData.dart';
 import 'package:yumnak/screens/spOrderDetails.dart';
-import 'package:yumnak/screens/support.dart';
+import 'package:yumnak/screens/supportSP.dart';
 import 'package:yumnak/services/auth.dart';
 
 class SP_HomePage extends StatefulWidget {
@@ -230,7 +230,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
                              Navigator.push(context, new MaterialPageRoute(
-                             builder: (context) =>  support()  ));
+                             builder: (context) =>  supportSP()  ));
                           },
                         ),
                         new Divider(),

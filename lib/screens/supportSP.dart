@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class support extends StatefulWidget {
+class supportSP extends StatefulWidget {
   @override
-  _supportState createState() => _supportState();
+  _supportSPState createState() => _supportSPState();
 }
 
-class _supportState extends State<support> {
+class _supportSPState extends State<supportSP> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

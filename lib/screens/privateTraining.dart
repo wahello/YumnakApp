@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/availableSP.dart';
 
 class privateTraining extends StatefulWidget {
@@ -19,6 +20,18 @@ class _privateTrainingState extends State<privateTraining> {
         appBar: new AppBar(
           backgroundColor: Colors.grey[200],
           iconTheme: IconThemeData(color: Colors.black38),
+            actions: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage(uid)));},
+                    child: Icon(
+                      Icons.home,
+                      color: Colors.black26,
+                      size: 26.0,),
+                  )
+              ),
+            ]
         ),
 
 

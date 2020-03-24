@@ -49,11 +49,23 @@ class _CustMyOrdersState extends State<CustMyOrders> {
 
   bool isTimePassed;
 
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
   initState(){
     super.initState();
     dbReference=_firebaseRef.child('Order').orderByChild('uid_cus').equalTo(uid);
   }
-  
+
+  Future<Null> refreshList() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 1));
+
+    setState(() {
+      build(context);
+    });
+    return null;
+  }
+
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
   Widget _buildListItem(OrderData order) {
@@ -171,41 +183,45 @@ class _CustMyOrdersState extends State<CustMyOrders> {
         iconTheme: IconThemeData(color: Colors.black38),
         actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
       ),
-      body: Container(
-        child: StreamBuilder(
-          stream: dbReference.onValue,
-          builder: (context, snapshot){
-            if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-            if (snapshot.data.snapshot.value != null){
-              Map data = snapshot.data.snapshot.value;
-              var keys = snapshot.data.snapshot.value.keys;
+      body: RefreshIndicator(
+        key: refreshKey,
+        onRefresh: refreshList,
+        child: Container(
+          child: StreamBuilder(
+            stream: dbReference.onValue,
+            builder: (context, snapshot){
+              if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+              if (snapshot.data.snapshot.value != null){
+                Map data = snapshot.data.snapshot.value;
+                var keys = snapshot.data.snapshot.value.keys;
 
 
-              allOrders.clear();
-              OrderData o;
-              for (var key in keys) {
-                o = new OrderData(
-                  data[key]["uid_cus"],
-                  data[key]["uid_sp"],
-                  data[key]["orderID"],
-                  data[key]["status"],
-                  data[key]["requestDate"],
-                  data[key]["service"],
-                  data[key]["serviceHours"],
-                  data.keys.toList(),
+                allOrders.clear();
+                OrderData o;
+                for (var key in keys) {
+                  o = new OrderData(
+                    data[key]["uid_cus"],
+                    data[key]["uid_sp"],
+                    data[key]["orderID"],
+                    data[key]["status"],
+                    data[key]["requestDate"],
+                    data[key]["service"],
+                    data[key]["serviceHours"],
+                    data.keys.toList(),
+                  );
+                  allOrders.add(o);
+                }
+                sortByNewest();
+                print ((allOrders[0].key));
+                return ListView.builder(
+                    itemCount: allOrders.length,
+                    itemBuilder: (context, index) {
+                      return _buildListItem(allOrders[index]);
+                    }
                 );
-                allOrders.add(o);
-              }
-              sortByNewest();
-              print ((allOrders[0].key));
-              return ListView.builder(
-                  itemCount: allOrders.length,
-                  itemBuilder: (context, index) {
-                    return _buildListItem(allOrders[index]);
-                  }
-              );
-            }else return Center(child: Text("لا يوجد طلبات"),);
-          },
+              }else return Center(child: Text("لا يوجد طلبات"),);
+            },
+          ),
         ),
       )
     );

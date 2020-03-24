@@ -169,15 +169,24 @@ class _availableSPState extends State<availableSP> {
               ),
             ],
           ),
-          new Expanded(
-            child:ListView.builder(
+          if(allData.length != 0)
+            new Expanded(
+            child: ListView.builder(
                     itemCount: allData.length,
                     itemBuilder: (BuildContext ctxt, int index) {
                       return _buildListItem(allData[index]);
                     }
-
+                 ) )
+          else
+            Container(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 100,),
+                  Center( child: Text("لا يوجد مقدمي خدمة متوفرين",))
+                ],
+              ),
             )
-          ),
+
         ],
       ),
     );
