@@ -37,6 +37,9 @@ this.startTime,this.endTime,this.raringPrice,this.ratingAvg,this.ratingCooperati
 
 class _availableSPState extends State<availableSP> {
 
+
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
   String c;
   String sortBy='distance';
   dynamic uid;
@@ -44,12 +47,9 @@ class _availableSPState extends State<availableSP> {
 
   _availableSPState(dynamic u, String cat){
     uid=u;
-    //print('availableSP: $uid');
     c=cat;
    print("Test: $c");
-    //SPData.clear();
     allData.clear();
-
   }
 
   static const List<String> longItems = const [
@@ -73,8 +73,18 @@ class _availableSPState extends State<availableSP> {
     super.initState();
     dbReferenceSP=_firebaseRefSP.child('Service Provider');
     dbReferenceCust=_firebaseRefCust.child('Customer').orderByChild('uid').equalTo(uid);
+    refreshList();
   }
+  Future<Null> refreshList() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 2));
 
+    setState(() {
+      build(context);
+    });
+
+    return null;
+  }
 
 
   Future Sort() async {
@@ -103,6 +113,15 @@ class _availableSPState extends State<availableSP> {
 
       allData.clear();
       allData.addAll(dummyList);
+  }
+
+  void sortByRating(){
+    dummyList.clear();
+    dummyList.addAll(allData);
+    dummyList.sort((a, b) => b.ratingAvg.compareTo(a.ratingAvg));
+
+    allData.clear();
+    allData.addAll(dummyList);
   }
 
 
@@ -140,6 +159,8 @@ class _availableSPState extends State<availableSP> {
                       sortBy='price';
                     if(text=='المسافة الأقرب أولًا')
                       sortBy='distance';
+                    if(text== 'التقييم الأعلى أولًا')
+                      sortBy='rating';
                   });
                 },
 
@@ -270,76 +291,106 @@ class _availableSPState extends State<availableSP> {
           ]
       ),
 
-      body: Container(
-        child: StreamBuilder(
-          stream: dbReferenceCust.onValue,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-            Map custData = snapshot.data.snapshot.value;
-            List Custitem = [];
-            custData.forEach((index, data) => Custitem.add({"key": index, ...data}));
-            Custlatitude = Custitem[0]['latitude'];
-            Custlongitude = Custitem[0]['longitude'];
-
-            return StreamBuilder(
-              stream: dbReferenceSP.onValue,
+      body: RefreshIndicator(
+        key: refreshKey,
+        onRefresh: refreshList,
+        child: Container(
+            child: StreamBuilder(
+              stream: dbReferenceCust.onValue,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-                Map SPData = snapshot.data.snapshot.value;
-                var keys = snapshot.data.snapshot.value.keys;
+                Map custData = snapshot.data.snapshot.value;
+                List Custitem = [];
+                custData.forEach((index, data) => Custitem.add({"key": index, ...data}));
+                Custlatitude = Custitem[0]['latitude'];
+                Custlongitude = Custitem[0]['longitude'];
 
-                allData.clear();
-                myData d;
-                for (var key in keys) {
-                  d = new myData(
-                    SPData[key]['email'],
-                    SPData[key]['name'],
-                    SPData[key]['phoneNumber'],
-                    SPData[key]['service'],
-                    SPData[key]['uid'],
-                    SPData[key]['price'].toDouble(),
-                    SPData[key]['qualifications'],
-                    SPData[key]['latitude'],
-                    SPData[key]['longitude'],
-                    SPData[key]['startTime'],
-                    SPData[key]['endTime'],
-                    SPData[key]['raringPrice'],
-                    SPData[key]['ratingAvg'],
-                    SPData[key]['ratingCooperation'],
-                    SPData[key]['ratingCounter'],
-                    SPData[key]['ratingTime'],
-                    SPData[key]['ratingWork'],
-                    SPData[key]['available'],
-                  );
-                  allData.add(d);
-                }
+                return StreamBuilder(
+                  stream: dbReferenceSP.onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                    Map SPData = snapshot.data.snapshot.value;
+                    var keys = snapshot.data.snapshot.value.keys;
 
-                return Container(
-                  child: FutureBuilder(
-                    future: Sort(),
-                    builder: (context,snapshot){
-                      if(snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                    allData.clear();
+                    myData d;
+                    for (var key in keys) {
+                      d = new myData(
+                        SPData[key]['email'],
+                        SPData[key]['name'],
+                        SPData[key]['phoneNumber'],
+                        SPData[key]['service'],
+                        SPData[key]['uid'],
+                        SPData[key]['price'].toDouble(),
+                        SPData[key]['qualifications'],
+                        SPData[key]['latitude'],
+                        SPData[key]['longitude'],
+                        SPData[key]['startTime'],
+                        SPData[key]['endTime'],
+                        SPData[key]['raringPrice'],
+                        SPData[key]['ratingAvg'],
+                        SPData[key]['ratingCooperation'],
+                        SPData[key]['ratingCounter'],
+                        SPData[key]['ratingTime'],
+                        SPData[key]['ratingWork'],
+                        SPData[key]['available'],
+                      );
+                      allData.add(d);
+                    }
 
-                      sortedData.clear();
-                      for(var i=0 ; i < allData.length ; i++){
-                        if(allData[i].service == c)
-                          sortedData.add(allData[i]);
-                      }
-                        allData.clear();
-                        allData.addAll(sortedData);
 
-                      if(sortBy=='distance')
-                        sortByDistance();
-                      if(sortBy=='price')
-                        sortByPrice();
-                      return Container(child: _buildList());
-                    },
-                  ),
+                    return Container(
+                      child: FutureBuilder(
+                        future: Sort(),
+                        builder: (context,snapshot){
+                          if(snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+
+                          sortedData.clear();
+                          for(var i=0 ; i < allData.length ; i++){
+                            if(allData[i].service == c)
+                              sortedData.add(allData[i]);
+                          }
+                          allData.clear();
+                          allData.addAll(sortedData);
+
+                          /////////////check if available/////////////
+                          sortedData.clear();
+                          for(var i=0 ; i < allData.length ; i++){
+                            if(allData[i].endTime != "" && allData[i].startTime != ""){
+                              DateTime end;
+                              DateTime start;
+                              var e = allData[i].endTime;
+                              var s = allData[i].startTime;
+
+                              if (e.length > 27){e = e.substring(0, 26) + e[e.length - 1]; }
+                              if (s.length > 27){s = s.substring(0, 26) + s[s.length - 1]; }
+
+                              end = DateTime.parse(e);
+                              start = DateTime.parse(s);
+
+                              if((!(end.isBefore(DateTime.now()))) && (allData[i].available != false) && !(start.isAfter(DateTime.now())))
+                                sortedData.add(allData[i]);
+                            }
+                          }
+                          allData.clear();
+                          allData.addAll(sortedData);
+                          /////////////check if available/////////////
+
+                          if(sortBy=='distance')
+                            sortByDistance();
+                          if(sortBy=='price')
+                            sortByPrice();
+                          if(sortBy=='rating')
+                            sortByRating();
+                          return Container(child: _buildList());
+                        },
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
-        )
+            )
+        ),
       )
     );
   }
