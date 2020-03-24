@@ -149,7 +149,8 @@ class _AddhoursState extends State<Addhours> {
         ),
 
         body: Container(
-          child: StreamBuilder(
+            width: MediaQuery.of(context).size.width,
+            child: StreamBuilder(
             stream: dbReference.onValue,
             builder: (context,snapshot){
               if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
@@ -355,30 +356,22 @@ class _AddhoursState extends State<Addhours> {
                     ),
                     SizedBox(height: 20,),
                     if (state == true)
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Container(
-                            child: Column(
-                              children: <Widget>[
-                                Row(children: <Widget>[
-                                  SizedBox(width: 50,),
-                                  Center(child: Text("متاح من الساعة"),),
-                                  SizedBox(width: 10,),
-                                 // Text(start.substring(10,12)+":"+start.substring(13,15)),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 10.0),
+                                child: Text(start.substring(0,16)+'متاح من الساعة ', style: TextStyle(color: Colors.grey[600], fontSize: 20.0, fontFamily: "Montserrat"),),
+                              ),
 
-                                ],),
-                                Row(children: <Widget>[
-                                  SizedBox(width: 50,),
-                                  Center(child: Text("إلى الساعة"),),
-                                  SizedBox(width: 35,),
-                                 // Text(end.substring(10,12)+":"+end.substring(13,15)),
-                                ],),
-                              ],
-                            ),
-                          ),
-                    )
-
-
+                            Container(
+                              padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+                              child: Text(end.substring(0,16)+'إلى الساعة ', style: TextStyle(color: Colors.grey[600], fontSize: 20.0, fontFamily: "Montserrat"),),
+                                ),
+                        ],
+                      ),
+                    ),
                   ], );
             },
           )

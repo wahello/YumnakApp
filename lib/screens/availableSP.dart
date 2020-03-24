@@ -38,7 +38,6 @@ this.startTime,this.endTime,this.raringPrice,this.ratingAvg,this.ratingCooperati
 class _availableSPState extends State<availableSP> {
 
 
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   String c;
   String sortBy='distance';
@@ -66,6 +65,7 @@ class _availableSPState extends State<availableSP> {
 
   var Custlatitude , Custlongitude;
 
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
 
   @override
@@ -73,16 +73,15 @@ class _availableSPState extends State<availableSP> {
     super.initState();
     dbReferenceSP=_firebaseRefSP.child('Service Provider');
     dbReferenceCust=_firebaseRefCust.child('Customer').orderByChild('uid').equalTo(uid);
-    refreshList();
+    //refreshList();
   }
   Future<Null> refreshList() async {
     refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
 
     setState(() {
       build(context);
     });
-
     return null;
   }
 
