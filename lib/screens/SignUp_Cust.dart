@@ -77,12 +77,14 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                       child: Column(
                         children: <Widget>[
                           Directionality(
+
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
                                 validator:(val)=> validateName(val),
                                 //(val) => val.isEmpty ? "أدخل الاسم" : null,
                                 onChanged: (val){setState(() => name=val);},
                                 decoration: InputDecoration(
+                                    helperText :"05xxxxxxx",
                                     icon: Icon(Icons.person),
                                     labelText:  'الاسم',
                                     labelStyle: TextStyle( fontFamily: 'Montserrat',fontWeight: FontWeight.bold, color: Colors.grey),

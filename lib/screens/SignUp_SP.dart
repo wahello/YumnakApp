@@ -171,6 +171,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                     validator: (String v)=>validateMobile(v),
                                     onChanged: (val){setState(() => phoneNumber=val);},
                                     decoration: InputDecoration(
+                                        helperText :"05xxxxxxx",
                                         icon: Icon(Icons.phone),
                                         labelText: 'رقم الجوال',
                                         labelStyle: TextStyle(

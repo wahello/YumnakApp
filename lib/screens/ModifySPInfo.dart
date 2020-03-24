@@ -198,7 +198,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                   ),
 
                                   SizedBox(height:25.0),
-
+                                  if (fileName != "")
                                   Directionality(
                                       textDirection: TextDirection.rtl,
                                       child: Row(
@@ -210,7 +210,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
 
                                           SizedBox(width:20.0),
 
-                                          if (fileName != "")
+
                                             ButtonTheme(
                                                 //controller:newFileName,
                                                 minWidth: 30.0,
@@ -230,17 +230,37 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                                     )
                                                 )
                                             ),
-                                          if(fileName == "")
+
+
+                                          SizedBox(height:20.0),
+                                        ],
+                                      )
+                                  ),
+                                  if (fileName=="")
+                                  Directionality(
+                                      textDirection: TextDirection.rtl,
+                                      child: Row(
+                                        children: <Widget>[
+
+                                          Text('المرفقات',
+                                            style:TextStyle( color: Colors.grey[600], fontSize: 20.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
+                                          ),
+
+                                          SizedBox(width:20.0),
+
+
                                             ButtonTheme(
+                                              //controller:newFileName,
                                                 minWidth: 30.0,
                                                 height: 10.0,
                                                 child: RaisedButton(
                                                     color: Colors.grey[200],
                                                     onPressed: () { chooseFile(); },
+
                                                     child: Row(
                                                         children: <Widget>[
                                                           Icon(Icons.attach_file),
-                                                          Text("  إضافة ",
+                                                          Text("  إرفاق ",
                                                               textAlign: TextAlign.center,
                                                               style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold,fontSize: 24.0, fontFamily: 'Montserrat', )
                                                           ),
@@ -249,11 +269,11 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                                 )
                                             ),
 
+
                                           SizedBox(height:20.0),
                                         ],
                                       )
                                   ),
-
 
                           //if (fileName != "")
 
@@ -481,18 +501,18 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
      StorageUploadTask uploadTask = await storageReference.putFile(_image);
      await uploadTask.onComplete;
      print('File Uploaded');
-     storageReference.getDownloadURL().then((fileURL) {
-       setState(() async {
+     storageReference.getDownloadURL().then((fileURL) async {
+       setState(()  {
          _uploadedFileURL = fileURL;
          newFileName = fileURL;
          isLoading = false;
          print(newFileName);
-
+       });
 
          var _key1;
          var key2;
          await ref.child('Service Provider').orderByChild("uid").equalTo(spID).
-         once().then((DataSnapshot snap) async {
+         once().then((DataSnapshot snap) {
            _key1 = snap.value.keys;
            key2 = _key1.toString();
 
@@ -500,6 +520,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
            ref.child('Service Provider').child(key2).update(
                {"fileName": newFileName});
          });
-       });
+
      });
    }}
