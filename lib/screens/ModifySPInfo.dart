@@ -275,7 +275,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                       )
                                   ),
 
-                          //if (fileName != "")
+                        //  if (fileName != "")
 
                                /* Align(
                                   alignment: Alignment.center,
@@ -287,14 +287,16 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
                                     placeholder: AssetImage("assets/loading.gif"),
                                     image: NetworkImage(fileName),
                                   )
-                                  *//**//*ClipPath(
+
+
+                                  ClipPath(
                                     child: new SizedBox(
                                         width: 180.0,
                                         height: 180.0,
                                         child:Image.network(fileName , fit: BoxFit.fill,)
 
                                     ),
-                                  ),*//**//*
+                                  ),
                                 ),*/
                               ],
                             ),
@@ -507,7 +509,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
          newFileName = fileURL;
          isLoading = false;
          print(newFileName);
-       });
+       });//end set
 
          var _key1;
          var key2;

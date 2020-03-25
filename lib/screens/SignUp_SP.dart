@@ -5,8 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:yumnak/services/auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:math';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yumnak/services/CurrentLocation.dart';
 import 'Main.dart';
@@ -164,7 +162,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                       })
                                 ],
                               ),
-
+//
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(

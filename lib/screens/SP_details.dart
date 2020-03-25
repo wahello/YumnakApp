@@ -229,16 +229,15 @@ class _SP_detailsState extends State<SP_details> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Align(
-                            alignment: Alignment.center,
+                              alignment: Alignment.center,
 
-                            child: ClipPath(
-                              child: new SizedBox(
-                                  width: 180.0,
-                                  height: 180.0,
-                                  child:Image.network(fileName , fit: BoxFit.fill,)
-
-                              ),
-                            ),
+                              child: FadeInImage(
+                                height: 180,
+                                width: 180,
+                                fit: BoxFit.cover,
+                                placeholder: AssetImage("assets/loading.gif"),
+                                image: NetworkImage(fileName),
+                              )
                           ),
                         ] ),
                   ),
@@ -406,16 +405,5 @@ class _SP_detailsState extends State<SP_details> {
       ],
     );
   }
-
-  /*display() async{
-  final StorageReference ref = FirebaseStorage.instance.ref().child('images/' + SPuid.fileName + ".jpg");
-  String downloadURL = await ref.getDownloadURL();
-
-  downloadURL = Uri.decodeFull(downloadURL);
-  print("FB Storage URL: $downloadURL");
-
-
-  return new NetworkImage(downloadURL);
-}*/
 
 }
