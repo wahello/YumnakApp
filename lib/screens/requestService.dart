@@ -48,6 +48,8 @@ class _requestServiceState extends State<requestService> {
     print('SP_details: $uid'); print('SP_details SPUID: $sp_uid');
   }
 
+  Widget _form;
+
   initState() {
     super.initState();
     reqDBReferenceSP = _firebaseRefSP.child('Service Provider').orderByChild('uid').equalTo(sp_uid);
@@ -142,137 +144,145 @@ class _requestServiceState extends State<requestService> {
   Widget _buildWidget(){
     return Form(
       key: _formKey, //for validation
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 40.0),
-          Directionality(
-            textDirection: material.TextDirection.rtl,
-            child: Row(
-              children: <Widget>[
-                SizedBox(width:20.0),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate([
+              Column(
+                children: <Widget>[
+                  SizedBox(height: 40.0),
+                  Directionality(
+                    textDirection: material.TextDirection.rtl,
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(width:20.0),
 
-                Expanded(
-                    child: Container(
-                        child: Text('أحتاج الخدمة خلال: ',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                        ))
-                ),
+                        Expanded(
+                            child: Container(
+                                child: Text('أحتاج الخدمة خلال: ',
+                                  style: TextStyle(color: Colors.grey[600], fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
+                                ))
+                        ),
 
-                SizedBox(width:20.0),
-                Expanded(
-                  child: Container(
-                    child: DropdownButtonFormField<String>(
-                      validator: (value) => value == null ? 'يجب اختيار وقت الخدمة' : null,
-                      hint: new Text('أختر وقت الخدمة'),
-                      onChanged: (String newValueSelected) {
-                        setState(() {
-                          if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty){
-                            error = 'يجب أختيار الخدمة';}
-                          else{
-                            hoursValue = newValueSelected;
-                            longSpinnerValue=newValueSelected;}
-                        });
-                      },
-                      value: longSpinnerValue,
-                      items: hours_list.map<DropdownMenuItem<String>>((String text) {
-                        return DropdownMenuItem<String>(
-                          value: text,
-                          child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize:14, color: Colors.grey[600],),),
-                        );
-                      }).toList(),
+                        SizedBox(width:20.0),
+                        Expanded(
+                          child: Container(
+                            child: DropdownButtonFormField<String>(
+                              validator: (value) => value == null ? 'يجب اختيار وقت الخدمة' : null,
+                              hint: new Text('أختر وقت الخدمة'),
+                              onChanged: (String newValueSelected) {
+                                setState(() {
+                                  if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty){
+                                    error = 'يجب أختيار الخدمة';}
+                                  else{
+                                    hoursValue = newValueSelected;
+                                    longSpinnerValue=newValueSelected;}
+                                });
+                              },
+                              value: longSpinnerValue,
+                              items: hours_list.map<DropdownMenuItem<String>>((String text) {
+                                return DropdownMenuItem<String>(
+                                  value: text,
+                                  child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize:14, color: Colors.grey[600],),),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width:20.0),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(width:20.0),
-              ],
-            ),
-          ),
 
-          SizedBox(height: 30.0),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Directionality(
-                textDirection: material.TextDirection.rtl,
-                child: TextFormField(
-                  validator: (val) => val.isEmpty ? "الرجاء كتابة وصف للطلب" : null,
-                  //onChanged: (val){ setState(() => serviceDescription =val);},
-                  //expands:true,
-                  controller: _sdControlar,
-                  maxLines: 6,
-                  minLines: 4,
-                  decoration: InputDecoration(
-                      icon: Icon(Icons.description),
-                      labelText: 'وصف zeft الطلب',
-                      labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                )
-            ),
-          ),
+                  SizedBox(height: 30.0),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Directionality(
+                        textDirection: material.TextDirection.rtl,
+                        child: TextFormField(
+                          validator: (val) => val.isEmpty ? "الرجاء كتابة وصف للطلب" : null,
+                          //onChanged: (val){ setState(() => serviceDescription =val);},
+                          //expands:true,
+                          controller: _sdControlar,
+                          maxLines: 6,
+                          minLines: 4,
+                          decoration: InputDecoration(
+                              icon: Icon(Icons.description),
+                              labelText: 'وصف zeft الطلب',
+                              labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent))),
+                        )
+                    ),
+                  ),
 
-          SizedBox(height: 40.0),
-          Row(
-            children: <Widget>[
-              Container(
-                  padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                  child: RaisedButton(
-                      onPressed: _pickLocation,
-                      color: Colors.green[100],
-                      child: Row(
-                          children: <Widget>[
-                            Text("الموقع للخدمة المقدمة",
-                                style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)
-                            ),
-                            Icon(
-                              Icons.edit_location,
-                              color: Colors.grey[600],
-                            ),
-                          ]
-                      )
+                  SizedBox(height: 40.0),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                          padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                          child: RaisedButton(
+                              onPressed: _pickLocation,
+                              color: Colors.green[100],
+                              child: Row(
+                                  children: <Widget>[
+                                    Text("الموقع للخدمة المقدمة",
+                                        style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)
+                                    ),
+                                    Icon(
+                                      Icons.edit_location,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ]
+                              )
+                          )
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 70.0),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: FloatingActionButton.extended(
+                      onPressed: () {
+                        if(_formKey.currentState.validate())
+                          if(picked){
+                            for(var i=0; i<24; i++)
+                              if(longSpinnerValue==hours_list[i])
+                                numOfHours=i+1;
+
+                            dt= new DateTime.now().toString();
+                            orderID='#'+(countOrders+1).toString();
+                            sendData();
+                            _showDialog();
+                          }
+                          else {
+                            Fluttertoast.showToast(
+                                msg: ("الرجاء التأكد من صحة الموقع"),
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIos: 20,
+                                backgroundColor: Colors.red[100],
+                                textColor: Colors.red[800]
+                            );
+                          }
+                      },
+                      label: Text('إرسال الطلب',
+                          //textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24.0,
+                            fontFamily: 'Montserrat',)
+                      ),
+                      backgroundColor: Colors.green[300],
+                    ),
                   )
-              ),
-            ],
-          ),
-
-          SizedBox(height: 70.0),
-          SizedBox(
-            width: double.infinity,
-            height: 40,
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                if(_formKey.currentState.validate())
-                  if(picked){
-                    for(var i=0; i<24; i++)
-                      if(longSpinnerValue==hours_list[i])
-                        numOfHours=i+1;
-
-                    dt= new DateTime.now().toString();
-                    orderID='#'+(countOrders+1).toString();
-                    sendData();
-                    _showDialog();
-                  }
-                  else {
-                    Fluttertoast.showToast(
-                        msg: ("الرجاء التأكد من صحة الموقع"),
-                        toastLength: Toast.LENGTH_LONG,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIos: 20,
-                        backgroundColor: Colors.red[100],
-                        textColor: Colors.red[800]
-                    );
-                  }
-              },
-              label: Text('إرسال الطلب',
-                  //textDirection: TextDirection.rtl,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24.0,
-                    fontFamily: 'Montserrat',)
-              ),
-              backgroundColor: Colors.green[300],
-            ),
+                ],
+              )
+            ]),
           )
         ],
       )
@@ -281,6 +291,15 @@ class _requestServiceState extends State<requestService> {
 
   @override
   Widget build(BuildContext context) {
+    if (_form == null) { // Create the form if it does not exist
+      _form = _createForm(context); // Build the form
+    }
+    return _form; // Show the form in the application
+  }
+
+  _createForm(BuildContext context){
+
+
     return Scaffold(
       appBar: new AppBar(
         title: new Center(child: new Text("طلب جديد", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat"))),
@@ -289,47 +308,47 @@ class _requestServiceState extends State<requestService> {
         actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
       ),
       body:Container(
-          width: MediaQuery.of(context).size.width,
-          child: StreamBuilder(
-            stream: dbReferenceCust.onValue,
-            builder: (context, snapshot){
-              if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-              Map custData = snapshot.data.snapshot.value;
-              List CustItem = [];
-              custData.forEach((index, data) => CustItem.add({"key": index, ...data}));
-              cusName= CustItem[0]['name'];
-              cusPN = CustItem[0]['phoneNumber'];
-              lat=CustItem[0]['latitude'];
-              lng=CustItem[0]['longitude'];
+        width: MediaQuery.of(context).size.width,
+        child: StreamBuilder(
+          stream: dbReferenceCust.onValue,
+          builder: (context, snapshot){
+            if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+            Map custData = snapshot.data.snapshot.value;
+            List CustItem = [];
+            custData.forEach((index, data) => CustItem.add({"key": index, ...data}));
+            cusName= CustItem[0]['name'];
+            cusPN = CustItem[0]['phoneNumber'];
+            lat=CustItem[0]['latitude'];
+            lng=CustItem[0]['longitude'];
 
-              return StreamBuilder(
-                stream: reqDBReferenceSP.onValue,
-                builder: (context, snapshot){
-                  if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-                  Map data = snapshot.data.snapshot.value;
-                  List spItem = [];
-                  data.forEach((index, data) => spItem.add({"key": index, ...data}));
-                  spName= spItem[0]['name'];
-                  spPN= spItem[0]['phoneNumber'];
-                  spService= spItem[0]['service'];
+            return StreamBuilder(
+              stream: reqDBReferenceSP.onValue,
+              builder: (context, snapshot){
+                if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                Map data = snapshot.data.snapshot.value;
+                List spItem = [];
+                data.forEach((index, data) => spItem.add({"key": index, ...data}));
+                spName= spItem[0]['name'];
+                spPN= spItem[0]['phoneNumber'];
+                spService= spItem[0]['service'];
 
-                  return StreamBuilder(
-                    stream: dbReferenceOrders.onValue,
-                    builder: (context, snapshot){
-                      if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-                      Map data = snapshot.data.snapshot.value;
-                      List orderItem = [];
-                      data.forEach((index, data) => orderItem.add({"key": index, ...data}));
-                      countOrders=orderItem.length;
-                      print(countOrders);
+                return StreamBuilder(
+                  stream: dbReferenceOrders.onValue,
+                  builder: (context, snapshot){
+                    if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                    Map data = snapshot.data.snapshot.value;
+                    List orderItem = [];
+                    data.forEach((index, data) => orderItem.add({"key": index, ...data}));
+                    countOrders=orderItem.length;
+                    print(countOrders);
 
-                      return _buildWidget();
-                    },
-                  );
-                },
-              );
-            },
-          ),
+                    return _buildWidget();
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
