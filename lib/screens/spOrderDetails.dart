@@ -207,6 +207,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     context: context,
                                     type: AlertType.none,
                                     title: "قبول الطلب",
+                                    style: AlertStyle(isCloseButton: false,),
                                     desc: "يمكنك إلغاء الطلب إذا أردت بشرط أن لا يكون الوقت المتبقي أقل من ساعة",
                                     buttons: [
                                       DialogButton(
@@ -239,6 +240,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     context: context,
                                     type: AlertType.none,
                                     title: "رفض الطلب",
+                                    style: AlertStyle(isCloseButton: false,),
                                     buttons: [
                                       DialogButton(
                                         child: Text(
@@ -315,7 +317,8 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                               child: RaisedButton(
                                 onPressed:(){
                                   Alert(
-                                    context: context,
+                                      style: AlertStyle(isCloseButton: false,),
+                                      context: context,
                                     type: AlertType.none,
                                     title: "اكتمال الطلب",
                                     desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
@@ -364,6 +367,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                               child: RaisedButton(
                                 onPressed:(){
                                   Alert(
+                                    style: AlertStyle(isCloseButton: false,),
                                     context: context,
                                     type: AlertType.none,
                                     title: "إلغاء الطلب",
@@ -402,6 +406,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                               child: RaisedButton(
                                 onPressed:(){
                                   Alert(
+                                      style: AlertStyle(isCloseButton: false,),
                                       context: context,
                                       type: AlertType.none,
                                       title: "اكتمال الطلب",
