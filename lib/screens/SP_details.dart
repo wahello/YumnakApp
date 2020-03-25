@@ -235,7 +235,7 @@ class _SP_detailsState extends State<SP_details> {
                                 height: 180,
                                 width: 180,
                                 fit: BoxFit.cover,
-                                placeholder: AssetImage("assets/loading.gif"),
+                                placeholder: AssetImage("assets/load.gif"),
                                 image: NetworkImage(fileName),
                               )
                           ),
@@ -388,7 +388,7 @@ class _SP_detailsState extends State<SP_details> {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-                                    requestService(uid, SPuid, name, service, cusName, cusLatitude, cusLongitude)));
+                                    requestService(uid, SPuid)));
                       },
                       child: Center(
                         child: Text( 'طلب',
@@ -398,7 +398,7 @@ class _SP_detailsState extends State<SP_details> {
                       ),
                     ),
                   )),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
             ],
           ),
         ),
