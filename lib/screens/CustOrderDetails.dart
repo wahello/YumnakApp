@@ -47,7 +47,7 @@ class _custOrderDetailsState extends State<custOrderDetails> {
 
 
   Widget _buildWidget(item, key) {
-    loc = new LatLng(item["loc_latitude"], item["loc_longitude"]);
+    loc = new LatLng(item["latitude"], item["longitude"]);
 
     DateTime reqDate = DateTime.parse(item['requestDate']);
     var endDate = reqDate.add(new Duration(hours: item['serviceHours']));

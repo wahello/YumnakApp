@@ -286,7 +286,8 @@ class _AddhoursState extends State<Addhours> {
                                           )),
                                       SizedBox(width:10.0),
                                       Container(
-                                        child: CupertinoSwitch(
+                                        child: Switch(
+                                          activeColor: Colors.green[300],
                                           value: _lights,
                                           onChanged: (bool value) {
 
