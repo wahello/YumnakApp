@@ -193,7 +193,7 @@ class _custOrderDetailsState extends State<custOrderDetails> {
                                   RaisedButton(
                                       elevation: 0,
                                       onPressed:()=> setState(() {
-                                        String phone=item['phone_sp'];
+                                        String phone=item['pn_sp'];
                                         _launched = _makePhoneCall('tel:$phone');
                                       }),
                                       color: Colors.white,

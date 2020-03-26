@@ -194,7 +194,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                             child: RaisedButton(
                                 onPressed:(){
                                   Navigator.push(context, new MaterialPageRoute(
-                                      builder: (context) => ViewLocation(item["uid_sp"], item["orderID"], loc, "SP",)));
+                                      builder: (context) => ViewLocation(item["uid_sp"], item["orderID"], loc, item["loc_locComment"],)));
                                   },
                                 color: Colors.grey,
                                 child: Row(
@@ -254,6 +254,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     context: context,
                                     type: AlertType.none,
                                     title: "رفض الطلب",
+                                    desc: 'هل أنت متأكد من رفض الطلب؟',
                                     style: AlertStyle(isCloseButton: false,),
                                     buttons: [
                                       DialogButton(
@@ -294,7 +295,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                 RaisedButton(
                                     elevation: 0,
                                     onPressed:()=> setState(() {
-                                      String phone=item['phone_cus'];
+                                      String phone=item['pn_cus'];
                                       _launched = _makePhoneCall('tel:$phone');
                                     }),
                                     color: Colors.white,
@@ -335,7 +336,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                       context: context,
                                       type: AlertType.none,
                                       title: "اكتمال الطلب",
-                                      desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
+                                      desc: "شكرًا لك! نرجو تقييم كيف كانت تجربتك مع العميل",
                                       buttons: [
                                         DialogButton(
                                           child: Text(
