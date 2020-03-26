@@ -2,6 +2,9 @@ import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/rendering.dart' as material;
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:rating_bar/rating_bar.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:yumnak/screens/CustOrderDetails.dart';
 class CustMyOrders extends StatefulWidget {
   dynamic uid;
@@ -48,6 +51,8 @@ class _CustMyOrdersState extends State<CustMyOrders> {
   _CustMyOrdersState(dynamic u){uid=u; print('CustMyOrders: $uid');}
 
   bool isTimePassed;
+  double _ratingStarTime = 0, _ratingStarService = 0, _ratingStarWay = 0, _ratingStarPrice = 0;
+  String _reviewComments="";
 
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
@@ -67,6 +72,123 @@ class _CustMyOrdersState extends State<CustMyOrders> {
   }
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
+
+  void showAlert(){
+    TextStyle alertButtonsTextStyle=TextStyle(color: Colors.white, fontSize: 20);
+
+    Alert(
+        style: AlertStyle(isCloseButton: false,),
+        context: context,
+        type: AlertType.none,
+        title: "اكتمال الطلب",
+        desc: "تم إكتمال الطلب الخاص بك من قبل مقدم الخدمة الرجاء تقييم مقدم الخدمة",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "رجوع", style: alertButtonsTextStyle,
+            ),
+            onPressed: () => Navigator.pop(context),
+            color: Colors.grey,
+          ),
+          DialogButton(
+            child: Text("موافق", style: alertButtonsTextStyle,),
+            onPressed: (){
+              setState(() {
+                //calculateRating(key);
+              });
+              Navigator.pop(context);
+            },
+            color: Colors.lightBlueAccent,
+          ),
+        ],
+        content: Column(
+            children: <Widget>[
+              Container(
+                  child:Column(
+                      children: <Widget>[
+                        Row(
+                            children: <Widget>[
+                              RatingBar(
+                                  onRatingChanged: (rating) => setState(() => _ratingStarTime = rating),
+                                  filledIcon: Icons.star,
+                                  emptyIcon: Icons.star_border,
+                                  filledColor: Colors.amber,
+                                  size: 25
+                              ),
+
+                              Flexible(fit: FlexFit.tight, child: SizedBox()),
+                              Text(': الالتزام بالوقت ', style:TextStyle(height: 1, fontSize: 20),) ,
+                            ]
+                        ),
+                        Row(
+                            children: <Widget>[
+                              RatingBar(
+                                onRatingChanged: (rating) => setState(() => _ratingStarService = rating),
+                                filledIcon: Icons.star,
+                                emptyIcon: Icons.star_border,
+                                filledColor: Colors.amber,
+                                size: 25,
+                              ),
+
+                              Flexible(fit: FlexFit.tight, child: SizedBox()),
+                              Text(': جودة الخدمة ', style:TextStyle(height: 1, fontSize: 20),) ,
+                            ]
+                        ),
+                        Row(
+                            children: <Widget>[
+                              RatingBar(
+                                  onRatingChanged: (rating) => setState(() => _ratingStarWay = rating),
+                                  filledIcon: Icons.star,
+                                  emptyIcon: Icons.star_border,
+                                  filledColor: Colors.amber,
+                                  size: 25
+                              ),
+
+                              Flexible(fit: FlexFit.tight, child: SizedBox()),
+                              Text(':التعامل  ', style:TextStyle(height: 1, fontSize: 20),) ,
+                            ]
+                        ),
+                        // Spacer(),
+                        Row(
+                            children: <Widget>[
+                              RatingBar(
+                                  onRatingChanged: (rating) => setState(() => _ratingStarPrice = rating),
+                                  filledIcon: Icons.star,
+                                  emptyIcon: Icons.star_border,
+                                  filledColor: Colors.amber,
+                                  size: 25
+                              ),
+                              Spacer(),
+                              Text(':السعر ', style:TextStyle(height: 1, fontSize: 20),) ,
+                            ]
+                        ),
+
+                        FormBuilder(
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 20.0),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                                child: FormBuilderTextField(
+                                  onChanged: (val){setState(() => _reviewComments=val);},
+                                  attribute: 'comment',
+                                  decoration: InputDecoration(
+                                    labelText: 'الملاحظات',
+                                    //filled: true,
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ]
+                  )
+              )
+            ]
+        )
+    ).show();
+  }
 
   Widget _buildListItem(OrderData order) {
     DateTime reqDate = DateTime.parse(order.dateAndTime);

@@ -38,6 +38,8 @@ class _spOrderDetailsState extends State<spOrderDetails> {
   TextStyle buttonTextStyle= TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',);
   TextStyle alertButtonsTextStyle=TextStyle(color: Colors.white, fontSize: 20);
 
+  double _ratingStarTime = 0, _ratingStarService = 0, _ratingStarWay = 0, _ratingStarPrice = 0;
+  String _reviewComments="";
   
   initState() {
     super.initState();
@@ -58,7 +60,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
   Widget _buildWidget(item, key) {
 
-    loc = new LatLng(item["loc_latitude"], item["loc_longitude"]);
+    loc = new LatLng(item["latitude"], item["longitude"]);
 
     DateTime reqDate = DateTime.parse(item['requestDate']);
     var endDate = reqDate.add(new Duration(hours: item['serviceHours']));
@@ -126,6 +128,18 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                       children: <Widget>[
                                         Text("الاسم: " , textAlign: TextAlign.right, style: uiTextStyle),
                                         Text(item['name_cus']),
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(0, 0, 45, 5),
+                                          child: RatingBar.readOnly(
+                                            initialRating: _avgCus,
+                                            isHalfAllowed: true,
+                                            halfFilledIcon: Icons.star_half,
+                                            filledIcon: Icons.star,
+                                            emptyIcon: Icons.star_border,
+                                            filledColor: Colors.amber,
+                                            size: 20,
+                                          ),
+                                        )
                                       ],
                                     ),
                                     Row(
@@ -319,9 +333,9 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                   Alert(
                                       style: AlertStyle(isCloseButton: false,),
                                       context: context,
-                                    type: AlertType.none,
-                                    title: "اكتمال الطلب",
-                                    desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
+                                      type: AlertType.none,
+                                      title: "اكتمال الطلب",
+                                      desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
                                       buttons: [
                                         DialogButton(
                                           child: Text(
@@ -437,10 +451,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                                     children: <Widget>[
                                                       RatingBar(
                                                           onRatingChanged: (rating) => setState(() => _ratingCus = rating),
-                                                          filledIcon: Icons.star,
-                                                          emptyIcon: Icons.star_border,
-                                                          filledColor: Colors.amber,
-                                                          size: 25
+                                                          filledIcon: Icons.star, emptyIcon: Icons.star_border, filledColor: Colors.amber, size: 25
                                                       ),
                                                     ]
                                                 )
@@ -487,7 +498,6 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: new AppBar(
           title: new Center(child: new Text("تفاصيل الطلب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 30.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),)),
