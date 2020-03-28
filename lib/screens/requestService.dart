@@ -75,7 +75,7 @@ class _requestServiceState extends State<requestService> {
   ];
   String hoursValue = hours_list[0];
   String longSpinnerValue;
-  String serviceDescription="zeft";
+  String serviceDescription="";
   String status='قيد الانتظار';
 
   final _formKey = GlobalKey<FormState>();
@@ -94,7 +94,6 @@ class _requestServiceState extends State<requestService> {
   int countOrders=0;
   var orderID;
   bool isCusRate= false;
-  String zeft='';
 
   final DatabaseReference database = FirebaseDatabase.instance.reference().child("Order");
 
@@ -133,7 +132,7 @@ class _requestServiceState extends State<requestService> {
           ),
           onPressed: (){
             Navigator.push(context, new MaterialPageRoute(
-              builder: (context) => HomePage(uid)));
+                builder: (context) => HomePage(uid)));
           },
           width: 120,
         )
@@ -143,149 +142,155 @@ class _requestServiceState extends State<requestService> {
 
   Widget _buildWidget(){
     return Form(
-      key: _formKey, //for validation
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Column(
-                children: <Widget>[
-                  SizedBox(height: 40.0),
-                  Directionality(
-                    textDirection: material.TextDirection.rtl,
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(width:20.0),
+        key: _formKey, //for validation
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate([
+                Column(
+                  children: <Widget>[
+                    SizedBox(height: 40.0),
+                    Directionality(
+                      textDirection: material.TextDirection.rtl,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(width:20.0),
 
-                        Expanded(
-                            child: Container(
-                                child: Text('أحتاج الخدمة خلال: ',
-                                  style: TextStyle(color: Colors.grey[600], fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
-                                ))
-                        ),
-
-                        SizedBox(width:20.0),
-                        Expanded(
-                          child: Container(
-                            child: DropdownButtonFormField<String>(
-                              validator: (value) => value == null ? 'يجب اختيار وقت الخدمة' : null,
-                              hint: new Text('أختر وقت الخدمة'),
-                              onChanged: (String newValueSelected) {
-                                setState(() {
-                                  if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty){
-                                    error = 'يجب أختيار الخدمة';}
-                                  else{
-                                    hoursValue = newValueSelected;
-                                    longSpinnerValue=newValueSelected;}
-                                });
-                              },
-                              value: longSpinnerValue,
-                              items: hours_list.map<DropdownMenuItem<String>>((String text) {
-                                return DropdownMenuItem<String>(
-                                  value: text,
-                                  child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize:14, color: Colors.grey[600],),),
-                                );
-                              }).toList(),
-                            ),
+                          Expanded(
+                              child: Container(
+                                  child: Text('أحتاج الخدمة خلال: ',
+                                    style: TextStyle(color: Colors.grey[600], fontSize: 18.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),
+                                  ))
                           ),
-                        ),
-                        SizedBox(width:20.0),
-                      ],
-                    ),
-                  ),
 
-                  SizedBox(height: 30.0),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: Directionality(
-                        textDirection: material.TextDirection.rtl,
-                        child: TextFormField(
-                          validator: (val) => val.isEmpty ? "الرجاء كتابة وصف للطلب" : null,
-                          //onChanged: (val){ setState(() => serviceDescription =val);},
-                          //expands:true,
-                          controller: _sdControlar,
-                          maxLines: 6,
-                          minLines: 4,
-                          decoration: InputDecoration(
-                              icon: Icon(Icons.description),
-                              labelText: 'وصف zeft الطلب',
-                              labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
-                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent))),
-                        )
-                    ),
-                  ),
+                          SizedBox(width:20.0),
+                          StatefulBuilder(
+                              builder: ( context, setState){
+                                return Expanded(
+                                  child: Container(
+                                    child: DropdownButtonFormField<String>(
+                                      validator: (value) => value == null ? 'يجب اختيار وقت الخدمة' : null,
+                                      hint: new Text('أختر وقت الخدمة'),
+                                      onChanged: (String newValueSelected) {
+                                        setState(() {
+                                          if (newValueSelected=='-أختر -' ||  newValueSelected.isEmpty){
+                                            error = 'يجب أختيار الخدمة';}
+                                          else{
+                                            hoursValue = newValueSelected;
+                                            longSpinnerValue=newValueSelected;
+                                            print(longSpinnerValue);}
+                                        });
+                                      },
+                                      value: longSpinnerValue,
+                                      items: hours_list.map<DropdownMenuItem<String>>((String text) {
+                                        return DropdownMenuItem<String>(
+                                          value: text,
+                                          child: Text(text, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize:14, color: Colors.grey[600],),),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                );
+                              }
 
-                  SizedBox(height: 40.0),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                          child: RaisedButton(
-                              onPressed: _pickLocation,
-                              color: Colors.green[100],
-                              child: Row(
-                                  children: <Widget>[
-                                    Text("الموقع للخدمة المقدمة",
-                                        style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)
-                                    ),
-                                    Icon(
-                                      Icons.edit_location,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ]
-                              )
+                          ),
+                          SizedBox(width:20.0),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 30.0),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child: Directionality(
+                          textDirection: material.TextDirection.rtl,
+                          child: TextFormField(
+                            validator: (val) => val.isEmpty ? "الرجاء كتابة وصف للطلب" : null,
+                            //onChanged: (val){ setState(() => serviceDescription =val);},
+                            //expands:true,
+                            controller: _sdControlar,
+                            maxLines: 6,
+                            minLines: 4,
+                            decoration: InputDecoration(
+                                icon: Icon(Icons.description),
+                                labelText: 'وصف الطلب',
+                                labelStyle: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,color: Colors.grey),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.lightBlueAccent))),
                           )
                       ),
-                    ],
-                  ),
-
-                  SizedBox(height: 70.0),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 40,
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        if(_formKey.currentState.validate())
-                          if(picked){
-                            for(var i=0; i<24; i++)
-                              if(longSpinnerValue==hours_list[i])
-                                numOfHours=i+1;
-
-                            dt= new DateTime.now().toString();
-                            orderID='#'+(countOrders+1).toString();
-                            sendData();
-                            _showDialog();
-                          }
-                          else {
-                            Fluttertoast.showToast(
-                                msg: ("الرجاء التأكد من صحة الموقع"),
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIos: 20,
-                                backgroundColor: Colors.red[100],
-                                textColor: Colors.red[800]
-                            );
-                          }
-                      },
-                      label: Text('إرسال الطلب',
-                          //textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24.0,
-                            fontFamily: 'Montserrat',)
-                      ),
-                      backgroundColor: Colors.green[300],
                     ),
-                  )
-                ],
-              )
-            ]),
-          )
-        ],
-      )
+
+                    SizedBox(height: 40.0),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                            padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                            child: RaisedButton(
+                                onPressed: _pickLocation,
+                                color: Colors.green[100],
+                                child: Row(
+                                    children: <Widget>[
+                                      Text("الموقع للخدمة المقدمة",
+                                          style: TextStyle(color: Colors.grey[600],fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',)
+                                      ),
+                                      Icon(
+                                        Icons.edit_location,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ]
+                                )
+                            )
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 70.0),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: FloatingActionButton.extended(
+                        onPressed: () {
+                          if(_formKey.currentState.validate())
+                            if(picked){
+                              for(var i=0; i<24; i++)
+                                if(longSpinnerValue==hours_list[i])
+                                  numOfHours=i+1;
+
+                              dt= new DateTime.now().toString();
+                              orderID='#'+(countOrders+1).toString();
+                              sendData();
+                              _showDialog();
+                            }
+                            else {
+                              Fluttertoast.showToast(
+                                  msg: ("الرجاء التأكد من صحة الموقع"),
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIos: 20,
+                                  backgroundColor: Colors.red[100],
+                                  textColor: Colors.red[800]
+                              );
+                            }
+                        },
+                        label: Text('إرسال الطلب',
+                            //textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24.0,
+                              fontFamily: 'Montserrat',)
+                        ),
+                        backgroundColor: Colors.green[300],
+                      ),
+                    )
+                  ],
+                )
+              ]),
+            )
+          ],
+        )
     );
   }
 
