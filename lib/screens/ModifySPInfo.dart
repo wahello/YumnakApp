@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yumnak/screens/SP_HomePage.dart';
 import 'package:yumnak/services/ModifyLocation.dart';
 import 'package:yumnak/services/auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -77,6 +78,12 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
           iconTheme: IconThemeData(color: Colors.black38,),
           title: new Center(child: new Text("إعدادات الحساب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
           backgroundColor: Colors.grey[200],
+          automaticallyImplyLeading: false,
+          leading: GestureDetector(
+            onTap: () {Navigator.push(context, new MaterialPageRoute( builder: (context) => SP_HomePage(spID)));},
+            child: Icon(Icons.arrow_back),
+          ),
+
         ),
         body: Container(
           child: StreamBuilder(

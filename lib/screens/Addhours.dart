@@ -5,6 +5,7 @@ import "dart:core";
 import 'dart:async';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:yumnak/screens/SP_HomePage.dart';
 
 class Addhours extends StatefulWidget {
   @override
@@ -46,6 +47,8 @@ class _AddhoursState extends State<Addhours> {
   DateTime endDT;
 
   bool free =false;
+
+  bool show = false;
 
 
 
@@ -152,10 +155,15 @@ class _AddhoursState extends State<Addhours> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: new AppBar(
+          automaticallyImplyLeading: false,
           iconTheme: IconThemeData(
             color: Colors.black38, //change your color here
           ),
           title: new Center(child: new Text("أوقات عملي المتاحة", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
+          leading: GestureDetector(
+            onTap: () {Navigator.push(context, new MaterialPageRoute( builder: (context) => SP_HomePage(spID)));},
+            child: Icon(Icons.arrow_back),
+          ),
           backgroundColor: Colors.grey[200],
         ),
 
@@ -193,6 +201,7 @@ class _AddhoursState extends State<Addhours> {
                           _lights=false;
                           state=false;
                           updateUserStatus();
+                          show = true;
                         }
                         else{
                           print("somthing");
@@ -200,6 +209,7 @@ class _AddhoursState extends State<Addhours> {
                           state = true;
                           _lights=true;
                           updateUserStatus();
+                          show = false;
                         }
                       }
 
@@ -215,7 +225,8 @@ class _AddhoursState extends State<Addhours> {
                           children: <Widget>[
                             SizedBox(height:30.0),
 
-                            Directionality(
+                              if(show)
+                              Directionality(
                               textDirection: TextDirection.rtl,
                               child:
                               Container(
@@ -244,9 +255,9 @@ class _AddhoursState extends State<Addhours> {
                             ),
 
 
-
                             SizedBox(height:20.0),
-                            Directionality(
+                            if(show)
+                              Directionality(
                                 textDirection: TextDirection.rtl,
                                 child: Container(
                                   width: MediaQuery.of(context).size.width,
@@ -290,7 +301,6 @@ class _AddhoursState extends State<Addhours> {
                                           activeColor: Colors.green[300],
                                           value: _lights,
                                           onChanged: (bool value) {
-
                                             setState(() {
 
                                               DateTime now = new DateTime.now();
@@ -353,6 +363,7 @@ class _AddhoursState extends State<Addhours> {
                                                 updateUserStatus();
                                                 print(_lights);
                                                 print("hi from off");
+                                                show = true;
                                               }
                                             });
 
@@ -366,6 +377,29 @@ class _AddhoursState extends State<Addhours> {
                                 )
                             ),
                             SizedBox(height: 20,),
+
+                            if (!show)
+                            Directionality(
+                            textDirection: TextDirection.rtl,
+                            child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                            children: <Widget>[
+                            SizedBox(width:110.0),
+                            Container(
+                            child: Column(children: <Widget>[ new RaisedButton(child: Text ("تغيير ساعات العمل"),
+                                onPressed:(){
+                              _lights = false;
+                              state = false;
+                              updateUserStatus();
+                              print(_lights);
+                              show = true;}),],),
+                            )
+                            ],
+                            ),
+                            )
+                            ),
+
                             if (state == true)
                               Container(
                                 width: MediaQuery.of(context).size.width,

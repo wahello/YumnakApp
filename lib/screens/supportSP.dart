@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:yumnak/screens/SP_HomePage.dart';
 
 class supportSP extends StatefulWidget {
+
+  /*String spID;
+  supportSP(String uid){this.spID=uid;}*/
+
   @override
   _supportSPState createState() => _supportSPState();
+  //_supportSPState createState() => _supportSPState(spID);
+
 }
 
 class _supportSPState extends State<supportSP> {
+
+  /*String spID;
+  _supportSPState(String uid){spID=uid;}*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: new AppBar(
           title: new Center(child: new Text("الدعم والمساعدة", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
           backgroundColor: Colors.grey[200],
-          iconTheme: IconThemeData(color: Colors.black38),
+          //automaticallyImplyLeading: false,
+          /*leading: GestureDetector(
+            onTap: () {Navigator.push(context, new MaterialPageRoute( builder: (context) => SP_HomePage()));},
+            child: Icon(Icons.arrow_back),
+          ),*/
         ),
       body: ListView(
         children: <Widget>[
