@@ -64,20 +64,11 @@ class _ModifyCustInfoState extends State<ModifyCustInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: new Center(child: new Text("        إعدادات الحساب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
+        title: new Center(child: new Text("إعدادات الحساب", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
         backgroundColor: Colors.grey[200],
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.arrow_forward),
-            color: Colors.grey,
-            onPressed: () {
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (context) => HomePage(uid)
-              ));},
-          ),],
-
+        iconTheme: IconThemeData(color: Colors.black38),
       ),
+
       body: Container(
         child: StreamBuilder(
           stream: dbReference.onValue,
