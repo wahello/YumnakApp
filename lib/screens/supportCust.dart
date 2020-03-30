@@ -183,7 +183,7 @@ class _supportCustState extends State<supportCust> {
                       alignment: Alignment.centerRight,
                       padding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 0.0),
                       child: Text(
-                        'متى بإمكاني إلغاء الطلب ؟',
+                        'هل بإمكاني إلغاء الطلب ؟',
                         style:
                         TextStyle(color: Colors.grey[900], fontSize: 16.0, fontFamily: "Montserrat"),
                       ),
