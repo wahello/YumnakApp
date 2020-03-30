@@ -21,6 +21,7 @@ class _supportSPState extends State<supportSP> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: new AppBar(
+          iconTheme: IconThemeData(color: Colors.black38),
           title: new Center(child: new Text("الدعم والمساعدة", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
           backgroundColor: Colors.grey[200],
           //automaticallyImplyLeading: false,
