@@ -28,7 +28,6 @@ class OrderData {
       serviceDescription,
       locComment;
   var cusUid, spUid, orderID, latitude, longitude, numOfHours;
-  //var key;
   bool rate;
 
   OrderData(
@@ -41,7 +40,6 @@ class OrderData {
       this.spService,
       this.rate,
       this.numOfHours,
-     // this.key,
       );
 }
 
@@ -107,8 +105,6 @@ class _CustMyOrdersState extends State<CustMyOrders> {
 
     if(!isWaiting && order.status == "قيد الانتظار" ){
       updateStatus(order.orderID);
-      //var k = (order.key).toString().substring(1,21);
-      //_firebaseRef.child('Order').child(k).update({"status": 'ملغي'});
     }
     
     Color col;
@@ -182,7 +178,6 @@ class _CustMyOrdersState extends State<CustMyOrders> {
 
               if(order.status=='مكتمل' && !order.rate)
                 Row(
-                  //crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     new RaisedButton(
@@ -416,10 +411,8 @@ class _CustMyOrdersState extends State<CustMyOrders> {
 
     if(_reviewComments!="")
       sendData(order);
-    //var k = (order.key).toString().substring(1,21);
-    //_firebaseRef.child('Order').child(k).update({"is_cus_rate":true});
-    updateRateStatus(order.orderID);
 
+    updateRateStatus(order.orderID);
   }
 
   Future<void> updateStatus(String id) async {
@@ -478,7 +471,6 @@ class _CustMyOrdersState extends State<CustMyOrders> {
           title: new Center(child: new Text("طلباتي", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 30.0, fontWeight: FontWeight.bold, fontFamily: "Montserrat"),)),
           backgroundColor: Colors.grey[200],
           iconTheme: IconThemeData(color: Colors.black38),
-          actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
         ),
         body: RefreshIndicator(
           key: refreshKey,
@@ -513,7 +505,6 @@ class _CustMyOrdersState extends State<CustMyOrders> {
                           data[key]["service"],
                           data[key]["is_cus_rate"],
                           data[key]["serviceHours"],
-                        //  data.keys.toList(),
                         );
                         allOrders.add(o);
                       }
