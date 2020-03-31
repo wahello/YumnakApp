@@ -28,7 +28,7 @@ class OrderData {
       serviceDescription,
       locComment;
   var cusUid, spUid, orderID, latitude, longitude, numOfHours;
-  var key;
+  //var key;
   bool rate;
 
   OrderData(
@@ -41,7 +41,7 @@ class OrderData {
       this.spService,
       this.rate,
       this.numOfHours,
-      this.key,
+     // this.key,
       );
 }
 
@@ -106,8 +106,9 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     );
 
     if(!isWaiting && order.status == "قيد الانتظار" ){
-      var k = (order.key).toString().substring(1,21);
-      _firebaseRef.child('Order').child(k).update({"status": 'ملغي'});
+      updateStatus(order.orderID);
+      //var k = (order.key).toString().substring(1,21);
+      //_firebaseRef.child('Order').child(k).update({"status": 'ملغي'});
     }
     
     Color col;
@@ -415,10 +416,38 @@ class _CustMyOrdersState extends State<CustMyOrders> {
 
     if(_reviewComments!="")
       sendData(order);
+    //var k = (order.key).toString().substring(1,21);
+    //_firebaseRef.child('Order').child(k).update({"is_cus_rate":true});
+    updateRateStatus(order.orderID);
 
-    var k = (order.key).toString().substring(1,21);
-    _firebaseRef.child('Order').child(k).update({"is_cus_rate":true});
   }
+
+  Future<void> updateStatus(String id) async {
+    var _keys;
+    var key;
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Order').orderByChild("orderID").equalTo(id).
+    once().then((DataSnapshot snap) async {
+      _keys = snap.value.keys;
+      key = _keys.toString();
+      key=key.substring(1,21);
+      ref.child('Order').child(key).update({ "status": "ملغي"});
+    } );
+  }
+
+  Future<void> updateRateStatus(String id) async {
+    var _keys;
+    var key;
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref.child('Order').orderByChild("orderID").equalTo(id).
+    once().then((DataSnapshot snap) async {
+          _keys = snap.value.keys;
+          key = _keys.toString();
+          key=key.substring(1,21);
+            ref.child('Order').child(key).update({ "is_cus_rate": true});
+        } );
+  }
+
 
   final DatabaseReference database = FirebaseDatabase.instance.reference().child("Reviews");
 
@@ -484,12 +513,11 @@ class _CustMyOrdersState extends State<CustMyOrders> {
                           data[key]["service"],
                           data[key]["is_cus_rate"],
                           data[key]["serviceHours"],
-                          data.keys.toList(),
+                        //  data.keys.toList(),
                         );
                         allOrders.add(o);
                       }
                       sortByNewest();
-                      print ((allOrders[0].key));
                       return ListView.builder(
                           itemCount: allOrders.length,
                           itemBuilder: (context, index) {
