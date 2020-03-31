@@ -38,8 +38,6 @@ class _spOrderDetailsState extends State<spOrderDetails> {
   TextStyle buttonTextStyle= TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.0,fontFamily: 'Montserrat',);
   TextStyle alertButtonsTextStyle=TextStyle(color: Colors.white, fontSize: 20);
 
-  double _ratingStarTime = 0, _ratingStarService = 0, _ratingStarWay = 0, _ratingStarPrice = 0;
-  String _reviewComments="";
   
   initState() {
     super.initState();
@@ -484,7 +482,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
 
     if(_ratingCus!=0.0){
       _ratingCounter=_ratingCounter+1;
-      countAvg=(_avgCus+_ratingCus)/_ratingCounter;
+      countAvg=((_avgCus*(_ratingCounter-1))+_ratingCus)/_ratingCounter;
       countAvg=countAvg.toDouble();
       _avgCus=countAvg+0.0001;
       print("_ratingCounter: $_ratingCounter    countAvg: $countAvg    _avgCus: $_avgCus  ");
