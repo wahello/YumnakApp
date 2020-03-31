@@ -184,7 +184,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                               Directionality(
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
-                                    validator: (val) => val.isEmpty ? "الرجاء إدخال البريد الألكتروني" : null,
+                                    validator: (val) => val.isEmpty ? "الحقل مطلوب" : null,
                                     onChanged: (val) {
                                       setState(() => email = val);
                                     },
@@ -204,7 +204,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
                                   textDirection: TextDirection.rtl,
                                   child: TextFormField(
                                     validator: (val) =>
-                                    val.length < 6 ? "يجب أن تكون كلمة المرور أكثر من ستة خانات" : null,
+                                    val.length < 6 ? "يتطلب هذا الحقل ٧ خانات على الأقل" : null,
                                     onChanged: (val) {
                                       setState(() => password = val);
                                     },
@@ -696,7 +696,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
 
           child: new AlertDialog(
             title: new Text("تفعيل الحساب",style:TextStyle( )),
-            content: new Text("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
+            content: new Text("يجب تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               new FlatButton(
@@ -746,7 +746,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     String patttern = r'(^[a-zA-Z ]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "الرجاء إدخال الاسم";
+      return "الحقل مطلوب";
     } else if (!regExp.hasMatch(value)) {
       return "يجب أن يحتوي الاسم على أحرف فقط";
     }
@@ -756,7 +756,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     String patttern = r'(^[0-9]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "الرجاء إدخال رقم الجوال";
+      return "الحقل مطلوب";
     } else if(value.length != 10){
       return "أدخل رقم الجوال الصحيح";
     }else if (!regExp.hasMatch(value)) {
@@ -768,7 +768,7 @@ class _SignUp_SPState extends State<SignUp_SP> {
     String patttern = r'(^[0-9]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "الرجاء تحديد السعر";
+      return "الحقل مطلوب";
     }else if (!regExp.hasMatch(value)) {
       return "السعر يحتوي على ارقام فقط";
     }

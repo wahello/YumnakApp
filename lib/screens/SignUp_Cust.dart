@@ -95,7 +95,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.isEmpty ? "الرجاء إدخال البريد الألكتروني" : null,  //null means valid email
+                                validator: (val) => val.isEmpty ? "الحقل مطلوب" : null,  //null means valid email
                                 onChanged: (val){setState(() => email=val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.email),
@@ -130,7 +130,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
                           Directionality(
                               textDirection: TextDirection.rtl,
                               child:TextFormField(
-                                validator: (val) => val.length < 6 ? "يجب أن تكون كلمة المرور أكثر من ستة خانات" : null,  //null means valid password
+                                validator: (val) => val.length < 6 ? "يتطلب هذا الحقل ٧ خانات على الأقل" : null,  //null means valid password
                                 onChanged: (val){ setState(() => password =val);},
                                 decoration: InputDecoration(
                                     icon: Icon(Icons.lock_outline),
@@ -278,7 +278,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
 
           child: new AlertDialog(
             title: new Text("تفعيل الحساب",style:TextStyle( )),
-            content: new Text("الرجاء تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
+            content: new Text("يجب تفعيل الحساب عن طريق البريد الإلكتروني المرسل إليك لتتمكن من تسجيل الدخول واستخدام البرنامج"),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               new FlatButton(
@@ -333,7 +333,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     String patttern = r'(^[a-zA-Z ]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "الرجاء إدخال الاسم";
+      return "الحقل مطلوب";
     } else if (!regExp.hasMatch(value)) {
       return "يجب أن يحتوي الاسم على أحرف فقط";
     }
@@ -343,7 +343,7 @@ class _SignUp_CustState extends State<SignUp_Cust> {
     String patttern = r'(^[0-9]*$)';
     RegExp regExp = new RegExp(patttern);
     if (value.length == 0) {
-      return "الرجاء إدخال رقم الجوال";
+      return "الحقل مطلوب";
     } else if(value.length != 10){
       return "أدخل رقم الجوال الصحيح";
     }else if (!regExp.hasMatch(value)) {
