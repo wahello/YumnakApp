@@ -6,13 +6,18 @@ import 'package:yumnak/models/user.dart';
 
 class AuthService {
 
+
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  //this fucntion will change based on the current logged in user
+  Stream<FirebaseUser> authState() {
+    return FirebaseAuth.instance.onAuthStateChanged;
+  }
 
   //create user obj based in FairbaseUser
   User _userFromFirebaseUser(FirebaseUser user){
-  return user != null ? User(uid: user.uid) : null;
+    return user != null ? User(uid: user.uid) : null;
   }
-
   //auth change user stream
   Stream<User> get user {
     return _auth.onAuthStateChanged.map(_userFromFirebaseUser);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rating_bar/rating_bar.dart';
+import 'package:yumnak/screens/SP_HomePage.dart';
 
 class sp_InformationData extends StatefulWidget {
   dynamic SPuid;
@@ -37,7 +38,8 @@ class _sp_InformationDataState extends State<sp_InformationData> {
         iconTheme: IconThemeData(color: Colors.black38,),
         title: new Center(child: new Text("بياناتي", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlueAccent, fontSize: 25.0, fontFamily: "Montserrat",fontWeight: FontWeight.bold))),
         backgroundColor: Colors.grey[200],
-        actions: <Widget>[IconButton(icon: Icon(Icons.home),onPressed: (){},color: Colors.grey[200],)], //اللهم إنا نسألك الستر والسلامة
+        leading: GestureDetector(onTap: () {Navigator.push(context, new MaterialPageRoute( builder: (context) => SP_HomePage(spID)));},child: Icon(Icons.arrow_back),),
+        automaticallyImplyLeading: false,//اللهم إنا نسألك الستر والسلامة
       ),
       body: Container(
         child: StreamBuilder(
@@ -156,7 +158,7 @@ class _sp_InformationDataState extends State<sp_InformationData> {
                                       alignment: Alignment.center,
 
 
-                                        child: FadeInImage(
+                                          child: FadeInImage(
                                           height: 180,
                                           width: 180,
                                           fit: BoxFit.cover,

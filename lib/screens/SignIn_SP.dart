@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -165,7 +166,9 @@ class _SignIn_SPState extends State<SignIn_SP> {
                                           setState(() => error= 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
                                         }else{
                                           print("This is uid "+result);
-                                          Navigator.push(context, new MaterialPageRoute(
+                                          final user = await FirebaseAuth.instance.currentUser();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacement(context, new MaterialPageRoute(
                                               builder: (context) => SP_HomePage(result)
                                           ));
                                         }

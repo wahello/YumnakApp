@@ -1,4 +1,5 @@
 import 'package:countdown_flutter/countdown_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -52,6 +53,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
 
   final _formKey = GlobalKey<FormState>();
   final AuthService  _auth = AuthService();
+  //final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<OrderData> dummyList = List<OrderData>();
 
@@ -209,6 +211,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           leading: Icon(Icons.account_circle),
                           title: new Text("بياناتي الشخصية",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
+                            Navigator.pop(context);
                             Navigator.push(context, new MaterialPageRoute(
                                 builder: (context) => sp_InformationData(spID)    ));
                           },
@@ -219,6 +222,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           leading: Icon(Icons.access_time),
                           title: new Text("أوقات عملي المتاحة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
+                            Navigator.pop(context);
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context) =>  Addhours(spID)  ));
                           },
@@ -229,6 +233,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           leading: Icon(Icons.help),
                           title: new Text("الدعم والمساعدة",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
+                            Navigator.pop(context);
                              Navigator.push(context, new MaterialPageRoute(
                              builder: (context) =>  supportSP()  ));
                           },
@@ -239,6 +244,7 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           leading: Icon(Icons.settings),
                           title: new Text("إعدادات الحساب",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
                           onTap: (){
+                            Navigator.pop(context);
                             Navigator.push(context, new MaterialPageRoute(
                                 builder: (context) =>   ModifySPInfo(spID) ));
                           },
@@ -248,14 +254,29 @@ class _SP_HomePageState extends State<SP_HomePage> {
                         new ListTile(
                           leading: Icon(Icons.exit_to_app),
                           title: new Text("تسجيل خروج",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
-                          onTap: () async {
+
+                          /*onTap: () async {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pushReplacement(
+                              context,
+                              new MaterialPageRoute(
+                                builder: (context) => Main(),),);
+                          },*/
+                       // ),
+
+
+
+
+                          /*onTap: () async {
                             if (_formKey.currentState.validate()){
-                              dynamic result = await _auth.signOut();
-                              if(result == null){
-                                Navigator.push(context, new MaterialPageRoute(
+                              //dynamic result = await _auth.signOut();
+                              dynamic result= FirebaseAuth.instance.signOut();
+                              print(result);
+                              //if(result == null){
+                                Navigator.pushReplacement(context, new MaterialPageRoute(
                                     builder: (context) => Main()
                                 ));
-                              }else{
+                             *//* }else{
                                 Fluttertoast.showToast(
                                     msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
                                     toastLength: Toast.LENGTH_LONG,
@@ -264,9 +285,30 @@ class _SP_HomePageState extends State<SP_HomePage> {
                                     backgroundColor: Colors.red[100],
                                     textColor: Colors.red[800]
                                 );
-                              }
+                              }*//*
                             }
-                          },
+                          },*/
+                            onTap: () async {
+                              var r = _auth.signOut();
+                              print(r);
+                              if ( r == "Could not sign out" ){
+                                Fluttertoast.showToast(msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIos: 20,
+                                    backgroundColor: Colors.red[100],
+                                    textColor: Colors.red[800]);
+                                    }else {
+                                    Navigator.pop(context);
+                                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                                        builder: (context) =>Main()),
+                                            (Route<dynamic> route) => false);
+                                    print("sign out");
+                                   // Navigator.pushNamedAndRemoveUntil(context, "yumnak/screens/Main", () => false);
+                                    /*Navigator.pushReplacement(context, new MaterialPageRoute(
+                                    builder: (context) => Main()
+                                        ));*/
+                              }},
                         ),
                         new Divider(),
                       ],

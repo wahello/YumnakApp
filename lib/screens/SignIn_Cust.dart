@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:yumnak/screens/ForgetPassword.dart';
 import 'package:yumnak/screens/HomePage.dart';
@@ -166,7 +167,9 @@ class _SignIn_CustState extends State<SignIn_Cust> {
                                         }
                                         else{
                                           print("This is uid "+result);
-                                          Navigator.push(context, new MaterialPageRoute(
+                                          final user = await FirebaseAuth.instance.currentUser();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacement(context, new MaterialPageRoute(
                                               builder: (context) => HomePage(result)
                                           ));
                                         }
