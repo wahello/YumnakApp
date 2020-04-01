@@ -1,7 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:rating_bar/rating_bar.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/screens/requestService.dart';
@@ -30,6 +28,8 @@ class _SP_detailsState extends State<SP_details> {
   var _firebaseRef =FirebaseDatabase.instance.reference();
   var dbReferenceCust;
   var _firebaseRefCust =FirebaseDatabase.instance.reference();
+  var dbReferenceReview;
+  var _firebaseRefReview =FirebaseDatabase.instance.reference();
 
 
   String available, file, name, phoneNumber, qualifications, email, service;
@@ -39,6 +39,8 @@ class _SP_detailsState extends State<SP_details> {
 
   String cusUid, cusName;
   var cusLatitude , cusLongitude;
+
+  List reviewsItem=[];
 
   _SP_detailsState(dynamic u,dynamic SPu, String loc){
     uid=u; SPuid=SPu;
@@ -50,29 +52,10 @@ class _SP_detailsState extends State<SP_details> {
     super.initState();
     dbReference=_firebaseRef.child('Service Provider').orderByChild('uid').equalTo(SPuid);
     dbReferenceCust=_firebaseRefCust.child('Customer').orderByChild('uid').equalTo(uid);
+    dbReferenceReview=_firebaseRefReview.child('Reviews').orderByChild('uid_sp').equalTo(SPuid);
     print('SP_details: $uid');print('SP_details SPUID: $SPuid');
 
   }
-
-/*  Future<void> showAttach(){
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Not in stock'),
-          content: Text("المفرق"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -96,27 +79,39 @@ class _SP_detailsState extends State<SP_details> {
             cusLongitude = Custitem[0]['longitude'];
 
             return StreamBuilder(
-                stream: dbReference.onValue,
-                builder: (context, snapshot){
+                stream: dbReferenceReview.onValue,
+                builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
-                  Map data = snapshot.data.snapshot.value;
-                  List item = [];
-                  data.forEach((index, data) => item.add({"key": index, ...data}));
-                  name=item[0]['name'];
-                  price=item[0]['price'];
-                  qualifications=item[0]['qualifications'];
-                  service=item[0]['service'];
-                  rAvg=item[0]['ratingAvg'];
-                  rTime=item[0]['ratingTime'];
-                  rWork=item[0]['ratingWork'];
-                  rCoop=item[0]['ratingCooperation'];
-                  rPrice=item[0]['raringPrice'];
-                  ratingCount=item[0]['ratingCounter'];
-                  fileName=item[0]['fileName'];
-                  lat=item[0]['latitude:'];
-                  lng=item[0]['longitude'];
+                  reviewsItem = [];
+                  if (snapshot.data.snapshot.value != null){
+                    Map reviewsData = snapshot.data.snapshot.value;
+                    reviewsData.forEach((index, data) => reviewsItem.add({"key": index, ...data}));
+                  }
 
-                  return spDetails();
+                  return StreamBuilder(
+                      stream: dbReference.onValue,
+                      builder: (context, snapshot){
+                        if (snapshot.connectionState == ConnectionState.waiting){return Center(child: CircularProgressIndicator(),);}
+                        Map data = snapshot.data.snapshot.value;
+                        List item = [];
+                        data.forEach((index, data) => item.add({"key": index, ...data}));
+                        name=item[0]['name'];
+                        price=item[0]['price'];
+                        qualifications=item[0]['qualifications'];
+                        service=item[0]['service'];
+                        rAvg=item[0]['ratingAvg'];
+                        rTime=item[0]['ratingTime'];
+                        rWork=item[0]['ratingWork'];
+                        rCoop=item[0]['ratingCooperation'];
+                        rPrice=item[0]['raringPrice'];
+                        ratingCount=item[0]['ratingCounter'];
+                        fileName=item[0]['fileName'];
+                        lat=item[0]['latitude:'];
+                        lng=item[0]['longitude'];
+
+                        return spDetails();
+                      }
+                  );
                 }
             );
           }
@@ -361,23 +356,38 @@ class _SP_detailsState extends State<SP_details> {
                   ),
                 ),
               ),
+            if (reviewsItem.length !=0)
               Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Container(
                   width: 340,
                   height: 110,
-                  child: ListView(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text('الاسم',textDirection: TextDirection.rtl),
-                        subtitle: Text("التعلييييييييييق",textDirection: TextDirection.rtl),
-                        //dense: true,
-                      ),
-                    ],
+                  child: ListView.separated(
+                      itemCount: reviewsItem.length,
+                      itemBuilder: (context, index) {
+                        return writeReviews(index);
+                      },
+                      separatorBuilder: (BuildContext context, int index) => const Divider(),
                   ),
                 ),
               ),
+              if (reviewsItem.length == 0)
+                Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Container(
+                    width: 340,
+                    height: 110,
+                    child: ListView(
+                      children: <Widget>[
+                        ListTile(
+                          title: Text('لا يوجد طلبات', textAlign: TextAlign.center,),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               SizedBox(height: 20),
               Container(
                   height: 40.0,
@@ -406,4 +416,12 @@ class _SP_detailsState extends State<SP_details> {
     );
   }
 
+  Widget writeReviews(int i){
+    String dt=reviewsItem[i]['dateTime'];
+    dt=dt.substring(0,10);
+    return ListTile(
+        title: Text(reviewsItem[i]['name_cus'] ,textDirection: TextDirection.rtl),
+        subtitle: Text(dt +"  \n  "+ reviewsItem[i]['review'],textDirection: TextDirection.rtl),
+    );
+  }
 }

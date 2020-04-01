@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:yumnak/screens/CustMyOrders.dart';
 import 'package:yumnak/screens/HomePage.dart';
 import 'package:yumnak/services/RequestLocation.dart';
 import 'package:flutter/rendering.dart' as material;
@@ -123,19 +124,25 @@ class _requestServiceState extends State<requestService> {
       context: context,
       type: AlertType.success,
       title: "تم إنشاء الطلب بنجاح",
-      desc: "حالة الطلب قيد الانتظار لمعرفة تحديثات الطلب الرجاء الذهاب إلى صفحة طلباتي",
+      desc: "الطلب قيد الانتظار" +"\n"+"لمتابعة حالة الطلب الرجاء الذهاب لصفحة طلباتي",
       buttons: [
         DialogButton(
-          child: Text(
-            "موافق",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
+          child: Text("صفحة طلباتي", style: TextStyle(color: Colors.white, fontSize: 16),),
+          onPressed: (){
+            Navigator.push(context, new MaterialPageRoute(
+                builder: (context) => CustMyOrders(uid)));
+          },
+          color: Colors.grey,
+        ),
+        DialogButton(
+          child: Text("الصفحة الرئيسية", style: TextStyle(color: Colors.white, fontSize: 16),),
           onPressed: (){
             Navigator.push(context, new MaterialPageRoute(
                 builder: (context) => HomePage(uid)));
           },
           width: 120,
-        )
+          color: Colors.lightBlueAccent,
+        ),
       ],
     ).show();
   }
