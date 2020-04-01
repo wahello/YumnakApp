@@ -124,22 +124,36 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
-                                        Text("الاسم: " , textAlign: TextAlign.right, style: uiTextStyle),
-                                        Text(item['name_cus']),
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(0, 0, 45, 5),
-                                          child: RatingBar.readOnly(
-                                            initialRating: _avgCus,
-                                            isHalfAllowed: true,
-                                            halfFilledIcon: Icons.star_half,
-                                            filledIcon: Icons.star,
-                                            emptyIcon: Icons.star_border,
-                                            filledColor: Colors.amber,
-                                            size: 20,
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text("الاسم: " , textAlign: TextAlign.right, style: uiTextStyle),
+                                            Text(((item['name_cus']).split(' '))[0]),
+                                          ],
+                                        ),
+                                        Directionality(
+                                          textDirection: TextDirection.ltr,
+                                          child:  Row(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(0, 0, 80, 5),
+                                                child: RatingBar.readOnly(
+                                                  initialRating: _avgCus,
+                                                  isHalfAllowed: true,
+                                                  halfFilledIcon: Icons.star_half,
+                                                  filledIcon: Icons.star,
+                                                  emptyIcon: Icons.star_border,
+                                                  filledColor: Colors.amber,
+                                                  size: 20,
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                        )
+                                        ),
+
                                       ],
                                     ),
+
                                     Row(
                                       children: <Widget>[
                                         Text("تصنيف الخدمة: " , textAlign: TextAlign.right, style: uiTextStyle),
@@ -220,7 +234,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                     type: AlertType.none,
                                     title: "قبول الطلب",
                                     style: AlertStyle(isCloseButton: false,),
-                                    desc: "يمكنك إلغاء الطلب إذا أردت بشرط أن لا يكون الوقت المتبقي أقل من ساعة",
+                                    desc: "في حالة إلغاء الطلب يتوجب القيام به قبل ساعة من الوقت المتبقي",
                                     buttons: [
                                       DialogButton(
                                         child: Text(
@@ -422,14 +436,16 @@ class _spOrderDetailsState extends State<spOrderDetails> {
                                       style: AlertStyle(isCloseButton: false,),
                                       context: context,
                                       type: AlertType.none,
-                                      title: "اكتمال الطلب",
-                                      desc: "شكرًا لك على اكمال الطلب! نرجو تقييم كيف كانت تجربتك مع العميل",
+                                      title: "الطلب مكتمل",
+                                      desc: "شكرًا لك! الرجاء تقييم تجربتك مع العميل" + "\n",
                                       buttons: [
                                         DialogButton(
-                                          child: Text(
-                                            "رجوع", style: alertButtonsTextStyle,
+                                          child: Text("تخطي", style: alertButtonsTextStyle,
                                           ),
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () {
+                                            _firebaseRef.child('Order').child(key).update({"status": 'مكتمل'});
+                                            Navigator.pop(context);
+                                          },
                                           color: Colors.grey,
                                         ),
                                         DialogButton(
@@ -477,7 +493,7 @@ class _spOrderDetailsState extends State<spOrderDetails> {
   calculateRating(key){
     double countAvg=_avgCus;
     print(_ratingCus);
-    if(_ratingCounter==0)
+    if(_ratingCounter==0 && _ratingCus!=0.0)
       _avgCus=0.0;
 
     if(_ratingCus!=0.0){

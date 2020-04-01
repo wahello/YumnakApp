@@ -37,6 +37,7 @@ class OrderData {
       this.spUid,
       this.orderID,
       this.cusName,
+      this.spName,
       this.status,
       this.dateAndTime,
       this.spService,
@@ -232,17 +233,19 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     _ratingStarWay = 0.0;
     _ratingStarPrice = 0.0;
 
+    String s=order.spService, n=order.spName;
+    String msg= "تم إكتمال الطلب لخدمة \" $s \" من قبل مقدم الخدمة $n كيف كانت خدمتك؟";
+
     Alert(
-        style: AlertStyle(isCloseButton: false,),
+        style: AlertStyle(
+          isCloseButton: false,
+        ),
         context: context,
         type: AlertType.none,
         title: "اكتمال الطلب",
-        desc: "تم إكتمال الطلب الخاص بك من قبل مقدم الخدمة الرجاء التقييم",
         buttons: [
           DialogButton(
-            child: Text(
-              "رجوع", style: alertButtonsTextStyle,
-            ),
+            child: Text("رجوع", style: alertButtonsTextStyle,),
             onPressed: () => Navigator.pop(context),
             color: Colors.grey,
           ),
@@ -262,6 +265,11 @@ class _CustMyOrdersState extends State<CustMyOrders> {
               Container(
                   child:Column(
                       children: <Widget>[
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Text(msg +"\n", style: TextStyle(fontSize: 16),),
+
+                        ),
                         Row(
                             children: <Widget>[
                               RatingBar(
@@ -508,6 +516,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
                           data[key]["uid_sp"],
                           data[key]["orderID"],
                           data[key]["name_cus"],
+                          data[key]["name_sp"],
                           data[key]["status"],
                           data[key]["requestDate"],
                           data[key]["service"],

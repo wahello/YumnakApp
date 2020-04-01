@@ -123,6 +123,7 @@ class _requestServiceState extends State<requestService> {
     Alert(
       context: context,
       type: AlertType.success,
+      style: AlertStyle(isCloseButton: false,),
       title: "تم إنشاء الطلب بنجاح",
       desc: "الطلب قيد الانتظار" +"\n"+"لمتابعة حالة الطلب الرجاء الذهاب لصفحة طلباتي",
       buttons: [
