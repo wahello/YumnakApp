@@ -78,7 +78,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     dbReferenceSP=_firebaseRefSP.child('Service Provider');
   }
 
-  Future<Null> refreshList() async {
+/*  Future<Null> refreshList() async {
     refreshKey.currentState?.show(atTop: false);
     await Future.delayed(Duration(seconds: 1));
 
@@ -86,7 +86,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
       build(context);
     });
     return null;
-  }
+  }*/
 
   format(Duration d) => d.toString().split('.').first.padLeft(8, "0");
 
@@ -478,10 +478,12 @@ class _CustMyOrdersState extends State<CustMyOrders> {
           backgroundColor: Colors.grey[200],
           iconTheme: IconThemeData(color: Colors.black38),
         ),
-        body: RefreshIndicator(
+        body:
+     /*   RefreshIndicator(
           key: refreshKey,
           onRefresh: refreshList,
-          child: Container(
+          child: */
+          Container(
             child: StreamBuilder(
               stream: dbReferenceSP.onValue,
               builder: (context, snapshot){
@@ -536,7 +538,10 @@ class _CustMyOrdersState extends State<CustMyOrders> {
               },
             ),
           ),
-        )
+
+       // )
+
+
     );
   }
   Future _getThingsOnStartup() async {
