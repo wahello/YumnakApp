@@ -111,7 +111,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     if(!isWaiting && order.status == "قيد الانتظار" ){
       updateStatus(order.orderID);
     }
-    
+
     Color col;
     isTimePassed=false;
     String stat=order.status;
@@ -166,20 +166,20 @@ class _CustMyOrdersState extends State<CustMyOrders> {
 
               new Padding(padding: new EdgeInsets.only(top: 10.0)),
               if(order.status!='مكتمل' || order.rate)
-              new RaisedButton(
-                color: Colors.green[300],
-                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0),),
-                padding: new EdgeInsets.all(3.0),
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text( 'تفاصيل الطلب',
-                      style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold,color: Colors.white),
-                    ),
-                  ],
+                new RaisedButton(
+                  color: Colors.green[300],
+                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0),),
+                  padding: new EdgeInsets.all(3.0),
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Text( 'تفاصيل الطلب',
+                        style: new TextStyle(fontSize: 18.0,fontWeight: FontWeight.bold,color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  onPressed: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, order.orderID)));},
                 ),
-                onPressed: () { Navigator.push(context, new MaterialPageRoute(builder: (context) => custOrderDetails(uid, order.orderID)));},
-              ),
 
               if(order.status=='مكتمل' && !order.rate)
                 Row(
@@ -440,11 +440,11 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref.child('Order').orderByChild("orderID").equalTo(id).
     once().then((DataSnapshot snap) async {
-          _keys = snap.value.keys;
-          key = _keys.toString();
-          key=key.substring(1,21);
-            ref.child('Order').child(key).update({ "is_cus_rate": true});
-        } );
+      _keys = snap.value.keys;
+      key = _keys.toString();
+      key=key.substring(1,21);
+      ref.child('Order').child(key).update({ "is_cus_rate": true});
+    } );
   }
 
 
@@ -519,7 +519,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
                       notRated.clear();
                       for(var i= 0 ; i < allOrders.length ; i++){
                         if (allOrders[i].rate == false && allOrders[i].status == "مكتمل" ){
-                          print("Hi");
+                          //print("Hi");
                           notRated.add(allOrders[i]);
                         }
                       }
@@ -545,7 +545,6 @@ class _CustMyOrdersState extends State<CustMyOrders> {
     for(var i= 0 ; i < notRated.length ; i++) {
       Future.delayed(Duration.zero, () => showAlert(notRated[i]));
     }
-   }
-
   }
 
+}
