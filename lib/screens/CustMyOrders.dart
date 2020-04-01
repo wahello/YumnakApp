@@ -17,6 +17,8 @@ class CustMyOrders extends StatefulWidget {
 //--------------------------ORDERS------------------------------------------
 
 List<OrderData> allOrders = [];
+List<OrderData> notRated = [];
+
 List<OrderData> ordersForRating=[];
 
 class OrderData {
@@ -68,6 +70,9 @@ class _CustMyOrdersState extends State<CustMyOrders> {
   var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   initState(){
+    _getThingsOnStartup().then((value){
+      print('Async done');
+    });
     super.initState();
     dbReference=_firebaseRef.child('Order').orderByChild('uid_cus').equalTo(uid);
     dbReferenceSP=_firebaseRefSP.child('Service Provider');
@@ -218,6 +223,7 @@ class _CustMyOrdersState extends State<CustMyOrders> {
   }
 
   void showAlert(OrderData order){
+    print("i am here");
     TextStyle alertButtonsTextStyle=TextStyle(color: Colors.white, fontSize: 20);
     TextStyle alerttextTextStyle=TextStyle(height: 1, fontSize: 18);
 
@@ -509,6 +515,15 @@ class _CustMyOrdersState extends State<CustMyOrders> {
                         allOrders.add(o);
                       }
                       sortByNewest();
+
+                      notRated.clear();
+                      for(var i= 0 ; i < allOrders.length ; i++){
+                        if (allOrders[i].rate == false && allOrders[i].status == "مكتمل" ){
+                          print("Hi");
+                          notRated.add(allOrders[i]);
+                        }
+                      }
+
                       return ListView.builder(
                           itemCount: allOrders.length,
                           itemBuilder: (context, index) {
@@ -524,4 +539,13 @@ class _CustMyOrdersState extends State<CustMyOrders> {
         )
     );
   }
-}
+  Future _getThingsOnStartup() async {
+    print("legth");
+    print(notRated.length);
+    for(var i= 0 ; i < notRated.length ; i++) {
+      Future.delayed(Duration.zero, () => showAlert(notRated[i]));
+    }
+   }
+
+  }
+
