@@ -38,10 +38,11 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   //TextEditingController _fileName = TextEditingController();
 
   String available, file, name, phoneNumber, qualifications, email;
-  var price, fileName, latitude,longitude;
-
+  var fileName, latitude,longitude;
+  double price=.0;
   String newName, newPhoneNumber, newQualifications;
-  var newPrice, newFileName, newLatitude,newLongitude;
+  var newFileName, newLatitude,newLongitude;
+  double newPrice=.0;
 
   File _image;
   String _uploadedFileURL;
@@ -64,11 +65,10 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
    // _fileName..addListener(_setNewFileName);
   }
 
-  _setNewName() {newName=_nameCtrl.text;print("Hi");print(newName);}
-  _setNewPhone(){newPhoneNumber=_phoneCtrl.text;print(newPhoneNumber);}
-  _setNewQual(){newQualifications=_qualCtrl.text;print(newQualifications);}
-  _setNewPrice(){newPrice=_priceCtrl.text;print(newPrice);}
-  //_setNewFileName(){newFileName=_fileName.text;print(newFileName);}
+  _setNewName() {newName=_nameCtrl.text;}
+  _setNewPhone(){newPhoneNumber=_phoneCtrl.text;}
+  _setNewQual(){newQualifications=_qualCtrl.text;}
+  _setNewPrice(){newPrice=double.tryParse(_priceCtrl.text);}
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +96,7 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
               fileName=item[0]['fileName'];
               name=item[0]['name'];
               phoneNumber=item[0]['phoneNumber'];
-              price=item[0]['price'];
+              price=(item[0]['price'])+.0;
               qualifications=item[0]['qualifications'];
               latitude=item[0]['latitude'];
               longitude=item[0]['longitude'];
@@ -416,7 +416,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
   }
 
   updateSP() async{
-    print("Update Method");
     if (newName == null &&_image==null && newQualifications==null && newPhoneNumber=="" && newPrice=="" )
       Fluttertoast.showToast(
           msg: ("لم تقم بتعديل"),
@@ -428,14 +427,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
       );
 
     else{
-      print('before variables update');
-
-     /* if(_image != null)
-        uploadFile();*/
-
-      // await uploadFile();
-      //print("after update");
-
       var _keys;
       var key;
 
@@ -454,9 +445,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
         newLongitude= longitude;
       }
 
-      print("before db update");
-
-     // DatabaseReference ref = await FirebaseDatabase.instance.reference();
       await ref.child('Service Provider').orderByChild("uid").equalTo(spID).
       once().then((DataSnapshot snap) async {
             _keys = snap.value.keys;
@@ -478,7 +466,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
             //ref.child('Service Provider').child(key).update({ "name": newName,"phoneNumber": newPhoneNumber,"qualifications" : newQualifications, "price" : newPrice, "latitude": lat, "longitude": lng, "locComment": locCom, "fileName": fileName});
 
       });
-      print("after db update");
 
       Fluttertoast.showToast(
           msg: ("تم تحديث البيانات بنجاح"),
@@ -495,7 +482,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
       setState(() {
         _image = image;
-        print(_image);
       });
     });
    // uploadFile();
@@ -515,7 +501,6 @@ class _ModifySPInfoState extends State<ModifySPInfo> {
          _uploadedFileURL = fileURL;
          newFileName = fileURL;
          isLoading = false;
-         print(newFileName);
        });//end set
 
          var _key1;

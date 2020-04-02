@@ -254,42 +254,8 @@ class _SP_HomePageState extends State<SP_HomePage> {
                           leading: Icon(Icons.exit_to_app),
                           title: new Text("تسجيل خروج",style: TextStyle(fontFamily: 'Montserrat',fontWeight: FontWeight.bold,fontSize: 18 ,color: Colors.grey[600]),),
 
-                          /*onTap: () async {
-                            FirebaseAuth.instance.signOut();
-                            Navigator.pushReplacement(
-                              context,
-                              new MaterialPageRoute(
-                                builder: (context) => Main(),),);
-                          },*/
-                       // ),
-
-
-
-
-                          /*onTap: () async {
-                            if (_formKey.currentState.validate()){
-                              //dynamic result = await _auth.signOut();
-                              dynamic result= FirebaseAuth.instance.signOut();
-                              print(result);
-                              //if(result == null){
-                                Navigator.pushReplacement(context, new MaterialPageRoute(
-                                    builder: (context) => Main()
-                                ));
-                             *//* }else{
-                                Fluttertoast.showToast(
-                                    msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
-                                    toastLength: Toast.LENGTH_LONG,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIos: 20,
-                                    backgroundColor: Colors.red[100],
-                                    textColor: Colors.red[800]
-                                );
-                              }*//*
-                            }
-                          },*/
                             onTap: () async {
                               var r = _auth.signOut();
-                              print(r);
                               if ( r == "Could not sign out" ){
                                 Fluttertoast.showToast(msg: "تعذر تسجيل الخروج الرجاء المحاولة مرة أخرى",
                                     toastLength: Toast.LENGTH_LONG,
@@ -303,10 +269,6 @@ class _SP_HomePageState extends State<SP_HomePage> {
                                         builder: (context) =>Main()),
                                             (Route<dynamic> route) => false);
                                     print("sign out");
-                                   // Navigator.pushNamedAndRemoveUntil(context, "yumnak/screens/Main", () => false);
-                                    /*Navigator.pushReplacement(context, new MaterialPageRoute(
-                                    builder: (context) => Main()
-                                        ));*/
                               }},
                         ),
                         new Divider(),
@@ -341,7 +303,6 @@ class _SP_HomePageState extends State<SP_HomePage> {
                   allOrders.add(o);
                 }
                 sortByNewest();
-                print ((allOrders[0].key));
                 return ListView.builder(
                     itemCount: allOrders.length,
                     itemBuilder: (context, index) {
