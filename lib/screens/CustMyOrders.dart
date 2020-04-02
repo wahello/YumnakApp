@@ -245,8 +245,11 @@ class _CustMyOrdersState extends State<CustMyOrders> {
         title: "اكتمال الطلب",
         buttons: [
           DialogButton(
-            child: Text("رجوع", style: alertButtonsTextStyle,),
-            onPressed: () => Navigator.pop(context),
+            child: Text("تخطي", style: alertButtonsTextStyle,),
+            onPressed: (){
+              updateRateStatus(order.orderID);
+              Navigator.pop(context);
+            } ,
             color: Colors.grey,
           ),
           DialogButton(
